@@ -1,5 +1,5 @@
 // js/data.js
-const nexusData = {
+const NEXUS_DATA = {
   config: {
     user: "DUŠAN FAJNOR",
     alias: "GENERAL SERGEANT",
