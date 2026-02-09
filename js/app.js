@@ -1,3 +1,4 @@
+const { useState, useEffect } = React;
 // 1. MODUL: Paywall (Opravený pre ID_04)
 const PaywallModule = () => {
   return (
