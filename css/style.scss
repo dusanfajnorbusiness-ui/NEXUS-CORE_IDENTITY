@@ -1,0 +1,91 @@
+// 1. DEFINÍCIA PREMENNÝCH (Všetko na jednom mieste)
+$bg-dark: #050505;
+$text-light: #e0e0e0;
+$font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+// Mapovanie farieb tvojich dimenzií
+$colors: (
+  "identity": #39FF14,
+  "workflow": #FFD700,
+  "cash": #FFAA00,
+  "vault": #00FFFF,
+  "reset": #0044FF
+);
+
+// 2. MIXINY (Tvoje "recepty" na dizajn)
+@mixin neon-glow($color) {
+  color: $color;
+  filter: drop-shadow(0 0 8px rgba($color, 0.6));
+}
+
+// 3. GLOBÁLNE ŠTÝLY
+body {
+  background-color: $bg-dark;
+  color: $text-light;
+  font-family: sans-serif;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+.neon-text {
+  transition: all 0.3s ease;
+  &.identity { @include neon-glow(map-get($colors, "identity")); }
+  &.vault { @include neon-glow(map-get($colors, "vault")); }
+}
+
+// 4. ANIMÁCIE
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+.pulse { animation: pulse 2s infinite ease-in-out; }
+
+.custom-scrollbar {
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
+  &::-webkit-scrollbar-thumb { 
+    background: #8A2BE2; 
+    border-radius: 10px;
+  }
+}
+/* Nexus OS - HEAVY RADAR SCANNER */
+.radar-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 0;
+  height: 0;
+  border: 4px solid; /* Výrazne hrubšia čiara */
+  border-radius: 50%;
+  box-shadow: 0 0 15px currentColor; /* CurrentColor automaticky vezme farbu dimenzie */
+  filter: drop-shadow(0 0 5px currentColor);
+  animation: radar-pulse-heavy 4s infinite linear;
+  pointer-events: none;
+  z-index: 1;
+  /* Pridaná žiara (glow) */
+  box-shadow: 0 0 15px currentColor, inset 0 0 15px currentColor;
+}
+
+.radar-circle.delay-1 {
+  animation-delay: 2s;
+}
+
+@keyframes radar-pulse-heavy {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 1;
+    border-width: 4px;
+  }
+  50% {
+    opacity: 0.8; /* Dlhšia viditeľnosť lúča */
+  }
+  100% {
+    width: 800px; /* Väčší rozptyl */
+    height: 800px;
+    opacity: 0;
+    border-width: 1px;
+  }
+}
