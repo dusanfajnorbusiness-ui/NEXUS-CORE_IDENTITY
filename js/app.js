@@ -224,6 +224,7 @@ const App = () => {
                             isUnlocked={isUnlocked} 
                             setIsUnlocked={setIsUnlocked}
                         >
+                            {/* LOGIKA PRE SKILL TREE vs OSTATNÉ DIMENZIE */}
                             {activeID === "07" ? (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[450px] overflow-y-auto pr-4 custom-scrollbar">
                                     {window.nexusData.skills.map((cert) => (
@@ -245,3 +246,6 @@ const App = () => {
         </div>
     );
 };
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
