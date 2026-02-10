@@ -127,6 +127,8 @@ const App = () => {
     const [loadTime] = useState(new Date());
     const [seconds, setSeconds] = useState(0);
     const [isUnlocked, setIsUnlocked] = useState(false);
+    // Nový stav pre vizuálny radar
+    const [showRadar, setShowRadar] = useState(false);
 
     // Audio inicializácia sonaru
     const sonarPing = useMemo(() => new Audio('./assets/sounds/sonar-ping.mp3'), []);
@@ -136,10 +138,15 @@ const App = () => {
             const diff = Math.floor((new Date() - loadTime) / 1000);
             setSeconds(diff);
             
-            // SONAR: Pípa len ak je zamknuté
+            // SONAR LOGIKA: Pípa a spúšťa radar každých 10s
             if (!isUnlocked && diff % 10 === 0 && diff > 0) {
                 sonarPing.volume = 0.15;
                 sonarPing.play().catch(() => {});
+                
+                // Aktivácia vizuálneho radaru
+                setShowRadar(true);
+                // Radar zmizne po 4 sekundách (zhodne s dĺžkou CSS animácie)
+                setTimeout(() => setShowRadar(false), 4000);
             }
         }, 1000);
         return () => clearInterval(timer);
@@ -194,29 +201,47 @@ const App = () => {
                     ))}
                 </nav>
 
-                <div className="p-10 bg-white/[0.03] border border-white/10 backdrop-blur-md relative rounded-r-xl max-w-4xl">
-                    <div className="absolute top-0 left-0 w-1.5 h-full" style={{ backgroundColor: current.color }} />
-                    <DimensionWrapper id={activeID} color={current.color} proContent={current.proContent} isUnlocked={isUnlocked} setIsUnlocked={setIsUnlocked}>
-                        {activeID === "07" ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[450px] overflow-y-auto pr-4 custom-scrollbar">
-                                {window.nexusData.skills.map((cert) => (
-                                    <div key={cert.id} className="p-4 border border-white/5 bg-white/[0.02] rounded-lg">
-                                        <div className="text-[8px] opacity-30 font-mono uppercase mb-2">{cert.issuer} // {cert.category}</div>
-                                        <div className="text-xs font-bold uppercase">{cert.name}</div>
-                                        <a href={cert.path} target="_blank" className="mt-3 block text-[9px] text-cyan-500/60 hover:text-cyan-400 font-mono underline uppercase">Open_Document →</a>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <p className="text-2xl md:text-4xl font-light text-white/90 uppercase leading-snug">{current.content}</p>
-                        )}
-                    </DimensionWrapper>
+                {/* AREA PRE OBSAH S INTEGROVANÝM RADAROM */}
+                <div className="relative p-10 bg-white/[0.03] border border-white/10 backdrop-blur-md rounded-r-xl max-w-4xl overflow-hidden">
+                    
+                    {/* 🛰️ RADAR: Vykresľuje sa len ak je zamknuté a showRadar je true */}
+                    {!isUnlocked && showRadar && (
+                        <>
+                            <div className="radar-circle" style={{ color: current.color }}></div>
+                            <div className="radar-circle delay-1" style={{ color: current.color }}></div>
+                        </>
+                    )}
+
+                    <div className="absolute top-0 left-0 w-1.5 h-full z-20" style={{ backgroundColor: current.color }} />
+                    
+                    {/* Content Wrapper */}
+                    <div className="relative z-10">
+                        <DimensionWrapper 
+                            id={activeID} 
+                            color={current.color} 
+                            proContent={current.proContent} 
+                            premiumContent={current.premiumContent}
+                            isUnlocked={isUnlocked} 
+                            setIsUnlocked={setIsUnlocked}
+                        >
+                            {activeID === "07" ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[450px] overflow-y-auto pr-4 custom-scrollbar">
+                                    {window.nexusData.skills.map((cert) => (
+                                        <div key={cert.id} className="p-4 border border-white/5 bg-white/[0.02] rounded-lg">
+                                            <div className="text-[8px] opacity-30 font-mono uppercase mb-2">{cert.issuer} // {cert.category}</div>
+                                            <div className="text-xs font-bold uppercase">{cert.name}</div>
+                                            <a href={cert.path} target="_blank" className="mt-3 block text-[9px] text-cyan-500/60 hover:text-cyan-400 font-mono underline uppercase">Open_Document →</a>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-2xl md:text-4xl font-light text-white/90 uppercase leading-snug">{current.content}</p>
+                            )}
+                        </DimensionWrapper>
+                    </div>
                 </div>
             </main>
             <Footer />
         </div>
     );
 };
-
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<App />);
