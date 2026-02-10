@@ -1,4 +1,4 @@
-const { useState, useEffect } = React; 
+const { useState, useEffect } = React;
 // 1. MODUL: Paywall (Opravený pre ID_04)
 const PaywallModule = () => {
   return (
@@ -30,10 +30,25 @@ const DimensionWrapper = ({ id, children, proContent, color }) => {
       <div className="text-left">{children}</div>
       {!unlocked ? (
         <div className="relative p-2 border border-dashed border-white/10 rounded-lg bg-black/80 mt-2 overflow-hidden max-w-sm mx-auto md:mx-0">
-          <div className="absolute inset-0 overflow-hidden opacity-60 pointer-events-none">
+          <div className="absolute inset-0 overflow-hidden opacity-60 pointer-events-none rounded-lg">
+            {/* Prvý pulzujúci kruh */}
             <div
               className="radar-circle"
-              style={{ borderColor: color, color: color }}
+              style={{
+                borderColor: color,
+                color: color,
+                boxShadow: `0 0 20px ${color}, inset 0 0 20px ${color}`, // Pridaná extra žiara priamo v JS
+              }}
+            ></div>
+
+            {/* Druhý pulzujúci kruh s oneskorením (delay-1 zo SCSS) */}
+            <div
+              className="radar-circle delay-1"
+              style={{
+                borderColor: color,
+                color: color,
+                boxShadow: `0 0 20px ${color}, inset 0 0 20px ${color}`,
+              }}
             ></div>
           </div>
           <div className="relative z-10 flex items-center gap-2 p-2">
@@ -61,6 +76,9 @@ const DimensionWrapper = ({ id, children, proContent, color }) => {
             <LibraryVault />
           ) : proContent === "LOAD_PAYWALL_MODULE" ? (
             <PaywallModule />
+          ) : typeof proContent === "string" && proContent.includes("<div") ? (
+            /* TOTO PREMENÍ TEXT NA SKUTOČNÉ DIVY A ZOZNAMY */
+            <div dangerouslySetInnerHTML={{ __html: proContent }} />
           ) : (
             proContent
           )}
