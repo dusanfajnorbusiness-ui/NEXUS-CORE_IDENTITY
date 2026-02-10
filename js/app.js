@@ -18,30 +18,32 @@ const PaywallModule = () => {
 };
 
 // 2. CORE WRAPPER (Strážca s Radarom a Fixom pre ID_01/10)
-const DimensionWrapper = ({ id, children, proContent, color }) => {
-  const [unlocked, setUnlocked] = useState(false);
-  const [key, setKey] = useState("");
-
-  // Ak nie je proContent (ID 01, 10), vykresli len čistý obsah
-  if (!proContent) return <div className="text-left">{children}</div>;
+const DimensionWrapper = ({ id, color, children, proContent }) => {
+  const [key, setKey] = React.useState("");
+  
+  // 1. Definujeme, ktoré ID sú voľné (bez zámku). 
+  // Ak chceš mať úplne všetko pod kľúčom, nechaj pole prázdne [].
+  const isFreeTier = [].includes(id); 
+  
+  const [unlocked, setUnlocked] = React.useState(isFreeTier);
 
   return (
     <div className="space-y-4">
+      {/* Základný obsah viditeľný pre všetkých */}
       <div className="text-left">{children}</div>
+
       {!unlocked ? (
-        <div className="relative p-2 border border-dashed border-white/10 rounded-lg bg-black/80 mt-2 overflow-hidden max-w-sm mx-auto md:mx-0">
+        /* ZÁMOK S RADAROM (Zobrazí sa, ak existuje proContent ALEBO ak id nie je vo free tieri) */
+        <div className="relative p-2 border border-dashed border-white/10 rounded-lg bg-black/80 mt-2 overflow-hidden max-w-sm mx-auto md:mx-0 min-h-[120px]">
           <div className="absolute inset-0 overflow-hidden opacity-60 pointer-events-none rounded-lg">
-            {/* Prvý pulzujúci kruh */}
             <div
               className="radar-circle"
               style={{
                 borderColor: color,
                 color: color,
-                boxShadow: `0 0 20px ${color}, inset 0 0 20px ${color}`, // Pridaná extra žiara priamo v JS
+                boxShadow: `0 0 20px ${color}, inset 0 0 20px ${color}`,
               }}
             ></div>
-
-            {/* Druhý pulzujúci kruh s oneskorením (delay-1 zo SCSS) */}
             <div
               className="radar-circle delay-1"
               style={{
@@ -51,38 +53,40 @@ const DimensionWrapper = ({ id, children, proContent, color }) => {
               }}
             ></div>
           </div>
-          <div className="relative z-10 flex items-center gap-2 p-2">
+
+          <div className="relative z-10 flex items-center gap-2 p-2 mt-4">
             <input
               type="password"
-              placeholder="KEY..."
+              placeholder="ENTER KEY..."
               className="bg-transparent border-b border-white/10 text-center text-[10px] w-full focus:outline-none focus:border-white/40 transition-all font-mono"
               onChange={(e) => setKey(e.target.value)}
             />
             <button
               onClick={() =>
-                key === "NEXUS-150-PRO" ? setUnlocked(true) : alert("DENIED")
+                key === "NEXUS-150-PRO" ? setUnlocked(true) : alert("ACCESS DENIED")
               }
               className="px-4 py-1 text-[9px] font-black uppercase transition-all active:scale-95 shadow-lg"
               style={{ backgroundColor: color, color: "#000" }}
             >
-              {" "}
-              Verify{" "}
+              Verify
             </button>
           </div>
         </div>
       ) : (
-        <div className="animate-in slide-in-from-top-2 fade-in pt-4 mt-4 border-t border-white/10 text-left">
-          {proContent === "LOAD_LIBRARY_MODULE" ? (
-            <LibraryVault />
-          ) : proContent === "LOAD_PAYWALL_MODULE" ? (
-            <PaywallModule />
-          ) : typeof proContent === "string" && proContent.includes("<div") ? (
-            /* TOTO PREMENÍ TEXT NA SKUTOČNÉ DIVY A ZOZNAMY */
-            <div dangerouslySetInnerHTML={{ __html: proContent }} />
-          ) : (
-            proContent
-          )}
-        </div>
+        /* ODOMKNUTÝ OBSAH (Zobrazí sa len ak proContent existuje) */
+        proContent && (
+          <div className="animate-in slide-in-from-top-2 fade-in pt-4 mt-4 border-t border-white/10 text-left">
+            {proContent === "LOAD_LIBRARY_MODULE" ? (
+              <LibraryVault />
+            ) : proContent === "LOAD_PAYWALL_MODULE" ? (
+              <PaywallModule />
+            ) : typeof proContent === "string" && proContent.includes("<div") ? (
+              <div dangerouslySetInnerHTML={{ __html: proContent }} />
+            ) : (
+              proContent
+            )}
+          </div>
+        )
       )}
     </div>
   );
