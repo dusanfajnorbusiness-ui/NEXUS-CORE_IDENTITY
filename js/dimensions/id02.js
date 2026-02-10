@@ -61,7 +61,32 @@ window.id02Data = {
       "Todoist nie je zoznam úloh, je to mapa energetických výdajov."
     </p>
   </div>
-
 </div>
-`
+`,
+  premiumContent: `
+    <div class="p-6 bg-[#FFD700]/5 border-2 border-[#FFD700] rounded-xl shadow-[0_0_25px_rgba(255,215,0,0.15)] relative overflow-hidden animate-in slide-in-from-bottom-4 duration-700">
+      <div class="absolute top-0 right-0 bg-[#FFD700] text-black text-[8px] px-4 font-black py-1 uppercase tracking-widest shadow-lg">Architect_Level_Flow</div>
+      <h4 class="text-[#FFD700] font-black text-[12px] uppercase mb-4 italic tracking-tighter">!! HYPER_AUTOMATION_SYSTEM !!</h4>
+      
+      <div class="space-y-4 text-[10px] font-mono leading-relaxed text-white/90 italic">
+        <p class="p-3 bg-black/40 border border-[#FFD700]/20 rounded text-[#FFD700]/90">
+          <span class="font-bold underline uppercase">System_Integration:</span><br/>
+          Kompletný audit a prepojenie tvojho digitálneho workflow (OneNote, Todoist, Outlook) do jedného neprerušovaného toku dát bez manuálneho vstupu.
+        </p>
+        <div class="grid grid-cols-1 gap-2 text-[8px] uppercase tracking-widest">
+          <div class="p-2 border border-[#FFD700]/20 bg-[#FFD700]/5 flex justify-between">
+            <span>External_Brain_Sync</span>
+            <span class="text-[#FFD700]">Active</span>
+          </div>
+          <div class="p-2 border border-[#FFD700]/20 bg-[#FFD700]/5 flex justify-between">
+            <span>Zero_Inbox_Protocol</span>
+            <span class="text-[#FFD700]">Active</span>
+          </div>
+        </div>
+        <p class="text-center text-[7px] opacity-40 uppercase tracking-[0.4em] mt-2">
+          Status: Performance_Peak_Initiated
+        </p>
+      </div>
+    </div>
+  `
 };

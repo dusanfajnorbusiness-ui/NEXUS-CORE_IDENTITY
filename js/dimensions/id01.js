@@ -52,24 +52,30 @@ window.id01Data = {
     </div>
   </div>
 
-  <div class="p-3 border border-dashed border-white/10 rounded-lg bg-black/20">
-    <p class="text-[9px] text-[#39FF14] font-bold uppercase mb-3 opacity-80 underline decoration-dotted">Log_Status:</p>
-    <div class="space-y-2 font-mono text-[8px]">
-      <div class="flex justify-between border-b border-white/5 pb-1">
-        <span class="opacity-50">> Defragmentácia</span>
-        <span class="text-[#39FF14]">DONE</span>
-      </div>
-      <div class="flex justify-between border-b border-white/5 pb-1">
-        <span class="opacity-50">> Architect_Observer</span>
-        <span class="text-[#39FF14]">85%</span>
-      </div>
-      <div class="flex justify-between">
-        <span class="opacity-50">> ZorbaBudha Balance</span>
-        <span class="text-yellow-500">PENDING</span>
-      </div>
-    </div>
+  <div class="p-3 border border-dashed border-white/10 rounded-lg bg-black/20 text-center py-4">
+    <p class="text-[10px] italic opacity-40">"Keď som, tak som, viem, že som."</p>
   </div>
 
 </div>
-`
+`,
+  premiumContent: `
+    <div class="p-6 bg-[#39FF14]/5 border-2 border-[#39FF14] rounded-xl shadow-[0_0_25px_rgba(57,255,20,0.2)] relative overflow-hidden animate-in zoom-in-95 duration-700">
+      <div class="absolute top-0 right-0 bg-[#39FF14] text-black text-[8px] px-4 font-black py-1 uppercase tracking-widest shadow-lg">Architect_Final_Form</div>
+      <h4 class="text-[#39FF14] font-black text-[12px] uppercase mb-4 italic tracking-tighter">!! DEEP_IDENTITY_SYNTHESIS !!</h4>
+      
+      <div class="space-y-4 text-[10px] font-mono leading-relaxed text-white/90 italic">
+        <p class="p-3 bg-black/40 border border-[#39FF14]/20 rounded">
+          <span class="text-[#39FF14] font-bold underline">PREPIS BAZÁLNYCH FILTROV:</span><br/>
+          Manuálna rekalibrácia kognitívnych skreslení. Odstránenie starých vzorcov "Hráča" na úrovni podvedomých reakcií.
+        </p>
+        <div class="grid grid-cols-2 gap-3 text-[8px] uppercase tracking-widest text-center">
+          <div class="p-2 border border-[#39FF14]/30 bg-[#39FF14]/10">Zero_Ego_Logic</div>
+          <div class="p-2 border border-[#39FF14]/30 bg-[#39FF14]/10">Pure_Will_Drive</div>
+        </div>
+        <p class="text-center text-[7px] opacity-40 uppercase tracking-[0.4em] mt-4">
+          Status: Nexus_Core_Full_Synchronization_Complete
+        </p>
+      </div>
+    </div>
+  `
 };

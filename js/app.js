@@ -27,60 +27,74 @@ const LibraryVault = () => {
     );
 };
 
-// 3. CORE WRAPPER: Strážca s Radarom a Enter Triggerom
-const DimensionWrapper = ({ id, color, children, proContent, isUnlocked, setIsUnlocked }) => {
+// 2. CORE WRAPPER: 3-Úrovňový Strážca (Free / Pro / Premium)
+const DimensionWrapper = ({ id, color, children, proContent, premiumContent, isUnlocked, setIsUnlocked }) => {
     const [keyInput, setKeyInput] = useState("");
+    const [accessLevel, setAccessLevel] = useState("FREE");
 
     const handleVerify = () => {
-        if (keyInput === "NEXUS-150-PRO") {
-            setIsUnlocked(true); // Toto vypne sonar v App komponente
+        const input = keyInput.trim().toUpperCase();
+        if (input === "NEXUS-150-PRO") {
+            setAccessLevel("PRO");
+            setIsUnlocked(true);
+        } else if (input === "NEXUS-999-PREMIUM") {
+            setAccessLevel("PREMIUM");
+            setIsUnlocked(true);
         } else {
-            alert("ACCESS DENIED: INVALID_KEY");
+            alert("ACCESS DENIED");
             setKeyInput("");
         }
     };
 
     return (
-        <div className="space-y-4">
-            <div className="text-left">{children}</div>
+        <div className="space-y-6">
+            {/* LEVEL 0: FREE CONTENT */}
+            <div className="text-left">
+                <div className="text-[7px] opacity-30 font-mono mb-2 tracking-widest">[ LEVEL: FREE_ACCESS ]</div>
+                {children}
+            </div>
+
             {!isUnlocked ? (
-                <div className="relative p-2 border border-dashed border-white/10 rounded-lg bg-black/80 mt-2 overflow-hidden max-w-sm mx-auto md:mx-0 min-h-[140px]">
-                    <div className="absolute inset-0 overflow-hidden opacity-60 pointer-events-none rounded-lg">
-                        <div className="radar-circle" style={{ borderColor: color, boxShadow: `0 0 20px ${color}, inset 0 0 20px ${color}` }}></div>
-                        <div className="radar-circle delay-1" style={{ borderColor: color, boxShadow: `0 0 20px ${color}, inset 0 0 20px ${color}` }}></div>
+                <div className="p-6 border border-white/5 bg-black/60 rounded-xl space-y-4 shadow-2xl">
+                    <input
+                        type="password"
+                        placeholder="ENTER ACCESS_KEY..."
+                        value={keyInput}
+                        onChange={(e) => setKeyInput(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === 'Enter') handleVerify(); }}
+                        className="bg-transparent border-b border-white/10 text-center text-[10px] w-full focus:outline-none focus:border-white/40 transition-all font-mono tracking-[0.2em] text-white py-2"
+                    />
+                    <div className="grid grid-cols-3 gap-2 text-[6px] font-mono text-center uppercase tracking-tighter">
+                        <div className="p-1 border border-[#39FF14] text-[#39FF14]">Free_Active</div>
+                        <div className="p-1 border border-white/5 text-white/20 text-white/40">Pro_Locked</div>
+                        <div className="p-1 border border-white/5 text-white/20 text-white/40">Prem_Locked</div>
                     </div>
-                    <div className="relative z-10 flex flex-col items-center gap-4 p-4 mt-2">
-                        <input
-                            type="password"
-                            placeholder="ENTER PRISTUPOVY KLUC..."
-                            value={keyInput}
-                            className="bg-transparent border-b border-white/10 text-center text-[10px] w-full focus:outline-none focus:border-white/40 transition-all font-mono tracking-[0.2em] text-white"
-                            onChange={(e) => setKeyInput(e.target.value)}
-                            onKeyDown={(e) => { if (e.key === 'Enter') handleVerify(); }} // ENTER TRIGGER
-                        />
-                        <button
-                            onClick={handleVerify}
-                            className="px-6 py-2 text-[10px] font-black uppercase transition-all active:scale-95 shadow-lg"
-                            style={{ backgroundColor: color, color: "#000" }}
-                        >
-                            Verify Identity
-                        </button>
-                    </div>
+                    <button onClick={handleVerify} className="w-full py-2 text-[9px] font-black uppercase shadow-lg transition-transform active:scale-95 hover:brightness-110" style={{ backgroundColor: color, color: "#000" }}>
+                        Verify Identity
+                    </button>
                 </div>
             ) : (
-                proContent && (
-                    <div className="animate-in slide-in-from-top-2 fade-in pt-4 mt-4 border-t border-white/10 text-left">
-                        {proContent === "LOAD_LIBRARY_MODULE" ? (
-                            <LibraryVault />
-                        ) : proContent === "LOAD_PAYWALL_MODULE" ? (
-                            <PaywallModule />
-                        ) : typeof proContent === "string" && proContent.includes("<div") ? (
+                <div className="space-y-6 animate-in slide-in-from-top-4 duration-700">
+                    {/* PRO CONTENT */}
+                    {(accessLevel === "PRO" || accessLevel === "PREMIUM") && (
+                        <div className="pt-6 border-t border-white/10">
+                            <div className="text-[7px] text-[#FFD700] mb-3 font-mono tracking-widest">[ LEVEL: PRO_UNLOCKED ]</div>
                             <div dangerouslySetInnerHTML={{ __html: proContent }} />
-                        ) : (
-                            <div className="text-white font-mono text-sm">{proContent}</div>
-                        )}
-                    </div>
-                )
+                        </div>
+                    )}
+                    {/* PREMIUM CONTENT */}
+                    {accessLevel === "PREMIUM" ? (
+                        <div className="pt-6 border-t-2 border-cyan-500/30 bg-cyan-500/5 p-4 rounded">
+                            <div className="text-[7px] text-cyan-400 mb-3 font-mono tracking-widest">[ LEVEL: PREMIUM_FULL ]</div>
+                            <div dangerouslySetInnerHTML={{ __html: premiumContent || "PREMIUM_DATA_STREAM_ACTIVE" }} />
+                        </div>
+                    ) : (
+                        <div className="p-3 border border-dashed border-white/5 opacity-20 rounded flex justify-between items-center text-[7px] font-mono uppercase">
+                             <span>Premium_Protocol</span>
+                             <span>Locked</span>
+                        </div>
+                    )}
+                </div>
             )}
         </div>
     );
