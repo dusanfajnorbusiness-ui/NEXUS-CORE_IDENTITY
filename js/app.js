@@ -144,6 +144,8 @@ const Footer = () => {
 // 5. CORE: App Component
 const App = () => {
   const [activeID, setActiveID] = useState("01");
+  // Pridáme tento riadok na sledovanie času načítania
+  const [loadTime] = useState(new Date());
   if (!window.nexusData)
     return (
       <div className="p-20 text-red-500 font-mono text-center">
