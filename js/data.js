@@ -1,5 +1,5 @@
 // js/data.js
-const NEXUS_DATA = {
+window.nexusData = {
   config: {
     user: "DUŠAN FAJNOR",
     alias: "GENERAL SERGEANT",
