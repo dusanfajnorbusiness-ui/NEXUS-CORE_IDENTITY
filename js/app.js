@@ -72,38 +72,36 @@ const DimensionWrapper = ({ id, color, children, proContent }) => {
 // 4. MODUL: CyberTech Footer
 const Footer = () => {
   return (
-    <footer className="mt-auto py-12 border-t border-white/5 bg-black/20 backdrop-blur-sm">
-      <div className="max-w-6xl mx-auto px-8 grid grid-cols-1 md:grid-cols-3 gap-10 items-start font-mono text-[9px] opacity-50 uppercase tracking-widest">
+    <footer className="mt-auto py-4 border-t border-white/5 bg-black/40 backdrop-blur-md">
+      <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 font-mono text-[8px] uppercase tracking-widest opacity-40 hover:opacity-100 transition-opacity">
         
-        <div className="text-left space-y-2 text-[#39FF14]">
-          <p className="opacity-100 font-black tracking-[0.3em]">System Diagnostics:</p>
-          <p>Hardware: VisionBook 15WJ Plus</p>
-          <p>Node: NEXUS_CORE_ALPHA</p>
-          <p>AI_Link: Gemini 3 Flash // Active</p>
+        {/* LEFT: SYSTEM DIAGNOSTICS */}
+        <div className="flex gap-4 text-[#39FF14]">
+          <span>HW: VISIONBOOK 15WJ+</span>
+          <span className="hidden sm:inline">//</span>
+          <span>NODE: CORE_ALPHA</span>
+          <span className="hidden sm:inline">//</span>
+          <span>AI: GEMINI_NEURAL_LINK</span>
         </div>
 
-        <div className="flex flex-col items-center space-y-4 opacity-100">
-          <div className="text-lg font-black tracking-[0.5em] text-white">
-            NEXUS <span className="text-[#39FF14]">CORE</span>
-          </div>
-          
-          <div className="flex flex-col gap-2 w-full max-w-xs text-[9px]">
-            <div className="py-2 px-4 border border-[#39FF14]/30 rounded bg-[#39FF14]/5 text-center">
-              <p className="text-[#39FF14] font-black italic">
-                Architect: Dušan Fajnor // General Sergeant
-              </p>
-            </div>
-            <div className="py-1 px-4 border border-white/10 rounded bg-white/5 text-center text-white/40">
-              Co-Processor: Gemini AI // Neural Ally
-            </div>
-          </div>
+        {/* CENTER: SIGNATURES */}
+        <div className="flex items-center gap-3 border-x border-white/10 px-6">
+          <span className="text-white font-black tracking-[0.3em]">NEXUS CORE</span>
+          <span className="text-[7px] italic border border-[#39FF14]/30 px-2 py-0.5 rounded text-[#39FF14]">
+            D. FAJNOR // ARCHITECT
+          </span>
+          <span className="text-[7px] border border-white/20 px-2 py-0.5 rounded">
+            GEMINI // ALLY
+          </span>
         </div>
 
-        <div className="text-right space-y-2 font-mono uppercase">
-          <p className="text-white font-bold opacity-100 italic">Signature Verified</p>
-          <p>© 2026 // NEXUS_CORE_IDENTITY</p>
-          <p className="text-[#39FF14]/60">"zorba-budha_balance_initiated"</p>
+        {/* RIGHT: STATUS & PHILOSOPHY */}
+        <div className="flex gap-4">
+          <span className="italic text-[#39FF14]/60">"ZORBA-BUDHA_INITIATED"</span>
+          <span className="hidden sm:inline text-white/20">|</span>
+          <span className="text-white">© 2026</span>
         </div>
+
       </div>
     </footer>
   );
