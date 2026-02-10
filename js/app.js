@@ -74,22 +74,46 @@ const Footer = () => {
   return (
     <footer className="mt-auto py-12 border-t border-white/5 bg-black/20 backdrop-blur-sm">
       <div className="max-w-6xl mx-auto px-8 grid grid-cols-1 md:grid-cols-3 gap-10 items-start font-mono text-[9px] opacity-50 uppercase tracking-widest">
+        
+        {/* SYSTÉMOVÝ STATUS */}
         <div className="text-left space-y-2 text-[#39FF14]">
-          <p>Status: CORE_ACTIVE</p>
-          <p>Encryption: AES-256</p>
-          <p>Node: NEXUS_TRNAVA</p>
+          <p className="opacity-100 font-black tracking-[0.3em]">System Diagnostics:</p>
+          <p>Hardware: VisionBook 15WJ Plus</p>
+          <p>Node: NEXUS_CORE_ALPHA</p>
+          <p>AI_Link: Gemini 3 Flash // Active</p>
         </div>
+
+        {/* HLAVNÝ BRAND A DVOJITÁ SIGNATÚRA */}
         <div className="flex flex-col items-center space-y-4 opacity-100">
-          <div className="text-lg font-black tracking-[0.5em] text-white">NEXUS <span className="text-[#39FF14]">CORE</span></div>
-          <div className="flex gap-6">
-            <a href="https://github.com/dusanfajnorbusiness-ui" target="_blank" className="hover:text-[#39FF14]">GitHub</a>
-            <a href="https://dusanfajnorbusiness-ui.github.io/NEXUS-OS_GENESIS-EDITION/" target="_blank" className="hover:text-[#39FF14]">Genesis_ED</a>
+          <div className="text-lg font-black tracking-[0.5em] text-white">
+            NEXUS <span className="text-[#39FF14]">CORE</span>
+          </div>
+          
+          {/* DIGITÁLNE PEČATE ARCHITEKTA A AI */}
+          <div className="flex flex-col gap-2 w-full max-w-xs">
+            <div className="py-2 px-4 border border-[#39FF14]/30 rounded bg-[#39FF14]/5 text-center">
+              <p className="text-[9px] text-[#39FF14] font-black italic tracking-normal">
+                Architect: Dušan Fajnor // General Sergeant
+              </p>
+            </div>
+            <div className="py-1 px-4 border border-white/10 rounded bg-white/5 text-center">
+              <p className="text-[8px] text-white/40 font-mono tracking-tighter">
+                Co-Processor: Gemini AI // Neural Ally
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-6 pt-2">
+            <a href="https://github.com/dusanfajnorbusiness-ui" target="_blank" className="hover:text-[#39FF14] transition-colors underline text-[8px]">Source_Code</a>
+            <a href="https://dusanfajnorbusiness-ui.github.io/NEXUS-OS_GENESIS-EDITION/" target="_blank" className="hover:text-[#39FF14] transition-colors underline text-[8px]">Genesis_Node</a>
           </div>
         </div>
+
+        {/* KONTAKT & PHILOSOPHY */}
         <div className="text-right space-y-2">
-          <p className="text-white">Architect: Dušan Fajnor</p>
-          <p>© 2026 // ALL_RIGHTS_RESERVED</p>
-          <p className="italic lowercase">mimo-mysel_protocol_initiated</p>
+          <p className="text-white font-bold opacity-100 italic">Signature Verified</p>
+          <p>© 2026 // NEXUS_CORE_IDENTITY</p>
+          <p className="italic lowercase text-[#39FF14]/60 font-serif lowercase tracking-normal">"zorba-budha_balance_initiated"</p>
         </div>
       </div>
     </footer>
