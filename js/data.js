@@ -280,7 +280,26 @@ window.nexusData = {
       color: "#39FF14",
       role: "Personal Architecture",
       content: "Transformácia: Hlas Poznania → Hlas Pravdy. Eliminácia programov bežnej mysle. Budovanie MimoMysle.",
-      quote: "Keď som, tak som, viem, že som."
+      quote: "Keď som, tak som, viem, že som.",
+      proContent: `
+        <div class="space-y-6 text-xs font-mono text-left">
+          <div class="p-4 border border-[#39FF14]/20 bg-[#39FF14]/5 rounded">
+            <p class="text-[#39FF14] font-black mb-2 uppercase">[ CORE_UPGRADE_ACTIVE ]</p>
+            <ul class="list-disc pl-4 space-y-2 opacity-70">
+              <li>Status: Prebudený Operátor</li>
+              <li>Protokol: Hlas Pravdy v1.0</li>
+              <li>Cieľ: Absolútna integrita vedomia</li>
+            </ul>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-2 opacity-50">
+            <div class="p-2 border border-white/10 rounded">OLD_MIND_REJECTED</div>
+            <div class="p-2 border border-white/10 rounded">NEW_REALITY_LOADED</div>
+          </div>
+          
+          <p class="italic opacity-60">"Už nie som obeťou okolností, som architektom vlastnej existencie."</p>
+        </div>
+      `
     },
     "02": {
       name: "workflow-leader",
