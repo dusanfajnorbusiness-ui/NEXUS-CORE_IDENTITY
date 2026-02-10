@@ -141,65 +141,83 @@ const Footer = () => {
   );
 };
 
-// 5. CORE: App Component
 const App = () => {
   const [activeID, setActiveID] = useState("01");
-  // Pridáme tento riadok na sledovanie času načítania
   const [loadTime] = useState(new Date());
-  if (!window.nexusData)
-    return (
-      <div className="p-20 text-red-500 font-mono text-center">
-        CRITICAL_ERROR: DATA_NODE_OFFLINE
-      </div>
-    );
+  const [seconds, setSeconds] = useState(0);
+  const [isUnlocked, setIsUnlocked] = useState(false); // Sledujeme stav odomknutia
 
-  const current =
-    window.nexusData.dimensions[activeID] || window.nexusData.dimensions["01"];
+  // Audio inicializácia sonaru (použi vlastnú cestu k súboru)
+  const sonarPing = React.useMemo(() => new Audio('assets/sounds/sonar-ping.mp3'), []);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const diff = Math.floor((new Date() - loadTime) / 1000);
+      setSeconds(diff);
+      
+      // SONAR LOGIKA: Pípa každých 10s, len ak je dimenzia zamknutá
+      if (!isUnlocked && diff % 10 === 0 && diff > 0) {
+        sonarPing.volume = 0.15;
+        sonarPing.play().catch(() => {}); // Prehliadače niekedy blokujú auto-play
+      }
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [loadTime, isUnlocked]);
+
+  // Farebná logika indikátora
+  const getStatusColor = () => {
+    if (seconds <= 30) return "#39FF14"; // Zelená (Čerstvé)
+    if (seconds <= 120) return "#8B4513"; // Hnedá (Staršie)
+    return "#FF003C"; // Červená (Kritické - treba refresh)
+  };
+
+  if (!window.nexusData) return (
+    <div className="p-20 text-red-500 font-mono text-center">CRITICAL_ERROR: DATA_NODE_OFFLINE</div>
+  );
+
+  const current = window.nexusData.dimensions[activeID] || window.nexusData.dimensions["01"];
+  const statusColor = getStatusColor();
 
   return (
-    <div
-      className="min-h-screen flex flex-col bg-[#050505] transition-all duration-700"
+    <div 
+      className="min-h-screen flex flex-col bg-[#050505] transition-all duration-700" 
       style={{ borderLeft: `6px solid ${current.color}` }}
     >
-      <div className="fixed top-8 right-8 flex items-center gap-3 bg-black/80 p-3 px-5 rounded-full border border-white/10 z-50">
-        <span
-          className="text-[10px] font-mono tracking-widest font-bold"
-          style={{ color: current.color }}
-        >
-          NEXUS CORE IDENTITY
-        </span>
-        <div
-          className="w-2.5 h-2.5 rounded-full pulse"
-          style={{ backgroundColor: current.color }}
-        />
-      </div>
-      {/* HUD: Identity Badge s indikátorom aktualizácie */}
-      <div className="fixed top-4 right-4 md:top-8 md:right-8 flex items-center gap-3 bg-black/90 p-2 px-4 rounded-full border border-white/10 z-50">
+      
+      {/* --- DYNAMICKÝ CYBER-HUD --- */}
+      <div className="fixed top-4 right-4 md:top-8 md:right-8 flex items-center gap-3 bg-black/90 p-2 px-4 rounded-full border border-white/10 z-50 shadow-2xl backdrop-blur-md">
         <div className="flex flex-col items-end mr-2">
-          <span
-            className="text-[9px] font-mono tracking-widest font-black uppercase"
-            style={{ color: current.color }}
-          >
+          <span className="text-[10px] font-mono tracking-widest font-black uppercase" style={{ color: current.color }}>
             {window.nexusData.config.version}
           </span>
-          <span className="text-[7px] text-white/40 font-mono uppercase">
-            Status: <span className="text-[#39FF14]">Live_Sync</span>
-          </span>
+          <div className="flex items-center gap-1 font-mono text-[7px] uppercase tracking-tighter">
+            <span className="opacity-40 text-white italic">Sync:</span>
+            <span style={{ color: statusColor }}>{seconds}s ago</span>
+          </div>
         </div>
 
-        {/* Pulzujúca gulička - Zelená = OK, Červená = Update Needed (simulácia) */}
+        {/* RADAR INDIKÁTOR */}
         <div className="relative flex items-center justify-center">
-          <div
-            className="w-2.5 h-2.5 rounded-full animate-pulse"
-            style={{
-              backgroundColor: "#39FF14",
-              boxShadow: "0 0 10px #39FF14",
-            }}
+          {/* Pulzujúca vlna (len ak je zamknuté - sonar aktívny) */}
+          {!isUnlocked && (
+            <div 
+              className="absolute w-6 h-6 rounded-full border animate-ping opacity-20"
+              style={{ borderColor: statusColor }}
+            />
+          )}
+          {/* Jadro indikátora */}
+          <div 
+            className="w-2.5 h-2.5 rounded-full z-10 transition-colors duration-500" 
+            style={{ 
+              backgroundColor: statusColor, 
+              boxShadow: `0 0 12px ${statusColor}` 
+            }} 
           />
-          <div className="absolute w-4 h-4 rounded-full border border-[#39FF14]/20 animate-ping" />
         </div>
       </div>
-      <main className="container mx-auto px-8 pt-20 pb-32 max-w-6xl flex-grow">
+
+      <main className="container mx-auto px-8 pt-20 pb-32 max-w-6xl flex-grow text-white">
+        {/* Tu pokračuje tvoj pôvodný Header, Nav a Content... */}
         <header className="mb-16">
           <div className="text-[10px] font-mono tracking-[0.4em] mb-4 opacity-40 uppercase">
             Protocol // {activeID}
