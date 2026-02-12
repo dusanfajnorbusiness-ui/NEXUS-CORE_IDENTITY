@@ -1,47 +1,92 @@
 @charset "UTF-8";
-body {
-  background-color: #050505;
-  color: #e0e0e0;
-  font-family: sans-serif;
-  margin: 0;
-  overflow-x: hidden;
-}
-
-.neon-text {
-  transition: all 0.3s ease;
-}
 .neon-text.identity {
   color: #39FF14;
   filter: drop-shadow(0 0 8px rgba(57, 255, 20, 0.6));
 }
-.neon-text.vault {
+
+.border-identity {
+  border-color: #39FF14;
+}
+
+.neon-text.workflow {
+  color: #FFD700;
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+}
+
+.border-workflow {
+  border-color: #FFD700;
+}
+
+.neon-text.cash {
+  color: #FFAA00;
+  filter: drop-shadow(0 0 8px rgba(255, 170, 0, 0.6));
+}
+
+.border-cash {
+  border-color: #FFAA00;
+}
+
+.neon-text.revenue {
+  color: #E0A800;
+  filter: drop-shadow(0 0 8px rgba(224, 168, 0, 0.6));
+}
+
+.border-revenue {
+  border-color: #E0A800;
+}
+
+.neon-text.asset {
+  color: #D4AF37;
+  filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.6));
+}
+
+.border-asset {
+  border-color: #D4AF37;
+}
+
+.neon-text.data {
+  color: #BF00FF;
+  filter: drop-shadow(0 0 8px rgba(191, 0, 255, 0.6));
+}
+
+.border-data {
+  border-color: #BF00FF;
+}
+
+.neon-text.skill {
+  color: #8A2BE2;
+  filter: drop-shadow(0 0 8px rgba(138, 43, 226, 0.6));
+}
+
+.border-skill {
+  border-color: #8A2BE2;
+}
+
+.neon-text.empty {
   color: #00FFFF;
   filter: drop-shadow(0 0 8px rgba(0, 255, 255, 0.6));
 }
 
-@keyframes pulse {
-  0%, 100% {
-    opacity: 0.5;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-}
-.pulse {
-  animation: pulse 2s infinite ease-in-out;
+.border-empty {
+  border-color: #00FFFF;
 }
 
-.custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
+.neon-text.sergeant {
+  color: #FF003C;
+  filter: drop-shadow(0 0 8px rgba(255, 0, 60, 0.6));
 }
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+
+.border-sergeant {
+  border-color: #FF003C;
 }
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #8A2BE2;
-  border-radius: 10px;
+
+.neon-text.non-identity {
+  color: #0044FF;
+  filter: drop-shadow(0 0 8px rgba(0, 68, 255, 0.6));
+}
+
+.border-non-identity {
+  border-color: #0044FF;
 }
 
 /* Nexus OS - HEAVY RADAR SCANNER */
@@ -52,19 +97,14 @@ body {
   transform: translate(-50%, -50%);
   width: 0;
   height: 0;
-  border: 4px solid; /* Výrazne hrubšia čiara */
+  border: 4px solid;
   border-radius: 50%;
-  box-shadow: 0 0 15px currentColor; /* CurrentColor automaticky vezme farbu dimenzie */
+  /* CurrentColor berie farbu z elementu, ktorý mu priradí app.js */
+  box-shadow: 0 0 15px currentColor, inset 0 0 10px currentColor;
   filter: drop-shadow(0 0 5px currentColor);
   animation: radar-pulse-heavy 4s infinite linear;
   pointer-events: none;
-  z-index: 1;
-  /* Pridaná žiara (glow) */
-  box-shadow: 0 0 15px currentColor, inset 0 0 15px currentColor;
-}
-
-.radar-circle.delay-1 {
-  animation-delay: 2s;
+  z-index: 0;
 }
 
 @keyframes radar-pulse-heavy {
@@ -74,12 +114,9 @@ body {
     opacity: 1;
     border-width: 4px;
   }
-  50% {
-    opacity: 0.8; /* Dlhšia viditeľnosť lúča */
-  }
   100% {
-    width: 800px; /* Väčší rozptyl */
-    height: 800px;
+    width: 150%;
+    padding-bottom: 150%;
     opacity: 0;
     border-width: 1px;
   }
