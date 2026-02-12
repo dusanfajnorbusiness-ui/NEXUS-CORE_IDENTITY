@@ -1,6 +1,8 @@
 window.nexusData = {
   config: { version: "NEXUS_CORE v5.2", client: "D. FAJNOR // ARCHITECT" },
-  skills: [ /* tvojich 38 certifikátov */ ],
+  skills: [
+    /* tvojich 38 certifikátov */
+  ],
   dimensions: {
     "01": {
       name: "identity",
@@ -8,7 +10,7 @@ window.nexusData = {
       quote: "Keď som, tak som, viem, že som.",
       content: "Jadro, autenticita, 'Keď som, tak som.'",
       proContent: window.id01Data?.proContent || "OFFLINE",
-      premiumContent: window.id01Data?.premiumContent || "OFFLINE"
+      premiumContent: window.id01Data?.premiumContent || "OFFLINE",
     },
     "02": {
       name: "workFlow-leader",
@@ -16,7 +18,7 @@ window.nexusData = {
       quote: "Efektivita v prítomnosti.",
       content: "Operatíva, výkon, denné úlohy.",
       proContent: window.id02Data?.proContent || "OFFLINE",
-      premiumContent: window.id02Data?.premiumContent || "OFFLINE"
+      premiumContent: window.id02Data?.premiumContent || "OFFLINE",
     },
     "03": {
       name: "cash-engine",
@@ -24,7 +26,7 @@ window.nexusData = {
       quote: "Peniaze sú palivo slobody.",
       content: "Správa toku peňazí a dlhov.",
       proContent: window.id03Data?.proContent || "OFFLINE",
-      premiumContent: window.id03Data?.premiumContent || "OFFLINE"
+      premiumContent: window.id03Data?.premiumContent || "OFFLINE",
     },
     "04": {
       name: "revenue-architect",
@@ -32,7 +34,7 @@ window.nexusData = {
       quote: "Projektovanie zisku.",
       content: "Budovanie systémov a predaj Access Key.",
       proContent: window.id04Data?.proContent || "OFFLINE",
-      premiumContent: window.id04Data?.premiumContent || "OFFLINE"
+      premiumContent: window.id04Data?.premiumContent || "OFFLINE",
     },
     "05": {
       name: "asset-matrix",
@@ -40,7 +42,7 @@ window.nexusData = {
       quote: "Tichý rast hodnôt.",
       content: "Dlhodobá stratégia a 'Kiyosaki mindset'.",
       proContent: window.id05Data?.proContent || "OFFLINE",
-      premiumContent: window.id05Data?.premiumContent || "OFFLINE"
+      premiumContent: window.id05Data?.premiumContent || "OFFLINE",
     },
     "06": {
       name: "data-absorber",
@@ -48,7 +50,7 @@ window.nexusData = {
       quote: "Nasávanie vedomostí ako procesor.",
       content: "Spracovanie 38 certifikátov a vedomostí.",
       proContent: window.id06Data?.proContent || "OFFLINE",
-      premiumContent: window.id06Data?.premiumContent || "OFFLINE"
+      premiumContent: window.id06Data?.premiumContent || "OFFLINE",
     },
     "07": {
       name: "skill-tree",
@@ -56,7 +58,7 @@ window.nexusData = {
       quote: "Vetvenie schopností.",
       content: "Kariérny status a Skill Tree (HTML/CSS).",
       proContent: window.id07Data?.proContent || "OFFLINE",
-      premiumContent: window.id07Data?.premiumContent || "OFFLINE"
+      premiumContent: window.id07Data?.premiumContent || "OFFLINE",
     },
     "08": {
       name: "empty-book",
@@ -64,7 +66,7 @@ window.nexusData = {
       quote: "Čistá strana pre tvorbu.",
       content: "Absorpcia informácií, 'Prijímací režim'.",
       proContent: window.id08Data?.proContent || "OFFLINE",
-      premiumContent: window.id08Data?.premiumContent || "OFFLINE"
+      premiumContent: window.id08Data?.premiumContent || "OFFLINE",
     },
     "09": {
       name: "sergeant-core",
@@ -72,15 +74,23 @@ window.nexusData = {
       quote: "Disciplína v akcii.",
       content: "CoD Zombies, YouTube, Akcia.",
       proContent: window.id09Data?.proContent || "OFFLINE",
-      premiumContent: window.id09Data?.premiumContent || "OFFLINE"
+      premiumContent: window.id09Data?.premiumContent || "OFFLINE",
     },
-    "10": {
+    10: {
       name: "non-identity",
       color: "#0044FF",
       quote: "Boh je Ticho.",
       content: "Ticho, Boh, Reset, Rodina, Základňa.",
       proContent: window.id10Data?.proContent || "OFFLINE",
-      premiumContent: window.id10Data?.premiumContent || "OFFLINE"
-    }
-  }
+      premiumContent: window.id10Data?.premiumContent || "OFFLINE",
+    },
+    11: {
+      name: "the-recovery",
+      color: "#FFBF00",
+      quote: "Cesta von z Matrixu.",
+      content: "Manifest Architekta. Ako von zo schizofrénie a insomnie.",
+      proContent: window.id11Data?.proContent || "OFFLINE",
+      premiumContent: window.id11Data?.premiumContent || "OFFLINE",
+    },
+  },
 };
