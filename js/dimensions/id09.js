@@ -1,53 +1,81 @@
-// js/dimensions/id09.js
 window.id09Data = {
   proContent: `
     <div class="space-y-6 font-mono text-left animate-in fade-in duration-700 text-white/90 px-1">
       
-      <div class="p-4 border-l-2 border-[#FF4500] bg-[#FF4500]/5 rounded-r">
-        <h3 class="text-[#FF4500] font-black uppercase tracking-wider text-xs">[ SERGEANT_CORE_v1.0 ]</h3>
-        <div class="flex flex-wrap gap-2 mt-2 text-[8px] opacity-60 uppercase font-bold">
-          <span>Combat_Mode: ACTIVE</span>
-          <span class="opacity-30">//</span>
-          <span>Rank: GENERAL_SERGEANT</span>
-        </div>
-      </div>
-
-      <div class="p-4 border border-dashed border-[#FF4500]/20 bg-[#FF4500]/5 rounded-lg text-center animate-pulse shadow-[0_0_15px_rgba(255,69,0,0.1)]">
-        <p class="text-[9px] font-mono text-[#FF4500]/60 uppercase tracking-[0.2em]">
-          [ INITIALIZING_COMBAT_NODE_09 ]
-        </p>
-        <p class="text-[7px] font-mono text-white/40 mt-1 italic uppercase">
-          Načítavam taktické dáta pre CoDM & Zombies...
+      {/* 1. HEADER: Sergeant Core Status */}
+      <div class="p-4 border-l-2 border-[#FF003C] bg-[#FF003C]/5 rounded-r">
+        <h3 class="text-[#FF003C] font-black uppercase tracking-wider text-xs">[ @zombieSergeant // YT_COMMAND_CENTER ]</h3>
+        <p class="text-[8px] opacity-60 mt-1 uppercase italic underline decoration-[#FF003C]/30">
+          Zombies Tactical Intel // 4.71K Subscribers // 1,515 Videos
         </p>
       </div>
 
-      <div class="p-4 border border-white/10 bg-black/40 rounded-lg space-y-4">
-        <p class="text-[9px] text-[#FF4500] font-bold uppercase mb-2 opacity-80 italic">> Combat_Efficiency:</p>
-        <div class="grid grid-cols-2 gap-2 text-[10px] tracking-tighter uppercase font-bold text-center">
-          <div class="p-2 bg-white/5 rounded border border-white/5">
-             <span class="block text-[#FF4500]">0.15s</span>
-             <span class="text-[6px] opacity-40">Reaction_Time</span>
+      {/* 2. REAL-TIME YT ANALYTICS GRID */}
+      <div class="grid grid-cols-2 gap-3">
+        <div class="p-3 border border-white/10 bg-black/40 rounded">
+          <p class="text-[7px] text-[#FF003C] uppercase mb-1 tracking-widest">Global_Engagement</p>
+          <div class="text-xl font-black italic">459K+</div>
+          <p class="text-[6px] opacity-40 mt-1 uppercase">Total Channel Views</p>
+        </div>
+        <div class="p-3 border border-white/10 bg-black/40 rounded">
+          <p class="text-[7px] text-[#FF003C] uppercase mb-1 tracking-widest">Deployment_Consistency</p>
+          <div class="text-xl font-black italic">ULTRA</div>
+          <p class="text-[6px] opacity-40 mt-1 uppercase">1.5K+ Tactical Briefings</p>
+        </div>
+      </div>
+
+      {/* 3. TACTICAL OPS: ZOMBIES & GUIDES */}
+      <div class="p-4 border border-white/10 bg-black/40 rounded-lg">
+        <h4 class="text-[#FF003C] font-bold text-[9px] uppercase mb-3 tracking-[0.2em] italic">> Current_War_Fronts:</h4>
+        <div class="grid grid-cols-1 gap-2 text-[9px] leading-relaxed">
+          <div class="flex justify-between border-b border-white/5 pb-1">
+            <span class="opacity-60">SHI_NO_NUMA:</span>
+            <span class="font-bold text-[#FF003C]">Speedrun / Endless Master</span>
           </div>
-          <div class="p-2 bg-white/5 rounded border border-white/5">
-             <span class="block text-[#FF4500]">100%</span>
-             <span class="text-[6px] opacity-40">Discipline</span>
+          <div class="flex justify-between border-b border-white/5 pb-1">
+            <span class="opacity-60">ISOLATED:</span>
+            <span class="font-bold">Undead Siege Damage Race</span>
+          </div>
+          <div class="flex justify-between border-b border-white/5 pb-1">
+            <span class="opacity-60">RETRO_OPS:</span>
+            <span class="font-bold uppercase text-[8px]">FFVII // MGS // Tomb Raider</span>
           </div>
         </div>
-        <p class="text-[9px] italic opacity-60 leading-tight text-center">
-          "V boji nerozhoduje sila, ale disciplína v jadre a ticho v mysli."
-        </p>
+      </div>
+
+      {/* 4. GROWTH MATRIX: PROGRESS BARS */}
+      <div class="p-4 border border-dashed border-[#FF003C]/30 bg-[#FF003C]/5 rounded-lg space-y-4">
+        <div class="space-y-1">
+          <div class="flex justify-between text-[8px] uppercase font-bold text-[#FF003C]"><span>Subscribers_Goal (5K)</span><span>94%</span></div>
+          <div class="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+            <div class="h-full bg-[#FF003C]" style="width: 94%"></div>
+          </div>
+        </div>
+        <div class="space-y-1 text-left italic opacity-50 text-[8px]">
+           <p>> Pripravujem: Speed Run Guide (Shi No Numa)</p>
+           <p>> Aktívne: Damage Run Guide (Isolated)</p>
+        </div>
+      </div>
+
+      <div class="p-3 border border-white/5 rounded text-center opacity-30 italic">
+        <p class="text-[8px] uppercase tracking-[0.3em]">No Guts, No Glory. Stay Frosty, Sergeant.</p>
       </div>
 
     </div>
   `,
   premiumContent: `
-    <div class="p-5 bg-[#FF4500]/10 border-2 border-[#FF4500] rounded-xl shadow-[0_0_25px_rgba(255,69,0,0.2)] relative overflow-hidden animate-in zoom-in-95 duration-700">
-      <div class="absolute top-0 right-0 bg-[#FF4500] text-black text-[7px] px-3 font-black py-0.5 uppercase tracking-tighter shadow-lg">Elite_Combat_Link</div>
-      <h4 class="text-[#FF4500] font-black text-[11px] uppercase mb-3 italic tracking-tighter text-center">!! TACTICAL_SYNERGY_PROTOCOL !!</h4>
-      <div class="space-y-3 text-[9px] font-mono leading-relaxed text-white/90 italic text-center">
-        <p>
-          Prístup k Architektovmu systému prenosu hernej disciplíny do reálneho sveta. Ako využiť reflexy a sústredenie zo Zombies pre odomknutie maximálnej produktivity v biznise.
+    <div class="p-6 bg-[#FF003C]/10 border-2 border-[#FF003C] rounded-xl shadow-[0_0_30px_rgba(255,0,60,0.2)] relative overflow-hidden animate-in zoom-in-95 duration-700 text-center">
+      <div class="absolute top-0 right-0 bg-[#FF003C] text-black text-[8px] px-4 font-black py-1 uppercase tracking-widest">Combat_Mastery</div>
+      <h4 class="text-[#FF003C] font-black text-[14px] uppercase mb-4 italic tracking-tighter">!! THE_ARCHITECT_STRAT_VAULT !!</h4>
+      
+      <div class="space-y-4 text-[10px] font-mono leading-relaxed text-white/90 italic">
+        <p class="p-3 bg-black/60 border border-[#FF003C]/20 rounded">
+          Prístup k privátnym rozborom Zombie máp, detailným Gunsmith atribútom (Sniper/Marksman) a unikátnym YouTube SEO stratégiám.
         </p>
+        <div class="grid grid-cols-2 gap-2 text-[7px] uppercase font-black">
+          <div class="p-2 border border-[#FF003C]/30 bg-black/20">Wunderwaffe_Exploits</div>
+          <div class="p-2 border border-[#FF003C]/30 bg-black/20">Damage_Race_Synergy</div>
+        </div>
       </div>
     </div>
   `

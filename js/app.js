@@ -284,7 +284,7 @@ const App = () => {
                       : activeID === "06"
                         ? "Study UI Space"
                         : activeID === "07"
-                          ? "Professional"
+                          ? "Professional UI Space"
                           : activeID === "08"
                             ? "Reader UI Space"
                             : activeID === "09"
