@@ -2,7 +2,6 @@ window.id09Data = {
   proContent: `
     <div class="space-y-6 font-mono text-left animate-in fade-in duration-700 text-white/90 px-1">
       
-      {/* 1. HEADER: Sergeant Core Status */}
       <div class="p-4 border-l-2 border-[#FF003C] bg-[#FF003C]/5 rounded-r">
         <h3 class="text-[#FF003C] font-black uppercase tracking-wider text-xs">[ @zombieSergeant // YT_COMMAND_CENTER ]</h3>
         <p class="text-[8px] opacity-60 mt-1 uppercase italic underline decoration-[#FF003C]/30">
@@ -10,7 +9,6 @@ window.id09Data = {
         </p>
       </div>
 
-      {/* 2. REAL-TIME YT ANALYTICS GRID */}
       <div class="grid grid-cols-2 gap-3">
         <div class="p-3 border border-white/10 bg-black/40 rounded">
           <p class="text-[7px] text-[#FF003C] uppercase mb-1 tracking-widest">Global_Engagement</p>
@@ -24,7 +22,6 @@ window.id09Data = {
         </div>
       </div>
 
-      {/* 3. TACTICAL OPS: ZOMBIES & GUIDES */}
       <div class="p-4 border border-white/10 bg-black/40 rounded-lg">
         <h4 class="text-[#FF003C] font-bold text-[9px] uppercase mb-3 tracking-[0.2em] italic">> Current_War_Fronts:</h4>
         <div class="grid grid-cols-1 gap-2 text-[9px] leading-relaxed">
@@ -34,7 +31,7 @@ window.id09Data = {
           </div>
           <div class="flex justify-between border-b border-white/5 pb-1">
             <span class="opacity-60">ISOLATED:</span>
-            <span class="font-bold">Undead Siege Damage Race</span>
+            <span class="font-bold uppercase">Undead Siege Damage Race</span>
           </div>
           <div class="flex justify-between border-b border-white/5 pb-1">
             <span class="opacity-60">RETRO_OPS:</span>
@@ -43,10 +40,12 @@ window.id09Data = {
         </div>
       </div>
 
-      {/* 4. GROWTH MATRIX: PROGRESS BARS */}
       <div class="p-4 border border-dashed border-[#FF003C]/30 bg-[#FF003C]/5 rounded-lg space-y-4">
         <div class="space-y-1">
-          <div class="flex justify-between text-[8px] uppercase font-bold text-[#FF003C]"><span>Subscribers_Goal (5K)</span><span>94%</span></div>
+          <div class="flex justify-between text-[8px] uppercase font-bold text-[#FF003C]">
+            <span>Subscribers_Goal (5K)</span>
+            <span>94%</span>
+          </div>
           <div class="w-full h-1 bg-white/5 rounded-full overflow-hidden">
             <div class="h-full bg-[#FF003C]" style="width: 94%"></div>
           </div>
@@ -69,12 +68,12 @@ window.id09Data = {
       <h4 class="text-[#FF003C] font-black text-[14px] uppercase mb-4 italic tracking-tighter">!! THE_ARCHITECT_STRAT_VAULT !!</h4>
       
       <div class="space-y-4 text-[10px] font-mono leading-relaxed text-white/90 italic">
-        <p class="p-3 bg-black/60 border border-[#FF003C]/20 rounded">
+        <p class="p-3 bg-black/60 border border-[#FF003C]/20 rounded text-center">
           Prístup k privátnym rozborom Zombie máp, detailným Gunsmith atribútom (Sniper/Marksman) a unikátnym YouTube SEO stratégiám.
         </p>
         <div class="grid grid-cols-2 gap-2 text-[7px] uppercase font-black">
-          <div class="p-2 border border-[#FF003C]/30 bg-black/20">Wunderwaffe_Exploits</div>
-          <div class="p-2 border border-[#FF003C]/30 bg-black/20">Damage_Race_Synergy</div>
+          <div class="p-2 border border-[#FF003C]/30 bg-black/20 text-white">Wunderwaffe_Exploits</div>
+          <div class="p-2 border border-[#FF003C]/30 bg-black/20 text-white">Damage_Race_Synergy</div>
         </div>
       </div>
     </div>
