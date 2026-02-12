@@ -192,14 +192,13 @@ const App = () => {
   const [showIntro, setShowIntro] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Audio inicializácia sonaru
   const sonarPing = useMemo(
     () => new Audio("./assets/sounds/sonar-ping.mp3"),
     [],
   );
 
   useEffect(() => {
-    // 1. FETCH GITHUB COMMITS (Ťahá históriu z tvojho repozitára)
+    // 1. FETCH GITHUB COMMITS
     fetch(
       "https://api.github.com/repos/dusanfajnorbusiness-ui/NEXUS-CORE_IDENTITY/commits",
     )
@@ -211,21 +210,19 @@ const App = () => {
           return {
             id: commit.sha.substring(0, 7),
             date: new Date(commit.commit.author.date).toLocaleDateString(),
-            title: lines[0], // Summary v GitHub Desk
-            desc: lines.slice(1).join(" ") || "No additional description.", // Description v GitHub Desk
+            title: lines[0],
+            desc: lines.slice(1).join(" ") || "No additional description.",
           };
         });
         setUpdates(formatted);
-        // Intro (miznutie 3 správ) skončí po 8 sekundách
         setTimeout(() => setShowIntro(false), 8000);
       })
       .catch((err) => console.error("GITHUB_SYNC_ERROR", err));
 
-    // 2. SONAR & TIMER LOGIKA
+    // 2. TIMER & SONAR
     const timer = setInterval(() => {
       const diff = Math.floor((new Date() - loadTime) / 1000);
       setSeconds(diff);
-
       if (!isUnlocked && diff % 10 === 0 && diff > 0) {
         sonarPing.volume = 0.15;
         sonarPing.play().catch(() => {});
@@ -237,9 +234,9 @@ const App = () => {
   }, [loadTime, isUnlocked, sonarPing]);
 
   const getStatusColor = () => {
-    if (seconds <= 30) return "#39FF14"; // Zelená
-    if (seconds <= 120) return "#8B4513"; // Hnedá
-    return "#FF003C"; // Červená
+    if (seconds <= 30) return "#39FF14";
+    if (seconds <= 120) return "#8B4513";
+    return "#FF003C";
   };
 
   if (!window.nexusData)
@@ -260,7 +257,7 @@ const App = () => {
     >
       {/* DYNAMICKÝ HUD (Hlavička s indikátormi) */}
       <div className="fixed top-4 right-4 md:top-8 md:right-8 flex items-center gap-3 z-50">
-        {/* MODUL: LAST UPDATE (Tlačidlo a rozbaľovacie menu) */}
+        {/* MODUL: LAST UPDATE */}
         <div className="relative font-mono text-[8px] tracking-[0.2em] uppercase">
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -271,7 +268,6 @@ const App = () => {
             LAST_UPDATE: {updates[0]?.date || "SYNCING..."}
           </button>
 
-          {/* INTRO SEKVENCIÁLNE MIZNUTIE (Prvé 3 správy pri načítaní) */}
           {showIntro && updates.length > 0 && (
             <div className="absolute top-12 right-0 space-y-2 w-64 pointer-events-none">
               {updates.slice(0, 3).map((upd, i) => (
@@ -291,7 +287,6 @@ const App = () => {
             </div>
           )}
 
-          {/* UPDATE LOG HISTORY (Rozbalené menu) */}
           {isMenuOpen && (
             <div className="absolute top-12 right-0 w-80 bg-black/95 border border-white/20 shadow-2xl p-5 rounded-xl animate-in fade-in zoom-in-95 backdrop-blur-xl">
               <h4 className="border-b border-white/10 pb-2 mb-4 text-[#39FF14] font-black italic tracking-widest text-[10px]">
@@ -329,7 +324,7 @@ const App = () => {
           )}
         </div>
 
-        {/* MODUL: SYNC STATUS (Tvoj pôvodný indikátor verzie) */}
+        {/* MODUL: SYNC STATUS */}
         <div className="bg-black/90 p-2 px-4 rounded-full border border-white/10 shadow-2xl backdrop-blur-md flex items-center gap-3">
           <div className="flex flex-col items-end mr-2">
             <span
@@ -363,7 +358,6 @@ const App = () => {
 
       <main className="container mx-auto px-8 pt-20 pb-32 max-w-6xl flex-grow text-white">
         <header className="mb-16">
-          {/* Horný HUD riadok */}
           <div className="text-[10px] font-mono tracking-[0.4em] mb-4 opacity-40 uppercase">
             Protocol_{activeID} //{" "}
             {activeID === "01"
@@ -389,7 +383,6 @@ const App = () => {
                                 : "Recovery UI Space"}
           </div>
 
-          {/* Hlavný nadpis (Veľké kone) */}
           <h1
             className="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-none"
             style={{ color: current.color }}
@@ -397,7 +390,6 @@ const App = () => {
             {current.name}
           </h1>
 
-          {/* SEKUNDÁRNY RIADOK: EN // SK (Malé písmo) */}
           <div className="text-[10px] font-mono tracking-[0.2em] opacity-30 uppercase mt-2 flex items-center gap-2">
             <span style={{ color: current.color }}>●</span>
             <span>
@@ -425,11 +417,12 @@ const App = () => {
             </span>
           </div>
 
-          {/* Citát */}
           <p className="mt-8 text-xl italic opacity-50 max-w-2xl leading-relaxed">
             "{current.quote}"
           </p>
         </header>
+
+        {/* Zvyšok tvojej navigácie a obsahu... */}
         <nav className="flex flex-wrap gap-2 mb-20">
           {Object.keys(window.nexusData.dimensions)
             .sort((a, b) => a - b)
