@@ -34,7 +34,7 @@ const LibraryVault = () => {
   );
 };
 
-// 3. CORE WRAPPER: 3-Úrovňový Strážca (Free / Pro / Premium)
+// 3. CORE WRAPPER: 3-Úrovňový Strážca s Admin Modulom
 const DimensionWrapper = ({
   id,
   color,
@@ -43,40 +43,48 @@ const DimensionWrapper = ({
   premiumContent,
   isUnlocked,
   setIsUnlocked,
+  currentUser // Pridaný prop pre kontrolu tiera
 }) => {
   const [keyInput, setKeyInput] = React.useState("");
   const [accessLevel, setAccessLevel] = React.useState("FREE");
 
   const handleVerify = () => {
     const input = keyInput.trim().toUpperCase();
+    // Systémové kľúče
     if (input === "NEXUS-150-PRO") {
       setAccessLevel("PRO");
       setIsUnlocked(true);
-    } else if (input === "NEXUS-999-PREMIUM") {
+    } else if (input === "NEXUS-999-PREMIUM" || input === "ARCHITECT-OVERRIDE") {
       setAccessLevel("PREMIUM");
       setIsUnlocked(true);
     } else {
-      alert("ACCESS DENIED");
+      alert("ACCESS DENIED: INVALID_ENCRYPTION_KEY");
       setKeyInput("");
     }
   };
 
   return (
-    <div className="space-y-6">
-      {/* LEVEL 0: FREE CONTENT - Vždy viditeľný (obsahuje text alebo grid certifikátov) */}
-      <div className="text-left animate-in fade-in duration-700">
-        <div className="text-[7px] opacity-30 font-mono mb-2 tracking-widest uppercase">
+    <div className="space-y-6 relative">
+      {/* DEKORATÍVNY BORDER - Dynamická žiara podľa dimenzie */}
+      <div 
+        className="absolute -inset-2 opacity-10 pointer-events-none blur-xl transition-all duration-1000"
+        style={{ backgroundColor: color }}
+      ></div>
+
+      {/* LEVEL 0: FREE CONTENT */}
+      <div className="text-left animate-in fade-in duration-700 relative z-10">
+        <div className="text-[7px] opacity-30 font-mono mb-2 tracking-widest uppercase flex items-center gap-2">
+          <span className="w-1 h-1 rounded-full bg-[#39FF14] animate-pulse"></span>
           [ Status: Free_Access_Active ]
         </div>
-        <div className="relative z-10">{children}</div>
+        <div className="relative z-10 border-l border-white/5 pl-4">{children}</div>
       </div>
 
-      {/* ZOBRAZENIE TERMINÁLU (Ak je zamknuté) */}
       {!isUnlocked ? (
+        /* ZAMKNUTÝ TERMINÁL */
         <div className="mt-10 p-6 border border-white/5 bg-black/60 rounded-xl space-y-4 shadow-2xl relative overflow-hidden group">
-          {/* Dekoratívny prvkok v rohu */}
           <div className="absolute top-0 right-0 p-1 font-mono text-[6px] opacity-20 uppercase tracking-widest">
-            Auth_Required_v5.3
+            Auth_Required_v5.3 // {id}
           </div>
 
           <input
@@ -84,22 +92,14 @@ const DimensionWrapper = ({
             placeholder="ENTER ACCESS_KEY..."
             value={keyInput}
             onChange={(e) => setKeyInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleVerify();
-            }}
+            onKeyDown={(e) => e.key === "Enter" && handleVerify()}
             className="bg-transparent border-b border-white/10 text-center text-[10px] w-full focus:outline-none focus:border-white/40 transition-all font-mono tracking-[0.2em] text-white py-2 relative z-10"
           />
 
           <div className="grid grid-cols-3 gap-2 text-[6px] font-mono text-center uppercase tracking-tighter relative z-10">
-            <div className="p-1 border border-[#39FF14] text-[#39FF14] bg-[#39FF14]/5">
-              Free_Active
-            </div>
-            <div className="p-1 border border-white/5 text-white/20">
-              Pro_Locked
-            </div>
-            <div className="p-1 border border-white/5 text-white/20">
-              Prem_Locked
-            </div>
+            <div className="p-1 border border-[#39FF14] text-[#39FF14] bg-[#39FF14]/5">FREE_ACTIVE</div>
+            <div className="p-1 border border-white/5 text-white/20">PRO_LOCKED</div>
+            <div className="p-1 border border-white/5 text-white/20">PREM_LOCKED</div>
           </div>
 
           <button
@@ -111,8 +111,8 @@ const DimensionWrapper = ({
           </button>
         </div>
       ) : (
-        /* ZOBRAZENIE ODOMKNUTÉHO OBSAHU (PRO / PREMIUM) */
-        <div className="space-y-6 animate-in slide-in-from-top-4 duration-700">
+        /* ODOMKNUTÝ OBSAH */
+        <div className="space-y-6 animate-in slide-in-from-top-4 duration-700 relative z-10">
           {/* PRO NODE */}
           {(accessLevel === "PRO" || accessLevel === "PREMIUM") && (
             <div className="pt-8 border-t border-white/10">
@@ -126,21 +126,23 @@ const DimensionWrapper = ({
             </div>
           )}
 
-          {/* PREMIUM NODE */}
+          {/* PREMIUM NODE & ADMIN LIST */}
           {accessLevel === "PREMIUM" ? (
             <div className="pt-8 border-t-2 border-cyan-500/30 bg-cyan-500/5 p-4 rounded-lg shadow-inner">
               <div className="text-[7px] text-cyan-400 mb-4 font-mono tracking-widest uppercase">
                 [ Status: Premium_Direct_Access ]
               </div>
               <div
-                className="premium-content-area"
-                dangerouslySetInnerHTML={{
-                  __html: premiumContent || "INITIALIZING_DATA_STREAM...",
-                }}
+                className="premium-content-area mb-8"
+                dangerouslySetInnerHTML={{ __html: premiumContent || "DATA_STREAM_ACTIVE..." }}
               />
+
+              {/* AUTOMATICKÉ ZOBRAZENIE ZOZNAMU UŽÍVATEĽOV PRE ARCHITECTA / PREMIUM */}
+              {window.nexusData.users && (
+                <UserAdminList users={window.nexusData.users} />
+              )}
             </div>
           ) : (
-            /* Preview zamknutého prémia */
             <div className="p-4 border border-dashed border-white/5 opacity-20 rounded-lg flex justify-between items-center text-[7px] font-mono uppercase italic">
               <span>Premium_Protocol_Encrypted</span>
               <span className="tracking-widest">Access_Denied</span>
@@ -253,69 +255,75 @@ const App = () => {
       className="min-h-screen flex flex-col bg-[#050505] transition-all duration-700 shadow-inner"
       style={{ borderLeft: `6px solid ${current.color}` }}
     >
-      {/* DYNAMICKÝ HUD */}
-      <div className="fixed top-4 right-4 md:top-8 md:right-8 flex items-center gap-3 z-50">
-        <div className="relative font-mono text-[8px] tracking-[0.2em] uppercase">
-          <button 
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="bg-black/90 p-2 px-4 rounded-full border border-white/10 shadow-2xl backdrop-blur-md flex items-center gap-2 hover:bg-white/5 transition-all"
-            style={{ color: statusColor }}
+{/* DYNAMICKÝ HUD */}
+<div className="fixed top-4 right-4 md:top-8 md:right-8 flex items-center gap-3 z-50">
+  
+  {/* MODUL: ACCOUNT (Nový operátorský uzol) */}
+  <AccountPanel 
+    user={window.nexusData.currentUser || {name: "GUEST", tier: "FREE", subscription: "NONE", tier_level: 0}} 
+    color={current.color} 
+  />
+
+  {/* MODUL: LAST UPDATE (Tvoj existujúci kód) */}
+  <div className="relative font-mono text-[8px] tracking-[0.2em] uppercase">
+    <button 
+      onClick={() => setIsMenuOpen(!isMenuOpen)}
+      className="bg-black/90 p-2 px-4 rounded-full border border-white/10 shadow-2xl backdrop-blur-md flex items-center gap-2 hover:bg-white/5 transition-all"
+      style={{ color: statusColor }}
+    >
+      <span className="animate-pulse">●</span> LAST_UPDATE: {updates[0]?.date || "SYNCING..."}
+    </button>
+
+    {showIntro && updates.length > 0 && (
+      <div className="absolute top-12 right-0 space-y-2 w-64 pointer-events-none">
+        {updates.slice(0, 3).map((upd, i) => (
+          <div key={upd.id} 
+            className="p-2 bg-black/95 border border-white/10 text-white animate-out fade-out slide-out-to-right duration-1000 fill-mode-forwards shadow-2xl"
+            style={{ animationDelay: `${(i * 2) + 1}s` }} 
           >
-            <span className="animate-pulse">●</span> LAST_UPDATE: {updates[0]?.date || "SYNCING..."}
-          </button>
+            <div className="text-[#39FF14] text-[6px] mb-1 font-black">[NEW_DEPLOYMENT]</div>
+            <div className="normal-case opacity-90 text-[8px] leading-tight italic">{upd.title}</div>
+          </div>
+        ))}
+      </div>
+    )}
 
-          {showIntro && updates.length > 0 && (
-            <div className="absolute top-12 right-0 space-y-2 w-64 pointer-events-none">
-              {updates.slice(0, 3).map((upd, i) => (
-                <div key={upd.id} 
-                  className="p-2 bg-black/95 border border-white/10 text-white animate-out fade-out slide-out-to-right duration-1000 fill-mode-forwards shadow-2xl"
-                  style={{ animationDelay: `${(i * 2) + 1}s` }} 
-                >
-                  <div className="text-[#39FF14] text-[6px] mb-1 font-black">[NEW_DEPLOYMENT]</div>
-                  <div className="normal-case opacity-90 text-[8px] leading-tight italic">{upd.title}</div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {isMenuOpen && (
-            <div className="absolute top-12 right-0 w-80 bg-black/95 border border-white/20 shadow-2xl p-5 rounded-xl animate-in fade-in zoom-in-95 backdrop-blur-xl">
-              <h4 className="border-b border-white/10 pb-2 mb-4 text-[#39FF14] font-black italic tracking-widest text-[10px]">LOGISTICKÝ_PROTOKOL_NEXUS</h4>
-              <div className="space-y-5 max-h-[350px] overflow-y-auto pr-3 custom-scrollbar">
-                {updates.map(upd => (
-                  <div key={upd.id} className="border-b border-white/5 pb-3 opacity-80 hover:opacity-100 transition-opacity">
-                    <div className="flex justify-between text-[6px] mb-1 font-mono tracking-tighter">
-                      <span className="text-white/30 italic">#NODE_{upd.id}</span>
-                      <span style={{ color: statusColor }}>{upd.date}</span>
-                    </div>
-                    <div className="text-[9px] font-bold text-white mb-1 leading-tight uppercase tracking-tight">{upd.title}</div>
-                    <div className="text-[7px] normal-case opacity-50 leading-relaxed italic">{upd.desc}</div>
-                  </div>
-                ))}
+    {isMenuOpen && (
+      <div className="absolute top-12 right-0 w-80 bg-black/95 border border-white/20 shadow-2xl p-5 rounded-xl animate-in fade-in zoom-in-95 backdrop-blur-xl">
+        <h4 className="border-b border-white/10 pb-2 mb-4 text-[#39FF14] font-black italic tracking-widest text-[10px]">LOGISTICKÝ_PROTOKOL_NEXUS</h4>
+        <div className="space-y-5 max-h-[350px] overflow-y-auto pr-3 custom-scrollbar">
+          {updates.map(upd => (
+            <div key={upd.id} className="border-b border-white/5 pb-3 opacity-80 hover:opacity-100 transition-opacity">
+              <div className="flex justify-between text-[6px] mb-1 font-mono tracking-tighter">
+                <span className="text-white/30 italic">#NODE_{upd.id}</span>
+                <span style={{ color: statusColor }}>{upd.date}</span>
               </div>
-              <a href="https://github.com/dusanfajnorbusiness-ui/NEXUS-CORE_IDENTITY/commits/main" target="_blank" className="block mt-5 text-center p-2 border border-white/10 hover:border-[#39FF14]/40 hover:text-[#39FF14] transition-all text-[7px] font-black tracking-[0.3em]">
-                OPEN_FULL_REPOSITORY_VAULT →
-              </a>
+              <div className="text-[9px] font-bold text-white mb-1 leading-tight uppercase tracking-tight">{upd.title}</div>
+              <div className="text-[7px] normal-case opacity-50 leading-relaxed italic">{upd.desc}</div>
             </div>
-          )}
-        </div>
-
-        <div className="bg-black/90 p-2 px-4 rounded-full border border-white/10 shadow-2xl backdrop-blur-md flex items-center gap-3">
-          <div className="flex flex-col items-end mr-2">
-            <span className="text-[10px] font-mono tracking-widest font-black uppercase" style={{ color: current.color }}>
-              {window.nexusData.config.version}
-            </span>
-            <div className="flex items-center gap-1 font-mono text-[7px] uppercase tracking-tighter">
-              <span className="opacity-40 text-white italic">Sync:</span>
-              <span style={{ color: statusColor }}>{seconds}s ago</span>
-            </div>
-          </div>
-          <div className="relative flex items-center justify-center">
-            {!isUnlocked && <div className="absolute w-6 h-6 rounded-full border animate-ping opacity-20" style={{ borderColor: statusColor }} />}
-            <div className="w-2.5 h-2.5 rounded-full z-10 transition-colors duration-500" style={{ backgroundColor: statusColor, boxShadow: `0 0 12px ${statusColor}` }} />
-          </div>
+          ))}
         </div>
       </div>
+    )}
+  </div>
+
+  {/* MODUL: SYNC STATUS (Tvoj existujúci kód) */}
+  <div className="bg-black/90 p-2 px-4 rounded-full border border-white/10 shadow-2xl backdrop-blur-md flex items-center gap-3">
+    <div className="flex flex-col items-end mr-2">
+      <span className="text-[10px] font-mono tracking-widest font-black uppercase" style={{ color: current.color }}>
+        {window.nexusData.config.version}
+      </span>
+      <div className="flex items-center gap-1 font-mono text-[7px] uppercase tracking-tighter">
+        <span className="opacity-40 text-white italic">Sync:</span>
+        <span style={{ color: statusColor }}>{seconds}s ago</span>
+      </div>
+    </div>
+    <div className="relative flex items-center justify-center">
+      {!isUnlocked && <div className="absolute w-6 h-6 rounded-full border animate-ping opacity-20" style={{ borderColor: statusColor }} />}
+      <div className="w-2.5 h-2.5 rounded-full z-10 transition-colors duration-500" style={{ backgroundColor: statusColor, boxShadow: `0 0 12px ${statusColor}` }} />
+    </div>
+  </div>
+</div>
 
       <main className="container mx-auto px-8 pt-20 pb-32 max-w-6xl flex-grow text-white">
         <header className="mb-16">

@@ -240,4 +240,15 @@ window.nexusData = {
       premiumContent: window.id11Data?.premiumContent || "OFFLINE",
     },
   },
+  currentUser: {
+    name: "D. FAJNOR",
+    tier: "ARCHITECT",
+    subscription: "LIFETIME_ACCESS",
+    tier_level: 999,
+  },
+  users: [
+    { id: "001", name: "D. FAJNOR", tier: "ARCHITECT", status: "ONLINE" },
+    { id: "102", name: "SERGEANT_X", tier: "PREMIUM", status: "OFFLINE" },
+    { id: "205", name: "GUEST_USER", tier: "FREE", status: "ONLINE" },
+  ],
 };
