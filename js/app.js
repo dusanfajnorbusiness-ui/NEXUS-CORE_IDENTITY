@@ -198,31 +198,30 @@ const App = () => {
   );
 
   useEffect(() => {
-    // 1. FETCH GITHUB COMMITS
-    fetch(
-      "https://api.github.com/repos/dusanfajnorbusiness-ui/NEXUS-CORE_IDENTITY/commits",
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        const formatted = data.slice(0, 10).map((commit) => {
+    // 1. FETCH GITHUB COMMITS (Dynamické ťahanie histórie)
+    fetch('https://api.github.com/repos/dusanfajnorbusiness-ui/NEXUS-CORE_IDENTITY/commits')
+      .then(res => res.json())
+      .then(data => {
+        const formatted = data.slice(0, 10).map(commit => {
           const msg = commit.commit.message;
-          const lines = msg.split("\n");
+          const lines = msg.split('\n');
           return {
             id: commit.sha.substring(0, 7),
             date: new Date(commit.commit.author.date).toLocaleDateString(),
             title: lines[0],
-            desc: lines.slice(1).join(" ") || "No additional description.",
+            desc: lines.slice(1).join(' ') || "No additional description."
           };
         });
         setUpdates(formatted);
         setTimeout(() => setShowIntro(false), 8000);
       })
-      .catch((err) => console.error("GITHUB_SYNC_ERROR", err));
+      .catch(err => console.error("GITHUB_SYNC_ERROR", err));
 
-    // 2. TIMER & SONAR
+    // 2. SONAR & TIMER LOGIKA
     const timer = setInterval(() => {
       const diff = Math.floor((new Date() - loadTime) / 1000);
       setSeconds(diff);
+
       if (!isUnlocked && diff % 10 === 0 && diff > 0) {
         sonarPing.volume = 0.15;
         sonarPing.play().catch(() => {});
@@ -234,9 +233,9 @@ const App = () => {
   }, [loadTime, isUnlocked, sonarPing]);
 
   const getStatusColor = () => {
-    if (seconds <= 30) return "#39FF14";
-    if (seconds <= 120) return "#8B4513";
-    return "#FF003C";
+    if (seconds <= 30) return "#39FF14"; 
+    if (seconds <= 120) return "#8B4513"; 
+    return "#FF003C"; 
   };
 
   if (!window.nexusData)
@@ -246,42 +245,34 @@ const App = () => {
       </div>
     );
 
-  const current =
-    window.nexusData.dimensions[activeID] || window.nexusData.dimensions["01"];
+  const current = window.nexusData.dimensions[activeID] || window.nexusData.dimensions["01"];
   const statusColor = getStatusColor();
 
   return (
     <div
-      className="min-h-screen flex flex-col bg-[#050505] transition-all duration-700"
+      className="min-h-screen flex flex-col bg-[#050505] transition-all duration-700 shadow-inner"
       style={{ borderLeft: `6px solid ${current.color}` }}
     >
-      {/* DYNAMICKÝ HUD (Hlavička s indikátormi) */}
+      {/* DYNAMICKÝ HUD */}
       <div className="fixed top-4 right-4 md:top-8 md:right-8 flex items-center gap-3 z-50">
-        {/* MODUL: LAST UPDATE */}
         <div className="relative font-mono text-[8px] tracking-[0.2em] uppercase">
-          <button
+          <button 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="bg-black/90 p-2 px-4 rounded-full border border-white/10 shadow-2xl backdrop-blur-md flex items-center gap-2 hover:bg-white/5 transition-all"
             style={{ color: statusColor }}
           >
-            <span className="animate-pulse">●</span>
-            LAST_UPDATE: {updates[0]?.date || "SYNCING..."}
+            <span className="animate-pulse">●</span> LAST_UPDATE: {updates[0]?.date || "SYNCING..."}
           </button>
 
           {showIntro && updates.length > 0 && (
             <div className="absolute top-12 right-0 space-y-2 w-64 pointer-events-none">
               {updates.slice(0, 3).map((upd, i) => (
-                <div
-                  key={upd.id}
+                <div key={upd.id} 
                   className="p-2 bg-black/95 border border-white/10 text-white animate-out fade-out slide-out-to-right duration-1000 fill-mode-forwards shadow-2xl"
-                  style={{ animationDelay: `${i * 2 + 1}s` }}
+                  style={{ animationDelay: `${(i * 2) + 1}s` }} 
                 >
-                  <div className="text-[#39FF14] text-[6px] mb-1 font-black">
-                    [NEW_DEPLOYMENT]
-                  </div>
-                  <div className="normal-case opacity-90 text-[8px] leading-tight italic">
-                    {upd.title}
-                  </div>
+                  <div className="text-[#39FF14] text-[6px] mb-1 font-black">[NEW_DEPLOYMENT]</div>
+                  <div className="normal-case opacity-90 text-[8px] leading-tight italic">{upd.title}</div>
                 </div>
               ))}
             </div>
@@ -289,48 +280,29 @@ const App = () => {
 
           {isMenuOpen && (
             <div className="absolute top-12 right-0 w-80 bg-black/95 border border-white/20 shadow-2xl p-5 rounded-xl animate-in fade-in zoom-in-95 backdrop-blur-xl">
-              <h4 className="border-b border-white/10 pb-2 mb-4 text-[#39FF14] font-black italic tracking-widest text-[10px]">
-                LOGISTICKÝ_PROTOKOL_NEXUS
-              </h4>
+              <h4 className="border-b border-white/10 pb-2 mb-4 text-[#39FF14] font-black italic tracking-widest text-[10px]">LOGISTICKÝ_PROTOKOL_NEXUS</h4>
               <div className="space-y-5 max-h-[350px] overflow-y-auto pr-3 custom-scrollbar">
-                {updates.map((upd) => (
-                  <div
-                    key={upd.id}
-                    className="border-b border-white/5 pb-3 opacity-80 hover:opacity-100 transition-opacity"
-                  >
+                {updates.map(upd => (
+                  <div key={upd.id} className="border-b border-white/5 pb-3 opacity-80 hover:opacity-100 transition-opacity">
                     <div className="flex justify-between text-[6px] mb-1 font-mono tracking-tighter">
-                      <span className="text-white/30 italic">
-                        #NODE_{upd.id}
-                      </span>
+                      <span className="text-white/30 italic">#NODE_{upd.id}</span>
                       <span style={{ color: statusColor }}>{upd.date}</span>
                     </div>
-                    <div className="text-[9px] font-bold text-white mb-1 leading-tight uppercase tracking-tight">
-                      {upd.title}
-                    </div>
-                    <div className="text-[7px] normal-case opacity-50 leading-relaxed italic">
-                      {upd.desc}
-                    </div>
+                    <div className="text-[9px] font-bold text-white mb-1 leading-tight uppercase tracking-tight">{upd.title}</div>
+                    <div className="text-[7px] normal-case opacity-50 leading-relaxed italic">{upd.desc}</div>
                   </div>
                 ))}
               </div>
-              <a
-                href="https://github.com/dusanfajnorbusiness-ui/NEXUS-CORE_IDENTITY/commits/main"
-                target="_blank"
-                className="block mt-5 text-center p-2 border border-white/10 hover:border-[#39FF14]/40 hover:text-[#39FF14] transition-all text-[7px] font-black tracking-[0.3em]"
-              >
+              <a href="https://github.com/dusanfajnorbusiness-ui/NEXUS-CORE_IDENTITY/commits/main" target="_blank" className="block mt-5 text-center p-2 border border-white/10 hover:border-[#39FF14]/40 hover:text-[#39FF14] transition-all text-[7px] font-black tracking-[0.3em]">
                 OPEN_FULL_REPOSITORY_VAULT →
               </a>
             </div>
           )}
         </div>
 
-        {/* MODUL: SYNC STATUS */}
         <div className="bg-black/90 p-2 px-4 rounded-full border border-white/10 shadow-2xl backdrop-blur-md flex items-center gap-3">
           <div className="flex flex-col items-end mr-2">
-            <span
-              className="text-[10px] font-mono tracking-widest font-black uppercase"
-              style={{ color: current.color }}
-            >
+            <span className="text-[10px] font-mono tracking-widest font-black uppercase" style={{ color: current.color }}>
               {window.nexusData.config.version}
             </span>
             <div className="flex items-center gap-1 font-mono text-[7px] uppercase tracking-tighter">
@@ -339,19 +311,8 @@ const App = () => {
             </div>
           </div>
           <div className="relative flex items-center justify-center">
-            {!isUnlocked && (
-              <div
-                className="absolute w-6 h-6 rounded-full border animate-ping opacity-20"
-                style={{ borderColor: statusColor }}
-              />
-            )}
-            <div
-              className="w-2.5 h-2.5 rounded-full z-10 transition-colors duration-500"
-              style={{
-                backgroundColor: statusColor,
-                boxShadow: `0 0 12px ${statusColor}`,
-              }}
-            />
+            {!isUnlocked && <div className="absolute w-6 h-6 rounded-full border animate-ping opacity-20" style={{ borderColor: statusColor }} />}
+            <div className="w-2.5 h-2.5 rounded-full z-10 transition-colors duration-500" style={{ backgroundColor: statusColor, boxShadow: `0 0 12px ${statusColor}` }} />
           </div>
         </div>
       </div>
@@ -359,121 +320,70 @@ const App = () => {
       <main className="container mx-auto px-8 pt-20 pb-32 max-w-6xl flex-grow text-white">
         <header className="mb-16">
           <div className="text-[10px] font-mono tracking-[0.4em] mb-4 opacity-40 uppercase">
-            Protocol_{activeID} //{" "}
-            {activeID === "01"
-              ? "Personal UI Space"
-              : activeID === "02"
-                ? "Work UI Space"
-                : activeID === "03"
-                  ? "Finance UI Space"
-                  : activeID === "04"
-                    ? "Business UI Space"
-                    : activeID === "05"
-                      ? "Investments UI Space"
-                      : activeID === "06"
-                        ? "Study UI Space"
-                        : activeID === "07"
-                          ? "Professional UI Space"
-                          : activeID === "08"
-                            ? "Reader UI Space"
-                            : activeID === "09"
-                              ? "Player UI Space"
-                              : activeID === "10"
-                                ? "Home UI Space"
-                                : "Recovery UI Space"}
+            Protocol_{activeID} // {
+              activeID === "01" ? "Personal UI Space" :
+              activeID === "02" ? "Work UI Space" :
+              activeID === "03" ? "Finance UI Space" :
+              activeID === "04" ? "Business UI Space" :
+              activeID === "05" ? "Investments UI Space" :
+              activeID === "06" ? "Study UI Space" :
+              activeID === "07" ? "Professional UI Space" :
+              activeID === "08" ? "Reader UI Space" :
+              activeID === "09" ? "Player UI Space" :
+              activeID === "10" ? "Home UI Space" :
+              "Recovery UI Space"
+            }
           </div>
 
-          <h1
-            className="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-none"
-            style={{ color: current.color }}
-          >
+          <h1 className="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-none" style={{ color: current.color }}>
             {current.name}
           </h1>
 
           <div className="text-[10px] font-mono tracking-[0.2em] opacity-30 uppercase mt-2 flex items-center gap-2">
             <span style={{ color: current.color }}>●</span>
             <span>
-              {activeID === "01"
-                ? "Identita // Z osobného života"
-                : activeID === "02"
-                  ? "Pracovný Tok // Z pracovného života"
-                  : activeID === "03"
-                    ? "Finančný Stroj // Z finančného života"
-                    : activeID === "04"
-                      ? "Architekt Výnosov // Z výnosového života"
-                      : activeID === "05"
-                        ? "Matrica Aktív // Z investičného života"
-                        : activeID === "06"
-                          ? "Absorpcia Dát // Z akademického života"
-                          : activeID === "07"
-                            ? "Strom Schopností // Z profesionálneho života"
-                            : activeID === "08"
-                              ? "Prázdna Kniha // Z čitateľského života"
-                              : activeID === "09"
-                                ? "Jadro Seržanta // Z hráčskeho života"
-                                : activeID === "10"
-                                  ? "Bez Identity // Z domáceho života"
-                                  : "Zotavenie // Z krízového života"}
+              {activeID === "01" ? "Identita // Z osobného života" :
+               activeID === "02" ? "Pracovný Tok // Z pracovného života" :
+               activeID === "03" ? "Finančný Stroj // Z finančného života" :
+               activeID === "04" ? "Architekt Výnosov // Z výnosového života" :
+               activeID === "05" ? "Matrica Aktív // Z investičného života" :
+               activeID === "06" ? "Absorpcia Dát // Z akademického života" :
+               activeID === "07" ? "Strom Schopností // Z profesionálneho života" :
+               activeID === "08" ? "Prázdna Kniha // Z čitateľského života" :
+               activeID === "09" ? "Jadro Seržanta // Z hráčskeho života" :
+               activeID === "10" ? "Bez Identity // Z domáceho života" :
+               "Zotavenie // Z krízového života"}
             </span>
           </div>
-
-          <p className="mt-8 text-xl italic opacity-50 max-w-2xl leading-relaxed">
-            "{current.quote}"
-          </p>
+          <p className="mt-8 text-xl italic opacity-50 max-w-2xl leading-relaxed">"{current.quote}"</p>
         </header>
 
-        {/* Zvyšok tvojej navigácie a obsahu... */}
         <nav className="flex flex-wrap gap-2 mb-20">
-          {Object.keys(window.nexusData.dimensions)
-            .sort((a, b) => a - b)
-            .map((id) => (
-              <button
-                key={id}
-                onClick={() => {
-                  setActiveID(id);
-                  setIsUnlocked(false);
-                }}
-                className={`px-5 py-3 font-mono text-xs border transition-all ${activeID === id ? "scale-105" : "opacity-40"}`}
-                style={{
-                  borderColor: window.nexusData.dimensions[id].color,
-                  color:
-                    activeID === id
-                      ? "#000"
-                      : window.nexusData.dimensions[id].color,
-                  backgroundColor:
-                    activeID === id
-                      ? window.nexusData.dimensions[id].color
-                      : "transparent",
-                }}
-              >
-                ID_{id}
-              </button>
-            ))}
+          {Object.keys(window.nexusData.dimensions).sort((a, b) => a - b).map((id) => (
+            <button
+              key={id}
+              onClick={() => { setActiveID(id); setIsUnlocked(false); }}
+              className={`px-5 py-3 font-mono text-xs border transition-all ${activeID === id ? "scale-105" : "opacity-40"}`}
+              style={{
+                borderColor: window.nexusData.dimensions[id].color,
+                color: activeID === id ? "#000" : window.nexusData.dimensions[id].color,
+                backgroundColor: activeID === id ? window.nexusData.dimensions[id].color : "transparent",
+              }}
+            >
+              ID_{id}
+            </button>
+          ))}
         </nav>
 
-        {/* AREA PRE OBSAH S INTEGROVANÝM RADAROM */}
         <div className="relative p-10 bg-white/[0.03] border border-white/10 backdrop-blur-md rounded-r-xl max-w-4xl overflow-hidden">
-          {/* 🛰️ RADAR: Vykresľuje sa len ak je zamknuté a showRadar je true */}
           {!isUnlocked && showRadar && (
             <>
-              <div
-                className="radar-circle"
-                style={{ color: current.color }}
-              ></div>
-              <div
-                className="radar-circle delay-1"
-                style={{ color: current.color }}
-              ></div>
+              <div className="radar-circle" style={{ color: current.color }}></div>
+              <div className="radar-circle delay-1" style={{ color: current.color }}></div>
             </>
           )}
-
-          <div
-            className="absolute top-0 left-0 w-1.5 h-full z-20"
-            style={{ backgroundColor: current.color }}
-          />
-
-          {/* Content Wrapper */}
-          <div className="relative z-10">
+          <div className="absolute top-0 left-0 w-1.5 h-full z-20" style={{ backgroundColor: current.color }} />
+          <div className="relative z-10 text-left">
             <DimensionWrapper
               id={activeID}
               color={current.color}
@@ -482,27 +392,13 @@ const App = () => {
               isUnlocked={isUnlocked}
               setIsUnlocked={setIsUnlocked}
             >
-              {/* LOGIKA PRE SKILL TREE vs OSTATNÉ DIMENZIE */}
               {activeID === "07" ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[450px] overflow-y-auto pr-4 custom-scrollbar">
                   {window.nexusData.skills.map((cert) => (
-                    <div
-                      key={cert.id}
-                      className="p-4 border border-white/5 bg-white/[0.02] rounded-lg"
-                    >
-                      <div className="text-[8px] opacity-30 font-mono uppercase mb-2">
-                        {cert.issuer} // {cert.category}
-                      </div>
-                      <div className="text-xs font-bold uppercase">
-                        {cert.name}
-                      </div>
-                      <a
-                        href={cert.path}
-                        target="_blank"
-                        className="mt-3 block text-[9px] text-cyan-500/60 hover:text-cyan-400 font-mono underline uppercase"
-                      >
-                        Open_Document →
-                      </a>
+                    <div key={cert.id} className="p-4 border border-white/5 bg-white/[0.02] rounded-lg">
+                      <div className="text-[8px] opacity-30 font-mono uppercase mb-2">{cert.issuer} // {cert.category}</div>
+                      <div className="text-xs font-bold uppercase">{cert.name}</div>
+                      <a href={cert.path} target="_blank" className="mt-3 block text-[9px] text-cyan-500/60 hover:text-cyan-400 font-mono underline uppercase">Open_Document →</a>
                     </div>
                   ))}
                 </div>
