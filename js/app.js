@@ -268,6 +268,7 @@ const App = () => {
 
       <main className="container mx-auto px-8 pt-20 pb-32 max-w-6xl flex-grow text-white">
         <header className="mb-16">
+          {/* Horný HUD riadok */}
           <div className="text-[10px] font-mono tracking-[0.4em] mb-4 opacity-40 uppercase">
             Protocol_{activeID} //{" "}
             {activeID === "01"
@@ -292,17 +293,38 @@ const App = () => {
                                 ? "Home"
                                 : "Recovery"}
           </div>
+
+          {/* Hlavný nadpis (Veľké kone) */}
           <h1
-            className="text-5xl md:text-8xl font-black uppercase tracking-tighter"
+            className="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-none"
             style={{ color: current.color }}
           >
             {current.name}
           </h1>
-          <p className="mt-6 text-xl italic opacity-50 max-w-2xl">
+
+          {/* SEKUNDÁRNY RIADOK: EN // SK (Malé písmo) */}
+<div className="text-[10px] font-mono tracking-[0.2em] opacity-30 uppercase mt-2 flex items-center gap-2">
+    <span style={{ color: current.color }}>●</span>
+    <span>
+        {activeID === "01" ? "Identity // Identita" :
+         activeID === "02" ? "Work Flow // Pracovný Tok" :
+         activeID === "03" ? "Cash Engine // Finančný Stroj" :
+         activeID === "04" ? "Revenue Architect // Architekt Výnosov" :
+         activeID === "05" ? "Asset Matrix // Matrica Aktív" :
+         activeID === "06" ? "Data Absorber // Absorpcia Dát" :
+         activeID === "07" ? "Skill Tree // Strom Schopností" :
+         activeID === "08" ? "Empty Book // Prázdna Kniha" :
+         activeID === "09" ? "Sergeant Core // Jadro Seržanta" :
+         activeID === "10" ? "Non-Identity // Bez Identity" :
+         "Recovery // Zotavenie"}
+    </span>
+</div>
+
+          {/* Citát */}
+          <p className="mt-8 text-xl italic opacity-50 max-w-2xl leading-relaxed">
             "{current.quote}"
           </p>
         </header>
-
         <nav className="flex flex-wrap gap-2 mb-20">
           {Object.keys(window.nexusData.dimensions)
             .sort((a, b) => a - b)
