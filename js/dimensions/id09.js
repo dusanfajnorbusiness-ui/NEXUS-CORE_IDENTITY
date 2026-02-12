@@ -1,63 +1,82 @@
 window.id09Data = {
   proContent: `
-    <div class="space-y-6 font-mono text-left animate-in fade-in duration-700 text-white/90 px-1">
+    <div class="space-y-8 font-mono text-left animate-in fade-in duration-700 text-white/90 px-1">
       
       <div class="p-4 border-l-2 border-[#FF003C] bg-[#FF003C]/5 rounded-r">
-        <h3 class="text-[#FF003C] font-black uppercase tracking-wider text-xs">[ @zombieSergeant // YT_COMMAND_CENTER ]</h3>
-        <p class="text-[8px] opacity-60 mt-1 uppercase italic underline decoration-[#FF003C]/30">
-          Zombies Tactical Intel // 4.71K Subscribers // 1,515 Videos
-        </p>
-      </div>
-
-      <div class="grid grid-cols-2 gap-3">
-        <div class="p-3 border border-white/10 bg-black/40 rounded">
-          <p class="text-[7px] text-[#FF003C] uppercase mb-1 tracking-widest">Global_Engagement</p>
-          <div class="text-xl font-black italic">459K+</div>
-          <p class="text-[6px] opacity-40 mt-1 uppercase">Total Channel Views</p>
-        </div>
-        <div class="p-3 border border-white/10 bg-black/40 rounded">
-          <p class="text-[7px] text-[#FF003C] uppercase mb-1 tracking-widest">Deployment_Consistency</p>
-          <div class="text-xl font-black italic">ULTRA</div>
-          <p class="text-[6px] opacity-40 mt-1 uppercase">1.5K+ Tactical Briefings</p>
+        <h3 class="text-[#FF003C] font-black uppercase tracking-wider text-xs">[ SERGEANT_CORE // YT: @zombieSergeant ]</h3>
+        <div class="flex gap-4 mt-2 text-[8px] uppercase opacity-60 italic">
+          <span>1,515 Videos</span>
+          <span>//</span>
+          <span>459K+ Views</span>
+          <span>//</span>
+          <span>4.71K Subs</span>
         </div>
       </div>
 
-      <div class="p-4 border border-white/10 bg-black/40 rounded-lg">
-        <h4 class="text-[#FF003C] font-bold text-[9px] uppercase mb-3 tracking-[0.2em] italic">> Current_War_Fronts:</h4>
-        <div class="grid grid-cols-1 gap-2 text-[9px] leading-relaxed">
-          <div class="flex justify-between border-b border-white/5 pb-1">
-            <span class="opacity-60">SHI_NO_NUMA:</span>
-            <span class="font-bold text-[#FF003C]">Speedrun / Endless Master</span>
+      <div class="space-y-3">
+        <div class="flex items-center gap-2 text-[#FF003C]">
+          <span class="text-xs">🤩</span>
+          <h4 class="font-black text-[10px] uppercase tracking-widest">Speed Run Challenges: Clasic in SHI NO NUMA</h4>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <div class="p-3 border border-white/10 bg-black/40 rounded text-[9px]">
+            <p class="text-[#FF003C] mb-2 font-bold italic">> Guide & Boss Intel:</p>
+            <ul class="space-y-1 opacity-80">
+              <li>• Speed Run Guide (Clasic)</li>
+              <li>• Normal Boss Abomination</li>
+              <li>• Hardcore Boss Abomination</li>
+              <li>• Hardcore Boss Jubokko</li>
+            </ul>
           </div>
-          <div class="flex justify-between border-b border-white/5 pb-1">
-            <span class="opacity-60">ISOLATED:</span>
-            <span class="font-bold uppercase">Undead Siege Damage Race</span>
-          </div>
-          <div class="flex justify-between border-b border-white/5 pb-1">
-            <span class="opacity-60">RETRO_OPS:</span>
-            <span class="font-bold uppercase text-[8px]">FFVII // MGS // Tomb Raider</span>
+          <div class="p-3 border border-white/10 bg-black/40 rounded text-[9px]">
+            <p class="text-[#FF003C] mb-2 font-bold italic">> S&R - Exfil / Endless:</p>
+            <ul class="space-y-1 opacity-80">
+              <li>• R10 - R30 S&R Speed Runs</li>
+              <li>• R50 - R64 High Round Runs</li>
+              <li>• Solo / Duo / Trio / Quatro Nodes</li>
+            </ul>
           </div>
         </div>
       </div>
 
-      <div class="p-4 border border-dashed border-[#FF003C]/30 bg-[#FF003C]/5 rounded-lg space-y-4">
-        <div class="space-y-1">
-          <div class="flex justify-between text-[8px] uppercase font-bold text-[#FF003C]">
-            <span>Subscribers_Goal (5K)</span>
-            <span>94%</span>
-          </div>
-          <div class="w-full h-1 bg-white/5 rounded-full overflow-hidden">
-            <div class="h-full bg-[#FF003C]" style="width: 94%"></div>
+      <div class="space-y-3">
+        <div class="flex items-center gap-2 text-[#FF003C]">
+          <span class="text-xs">🤩</span>
+          <h4 class="font-black text-[10px] uppercase tracking-widest">Damage Run Challenges: SHI NO NUMA / ISOLATED</h4>
+        </div>
+        <div class="p-4 border border-dashed border-[#FF003C]/30 bg-[#FF003C]/5 rounded-lg">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-[8px] uppercase">
+            <div class="space-y-2">
+              <p class="font-bold text-[#FF003C] border-b border-[#FF003C]/20 pb-1">Undead Siege</p>
+              <p class="opacity-70 italic">Casual / Hard / Nightmare</p>
+            </div>
+            <div class="space-y-2">
+              <p class="font-bold text-[#FF003C] border-b border-[#FF003C]/20 pb-1">Clasic Bosses</p>
+              <p class="opacity-70 italic">Abomination / Jubokko intel</p>
+            </div>
+            <div class="space-y-2">
+              <p class="font-bold text-[#FF003C] border-b border-[#FF003C]/20 pb-1">Endless Logic</p>
+              <p class="opacity-70 italic">Solo to Quatro Scaling</p>
+            </div>
           </div>
         </div>
-        <div class="space-y-1 text-left italic opacity-50 text-[8px]">
-           <p>> Pripravujem: Speed Run Guide (Shi No Numa)</p>
-           <p>> Aktívne: Damage Run Guide (Isolated)</p>
-        </div>
+      </div>
+
+      <div class="space-y-4">
+         <h4 class="text-[9px] font-black uppercase tracking-[0.2em] opacity-40">> PROJECT_PROGRESS_MONITOR:</h4>
+         <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-[7px] font-bold">
+            <div class="p-2 border border-white/5 bg-black/20">CoDM: 100% (V)</div>
+            <div class="p-2 border border-white/5 bg-black/20">FFVII: 100% (V)</div>
+            <div class="p-2 border border-white/5 bg-black/20">FFVIII: 100% (V)</div>
+            <div class="p-2 border border-white/5 bg-black/20 opacity-40">MGS: 10% (V)</div>
+         </div>
+         <div class="p-2 border border-white/5 bg-black/20 text-[7px] font-bold uppercase tracking-widest text-center">
+            Mentoring Blog & Training Modules: <span class="text-[#FF003C]">Preparing...</span>
+         </div>
       </div>
 
       <div class="p-3 border border-white/5 rounded text-center opacity-30 italic">
-        <p class="text-[8px] uppercase tracking-[0.3em]">No Guts, No Glory. Stay Frosty, Sergeant.</p>
+        <p class="text-[8px] uppercase tracking-[0.3em]">Stay Frosty. The Truth. The Way. The Life.</p>
       </div>
 
     </div>
@@ -68,12 +87,12 @@ window.id09Data = {
       <h4 class="text-[#FF003C] font-black text-[14px] uppercase mb-4 italic tracking-tighter">!! THE_ARCHITECT_STRAT_VAULT !!</h4>
       
       <div class="space-y-4 text-[10px] font-mono leading-relaxed text-white/90 italic">
-        <p class="p-3 bg-black/60 border border-[#FF003C]/20 rounded text-center">
-          Prístup k privátnym rozborom Zombie máp, detailným Gunsmith atribútom (Sniper/Marksman) a unikátnym YouTube SEO stratégiám.
+        <p class="p-3 bg-black/60 border border-[#FF003C]/20 rounded">
+          Full Database of Naming Protocols: Speed Run (??m??s), Damage Run (?? ??? ???), and Endless Kill Races. Access to private tactical guides and mentoring tiers.
         </p>
         <div class="grid grid-cols-2 gap-2 text-[7px] uppercase font-black">
-          <div class="p-2 border border-[#FF003C]/30 bg-black/20 text-white">Wunderwaffe_Exploits</div>
-          <div class="p-2 border border-[#FF003C]/30 bg-black/20 text-white">Damage_Race_Synergy</div>
+          <div class="p-2 border border-[#FF003C]/30 bg-black/20 text-white italic">R64 Solo_Mastery</div>
+          <div class="p-2 border border-[#FF003C]/30 bg-black/20 text-white italic">Jubokko_Exfil_Logic</div>
         </div>
       </div>
     </div>
