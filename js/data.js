@@ -251,4 +251,14 @@ window.nexusData = {
     { id: "102", name: "SERGEANT_X", tier: "PREMIUM", status: "OFFLINE" },
     { id: "205", name: "GUEST_USER", tier: "FREE", status: "ONLINE" },
   ],
+  system_config: {
+    version: "1.3 (Safety & Performance Protocol)",
+    security: {
+      key_pro: "NEXUS-150-PRO",
+      key_premium: "NEXUS-999-PREMIUM",
+      key_admin: "NEXUS-OMEGA-OVRD",
+    },
+    mrr_target: "150€ (5 Users)",
+    web_status: "LIVE",
+  },
 };
