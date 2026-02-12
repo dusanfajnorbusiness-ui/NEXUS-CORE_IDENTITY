@@ -34,7 +34,7 @@ const LibraryVault = () => {
   );
 };
 
-// 2. CORE WRAPPER: 3-Úrovňový Strážca (Free / Pro / Premium)
+// 3. CORE WRAPPER: 3-Úrovňový Strážca (Free / Pro / Premium)
 const DimensionWrapper = ({
   id,
   color,
@@ -185,8 +185,12 @@ const App = () => {
   const [loadTime] = useState(new Date());
   const [seconds, setSeconds] = useState(0);
   const [isUnlocked, setIsUnlocked] = useState(false);
-  // Nový stav pre vizuálny radar
   const [showRadar, setShowRadar] = useState(false);
+
+  // --- LOGISTICKÝ PROTOKOL PRE LAST UPDATE ---
+  const [updates, setUpdates] = useState([]);
+  const [showIntro, setShowIntro] = useState(true);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Audio inicializácia sonaru
   const sonarPing = useMemo(
@@ -195,18 +199,37 @@ const App = () => {
   );
 
   useEffect(() => {
+    // 1. FETCH GITHUB COMMITS (Ťahá históriu z tvojho repozitára)
+    fetch(
+      "https://api.github.com/repos/dusanfajnorbusiness-ui/NEXUS-CORE_IDENTITY/commits",
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        const formatted = data.slice(0, 10).map((commit) => {
+          const msg = commit.commit.message;
+          const lines = msg.split("\n");
+          return {
+            id: commit.sha.substring(0, 7),
+            date: new Date(commit.commit.author.date).toLocaleDateString(),
+            title: lines[0], // Summary v GitHub Desk
+            desc: lines.slice(1).join(" ") || "No additional description.", // Description v GitHub Desk
+          };
+        });
+        setUpdates(formatted);
+        // Intro (miznutie 3 správ) skončí po 8 sekundách
+        setTimeout(() => setShowIntro(false), 8000);
+      })
+      .catch((err) => console.error("GITHUB_SYNC_ERROR", err));
+
+    // 2. SONAR & TIMER LOGIKA
     const timer = setInterval(() => {
       const diff = Math.floor((new Date() - loadTime) / 1000);
       setSeconds(diff);
 
-      // SONAR LOGIKA: Pípa a spúšťa radar každých 10s
       if (!isUnlocked && diff % 10 === 0 && diff > 0) {
         sonarPing.volume = 0.15;
         sonarPing.play().catch(() => {});
-
-        // Aktivácia vizuálneho radaru
         setShowRadar(true);
-        // Radar zmizne po 4 sekundách (zhodne s dĺžkou CSS animácie)
         setTimeout(() => setShowRadar(false), 4000);
       }
     }, 1000);
@@ -235,34 +258,106 @@ const App = () => {
       className="min-h-screen flex flex-col bg-[#050505] transition-all duration-700"
       style={{ borderLeft: `6px solid ${current.color}` }}
     >
-      {/* DYNAMICKÝ HUD */}
-      <div className="fixed top-4 right-4 md:top-8 md:right-8 flex items-center gap-3 bg-black/90 p-2 px-4 rounded-full border border-white/10 z-50 shadow-2xl backdrop-blur-md">
-        <div className="flex flex-col items-end mr-2">
-          <span
-            className="text-[10px] font-mono tracking-widest font-black uppercase"
-            style={{ color: current.color }}
+      {/* DYNAMICKÝ HUD (Hlavička s indikátormi) */}
+      <div className="fixed top-4 right-4 md:top-8 md:right-8 flex items-center gap-3 z-50">
+        {/* MODUL: LAST UPDATE (Tlačidlo a rozbaľovacie menu) */}
+        <div className="relative font-mono text-[8px] tracking-[0.2em] uppercase">
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="bg-black/90 p-2 px-4 rounded-full border border-white/10 shadow-2xl backdrop-blur-md flex items-center gap-2 hover:bg-white/5 transition-all"
+            style={{ color: statusColor }}
           >
-            {window.nexusData.config.version}
-          </span>
-          <div className="flex items-center gap-1 font-mono text-[7px] uppercase tracking-tighter">
-            <span className="opacity-40 text-white italic">Sync:</span>
-            <span style={{ color: statusColor }}>{seconds}s ago</span>
-          </div>
-        </div>
-        <div className="relative flex items-center justify-center">
-          {!isUnlocked && (
-            <div
-              className="absolute w-6 h-6 rounded-full border animate-ping opacity-20"
-              style={{ borderColor: statusColor }}
-            />
+            <span className="animate-pulse">●</span>
+            LAST_UPDATE: {updates[0]?.date || "SYNCING..."}
+          </button>
+
+          {/* INTRO SEKVENCIÁLNE MIZNUTIE (Prvé 3 správy pri načítaní) */}
+          {showIntro && updates.length > 0 && (
+            <div className="absolute top-12 right-0 space-y-2 w-64 pointer-events-none">
+              {updates.slice(0, 3).map((upd, i) => (
+                <div
+                  key={upd.id}
+                  className="p-2 bg-black/95 border border-white/10 text-white animate-out fade-out slide-out-to-right duration-1000 fill-mode-forwards shadow-2xl"
+                  style={{ animationDelay: `${i * 2 + 1}s` }}
+                >
+                  <div className="text-[#39FF14] text-[6px] mb-1 font-black">
+                    [NEW_DEPLOYMENT]
+                  </div>
+                  <div className="normal-case opacity-90 text-[8px] leading-tight italic">
+                    {upd.title}
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
-          <div
-            className="w-2.5 h-2.5 rounded-full z-10 transition-colors duration-500"
-            style={{
-              backgroundColor: statusColor,
-              boxShadow: `0 0 12px ${statusColor}`,
-            }}
-          />
+
+          {/* UPDATE LOG HISTORY (Rozbalené menu) */}
+          {isMenuOpen && (
+            <div className="absolute top-12 right-0 w-80 bg-black/95 border border-white/20 shadow-2xl p-5 rounded-xl animate-in fade-in zoom-in-95 backdrop-blur-xl">
+              <h4 className="border-b border-white/10 pb-2 mb-4 text-[#39FF14] font-black italic tracking-widest text-[10px]">
+                LOGISTICKÝ_PROTOKOL_NEXUS
+              </h4>
+              <div className="space-y-5 max-h-[350px] overflow-y-auto pr-3 custom-scrollbar">
+                {updates.map((upd) => (
+                  <div
+                    key={upd.id}
+                    className="border-b border-white/5 pb-3 opacity-80 hover:opacity-100 transition-opacity"
+                  >
+                    <div className="flex justify-between text-[6px] mb-1 font-mono tracking-tighter">
+                      <span className="text-white/30 italic">
+                        #NODE_{upd.id}
+                      </span>
+                      <span style={{ color: statusColor }}>{upd.date}</span>
+                    </div>
+                    <div className="text-[9px] font-bold text-white mb-1 leading-tight uppercase tracking-tight">
+                      {upd.title}
+                    </div>
+                    <div className="text-[7px] normal-case opacity-50 leading-relaxed italic">
+                      {upd.desc}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <a
+                href="https://github.com/dusanfajnorbusiness-ui/NEXUS-CORE_IDENTITY/commits/main"
+                target="_blank"
+                className="block mt-5 text-center p-2 border border-white/10 hover:border-[#39FF14]/40 hover:text-[#39FF14] transition-all text-[7px] font-black tracking-[0.3em]"
+              >
+                OPEN_FULL_REPOSITORY_VAULT →
+              </a>
+            </div>
+          )}
+        </div>
+
+        {/* MODUL: SYNC STATUS (Tvoj pôvodný indikátor verzie) */}
+        <div className="bg-black/90 p-2 px-4 rounded-full border border-white/10 shadow-2xl backdrop-blur-md flex items-center gap-3">
+          <div className="flex flex-col items-end mr-2">
+            <span
+              className="text-[10px] font-mono tracking-widest font-black uppercase"
+              style={{ color: current.color }}
+            >
+              {window.nexusData.config.version}
+            </span>
+            <div className="flex items-center gap-1 font-mono text-[7px] uppercase tracking-tighter">
+              <span className="opacity-40 text-white italic">Sync:</span>
+              <span style={{ color: statusColor }}>{seconds}s ago</span>
+            </div>
+          </div>
+          <div className="relative flex items-center justify-center">
+            {!isUnlocked && (
+              <div
+                className="absolute w-6 h-6 rounded-full border animate-ping opacity-20"
+                style={{ borderColor: statusColor }}
+              />
+            )}
+            <div
+              className="w-2.5 h-2.5 rounded-full z-10 transition-colors duration-500"
+              style={{
+                backgroundColor: statusColor,
+                boxShadow: `0 0 12px ${statusColor}`,
+              }}
+            />
+          </div>
         </div>
       </div>
 
