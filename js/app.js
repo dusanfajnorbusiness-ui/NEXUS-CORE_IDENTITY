@@ -272,26 +272,26 @@ const App = () => {
           <div className="text-[10px] font-mono tracking-[0.4em] mb-4 opacity-40 uppercase">
             Protocol_{activeID} //{" "}
             {activeID === "01"
-              ? "Personal"
+              ? "Personal UI Space"
               : activeID === "02"
-                ? "Work"
+                ? "Work UI Space"
                 : activeID === "03"
-                  ? "Finance"
+                  ? "Finance UI Space"
                   : activeID === "04"
-                    ? "Business"
+                    ? "Business UI Space"
                     : activeID === "05"
-                      ? "Investments"
+                      ? "Investments UI Space"
                       : activeID === "06"
-                        ? "Study"
+                        ? "Study UI Space"
                         : activeID === "07"
                           ? "Professional"
                           : activeID === "08"
-                            ? "Reader"
+                            ? "Reader UI Space"
                             : activeID === "09"
-                              ? "Player"
+                              ? "Player UI Space"
                               : activeID === "10"
-                                ? "Home"
-                                : "Recovery"}
+                                ? "Home UI Space"
+                                : "Recovery UI Space"}
           </div>
 
           {/* Hlavný nadpis (Veľké kone) */}
@@ -303,22 +303,32 @@ const App = () => {
           </h1>
 
           {/* SEKUNDÁRNY RIADOK: EN // SK (Malé písmo) */}
-<div className="text-[10px] font-mono tracking-[0.2em] opacity-30 uppercase mt-2 flex items-center gap-2">
-    <span style={{ color: current.color }}>●</span>
-    <span>
-        {activeID === "01" ? "Identity // Identita" :
-         activeID === "02" ? "Work Flow // Pracovný Tok" :
-         activeID === "03" ? "Cash Engine // Finančný Stroj" :
-         activeID === "04" ? "Revenue Architect // Architekt Výnosov" :
-         activeID === "05" ? "Asset Matrix // Matrica Aktív" :
-         activeID === "06" ? "Data Absorber // Absorpcia Dát" :
-         activeID === "07" ? "Skill Tree // Strom Schopností" :
-         activeID === "08" ? "Empty Book // Prázdna Kniha" :
-         activeID === "09" ? "Sergeant Core // Jadro Seržanta" :
-         activeID === "10" ? "Non-Identity // Bez Identity" :
-         "Recovery // Zotavenie"}
-    </span>
-</div>
+          <div className="text-[10px] font-mono tracking-[0.2em] opacity-30 uppercase mt-2 flex items-center gap-2">
+            <span style={{ color: current.color }}>●</span>
+            <span>
+              {activeID === "01"
+                ? "Identita // Z osobného života"
+                : activeID === "02"
+                  ? "Pracovný Tok // Z pracovného života"
+                  : activeID === "03"
+                    ? "Finančný Stroj // Z finančného života"
+                    : activeID === "04"
+                      ? "Architekt Výnosov // Z výnosového života"
+                      : activeID === "05"
+                        ? "Matrica Aktív // Z investičného života"
+                        : activeID === "06"
+                          ? "Absorpcia Dát // Z akademického života"
+                          : activeID === "07"
+                            ? "Strom Schopností // Z profesionálneho života"
+                            : activeID === "08"
+                              ? "Prázdna Kniha // Z čitateľského života"
+                              : activeID === "09"
+                                ? "Jadro Seržanta // Z hráčskeho života"
+                                : activeID === "10"
+                                  ? "Bez Identity // Z domáceho života"
+                                  : "Zotavenie // Z krízového života"}
+            </span>
+          </div>
 
           {/* Citát */}
           <p className="mt-8 text-xl italic opacity-50 max-w-2xl leading-relaxed">
