@@ -1,5 +1,5 @@
 // ==========================================
-// 0. FIREBASE & INIT (v5.8-Full Recovery)
+// 0. FIREBASE & INIT (v5.9-Cloud Sync)
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyAZ63dB9Rc5zX-qabOCC0LSErQnwzr9eaE",
@@ -18,7 +18,7 @@ const googleProvider = new firebase.auth.GoogleAuthProvider();
 const { useState, useEffect, useMemo, useRef } = React;
 
 // ==========================================
-// 1. MODUL: AccountPanel (Auth Engine)
+// 1. MODUL: AccountPanel (Auth & Cloud Sync)
 // ==========================================
 const AccountPanel = ({ color }) => {
   const [isLogged, setIsLogged] = useState(false);
@@ -26,36 +26,77 @@ const AccountPanel = ({ color }) => {
   const [isEditing, setIsEditing] = useState(false);
   const authRef = useRef(null);
   const editRef = useRef(null);
+  
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem("nexus_operator");
-    return saved ? JSON.parse(saved) : { name: "HOSŤ_OPERÁTOR", tier: "FREE", subscription: "NONE", bio: "Inicializácia...", avatar: null };
+    return saved ? JSON.parse(saved) : { 
+      name: "HOSŤ_OPERÁTOR", 
+      tier: "FREE", 
+      subscription: "NONE", 
+      bio: "Inicializácia...", 
+      avatar: null 
+    };
   });
 
-  useEffect(() => { if (user.subscription !== "NONE") setIsLogged(true); }, []);
+  // UNIVERZÁLNY KĽÚČ PRE RODINU
+  const FAMILY_PRO_KEY = "NEXUS-150-PRO";
+
   useEffect(() => {
-    const handleOutside = (e) => {
-      if (authRef.current && !authRef.current.contains(e.target)) setShowAuth(false);
-      if (editRef.current && !editRef.current.contains(e.target)) setIsEditing(false);
-    };
-    document.addEventListener("mousedown", handleOutside);
-    return () => document.removeEventListener("mousedown", handleOutside);
+    const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
+      if (firebaseUser) {
+        const userRef = db.collection("operators").doc(firebaseUser.uid);
+        const doc = await userRef.get();
+        if (doc.exists) {
+          const cloudData = doc.data();
+          setUser(cloudData);
+          localStorage.setItem("nexus_operator", JSON.stringify(cloudData));
+        }
+        setIsLogged(true);
+      }
+    });
+    return () => unsubscribe();
   }, []);
 
-  const saveToNexus = (u) => { setUser(u); localStorage.setItem("nexus_operator", JSON.stringify(u)); };
+  const saveToNexus = async (u) => {
+    setUser(u);
+    localStorage.setItem("nexus_operator", JSON.stringify(u));
+    const firebaseUser = auth.currentUser;
+    if (firebaseUser) {
+      try {
+        await db.collection("operators").doc(firebaseUser.uid).set(u, { merge: true });
+      } catch (e) { console.error("SYNC_ERROR:", e); }
+    }
+  };
   
   const handleAuth = (tier) => {
-    const keys = { FREE: "NONE", PRO: "NEXUS-150-PRO", PREMIUM: "NEXUS-999-PREMIUM" };
+    const keys = { FREE: "NONE", PRO: FAMILY_PRO_KEY, PREMIUM: "NEXUS-999-PREMIUM" };
     saveToNexus({ ...user, tier, subscription: "ACTIVE", accessKey: keys[tier] });
-    setIsLogged(true); setShowAuth(false);
+    setIsLogged(true); 
+    setShowAuth(false);
   };
 
   const handleSocialLogin = async () => {
     try {
       const result = await auth.signInWithPopup(googleProvider);
       const u = result.user;
-      const nexusUser = { uid: u.uid, name: u.displayName.toUpperCase(), email: u.email, tier: "FREE", avatar: u.photoURL, bio: "Cloud Link aktívny." };
-      saveToNexus(nexusUser); setIsLogged(true); setShowAuth(false);
-    } catch (e) { console.error(e); }
+      const userRef = db.collection("operators").doc(u.uid);
+      const doc = await userRef.get();
+      
+      let nexusUser = doc.exists ? doc.data() : { 
+        uid: u.uid, 
+        name: u.displayName.toUpperCase(), 
+        email: u.email, 
+        tier: "FREE", 
+        avatar: u.photoURL, 
+        bio: "Cloud Link aktívny.",
+        subscription: "ACTIVE" 
+      };
+      
+      if (!doc.exists) await userRef.set(nexusUser);
+      saveToNexus(nexusUser);
+      setIsLogged(true); 
+      setShowAuth(false);
+    } catch (e) { console.error("AUTH_ERROR:", e); }
   };
 
   return (
@@ -90,7 +131,7 @@ const AccountPanel = ({ color }) => {
              <div className="absolute top-14 right-0 w-80 bg-black/95 border border-white/20 p-6 z-[100] rounded-xl shadow-2xl backdrop-blur-xl">
                 <div className="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
                    <h4 className="text-[#39FF14] text-[10px] font-black uppercase">Identity_Overhaul</h4>
-                   <button onClick={() => { localStorage.removeItem("nexus_operator"); window.location.reload(); }} className="text-red-500 text-[7px] underline">Logout</button>
+                   <button onClick={() => { auth.signOut(); localStorage.removeItem("nexus_operator"); window.location.reload(); }} className="text-red-500 text-[7px] underline">Logout</button>
                 </div>
                 <div className="space-y-4">
                    <div className="flex flex-col text-left"><label className="text-[6px] opacity-40 uppercase text-white">Identity_Mark</label><input className="bg-white/10 p-2 text-[10px] text-white focus:outline-none" value={user.name} onChange={(e) => saveToNexus({ ...user, name: e.target.value.toUpperCase() })} /></div>
@@ -106,14 +147,14 @@ const AccountPanel = ({ color }) => {
 };
 
 // ==========================================
-// 2. MODUL: UserAdminList (Database View)
+// 2. MODUL: UserAdminList (Cloud DB View)
 // ==========================================
 const UserAdminList = ({ users }) => (
   <div className="mt-10 bg-black/40 border border-white/5 p-6 rounded-lg text-white animate-in fade-in">
     <h3 className="text-[#39FF14] text-[10px] mb-6 tracking-[0.5em] font-black uppercase italic">Registered_Operators_Database</h3>
     <table className="w-full text-[10px] text-left">
       <thead><tr className="opacity-30 border-b border-white/10 uppercase text-[8px]"><th>ID</th><th>Operator</th><th>Clearance</th><th>Status</th></tr></thead>
-      <tbody>{users.map(u => (<tr key={u.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"><td className="py-3 text-white/40 italic">#NEX_{u.id}</td><td className="py-3 font-bold">{u.name}</td><td className="py-3 uppercase text-[8px]">{u.tier}</td><td className="py-3 text-[#39FF14] animate-pulse italic uppercase text-[8px]">In_Field</td></tr>))}</tbody>
+      <tbody>{users.map(u => (<tr key={u.uid || u.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors"><td className="py-3 text-white/40 italic">#NEX_{u.uid?.substring(0,5) || u.id}</td><td className="py-3 font-bold">{u.name}</td><td className="py-3 uppercase text-[8px]">{u.tier}</td><td className="py-3 text-[#39FF14] animate-pulse italic uppercase text-[8px]">In_Field</td></tr>))}</tbody>
     </table>
   </div>
 );
@@ -241,7 +282,6 @@ const App = () => {
           <p className="mt-8 text-xl italic opacity-50 max-w-2xl leading-relaxed text-white">"{current.quote}"</p>
         </header>
 
-        {/* 🚀 OPRAVENÁ NAVIGÁCIA (GRID) */}
         <nav className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-11 gap-2 mb-20">
           {Object.keys(window.nexusData.dimensions).sort((a,b)=>a-b).map((id) => (
             <button key={id} onClick={() => { setActiveID(id); setIsUnlocked(false); }} className={`p-3 font-mono text-[9px] border transition-all ${activeID === id ? "scale-105" : "opacity-40 hover:opacity-100"}`} style={{ borderColor: window.nexusData.dimensions[id].color, color: activeID === id ? "#000" : window.nexusData.dimensions[id].color, backgroundColor: activeID === id ? window.nexusData.dimensions[id].color : "transparent" }}>ID_{id}</button>
