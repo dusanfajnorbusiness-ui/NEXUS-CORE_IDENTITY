@@ -1,20 +1,22 @@
-// 🔥 FIREBASE INITIALIZATION: NEXUS-CORE_2Mb
+// 🔥 FIREBASE INICIALIZÁCIA: NEXUS-CORE_2Mb
 const firebaseConfig = {
-  apiKey: "SEM_VLOŽ_SVOJ_API_KEY",
+  apiKey: "AIzaSyAZ63dB9Rc5zX-qabOCC0LSErQnwzr9eaE",
   authDomain: "nexus-core-2mb.firebaseapp.com",
   projectId: "nexus-core-2mb",
-  storageBucket: "nexus-core-2mb.appspot.com",
-  messagingSenderId: "TVOJE_ID",
-  appId: "TVOJE_APP_ID",
+  storageBucket: "nexus-core-2mb.firebasestorage.app",
+  messagingSenderId: "906269523308",
+  appId: "1:906269523308:web:1c719d64412c92bf570749",
+  measurementId: "G-QE4GE8TZN9"
 };
 
-// Inicializácia služieb (CDN Compat verzia)
+// Inicializácia služieb (CDN Compat Verzia)
 if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp(firebaseConfig);
 }
 const auth = firebase.auth();
 const db = firebase.firestore();
 const googleProvider = new firebase.auth.GoogleAuthProvider();
+
 const { useState, useEffect, useMemo, useRef } = React;
 
 // ==========================================
@@ -29,30 +31,21 @@ const AccountPanel = ({ color }) => {
 
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem("nexus_operator");
-    return saved
-      ? JSON.parse(saved)
-      : {
-          name: "GUEST_OPERATOR",
-          tier: "FREE",
-          subscription: "NONE",
-          tier_level: 0,
-          bio: "Initializing status...",
-          avatar: null,
-          accessKey: "",
-        };
+    return saved ? JSON.parse(saved) : {
+      name: "HOSŤ_OPERÁTOR",
+      tier: "FREE",
+      subscription: "NONE",
+      bio: "Inicializácia stavu...",
+      avatar: null,
+      accessKey: "",
+    };
   });
 
-  useEffect(() => {
-    if (user.subscription !== "NONE") setIsLogged(true);
-  }, []);
-
-  // PROTOKOL: Click-Away (Zatvorenie pri klike mimo)
+  // PROTOKOL: Click-Away pre Auth a Profil (Zatvorenie klikom vedľa)
   useEffect(() => {
     const handleOutside = (e) => {
-      if (authRef.current && !authRef.current.contains(e.target))
-        setShowAuth(false);
-      if (editRef.current && !editRef.current.contains(e.target))
-        setIsEditing(false);
+      if (authRef.current && !authRef.current.contains(e.target)) setShowAuth(false);
+      if (editRef.current && !editRef.current.contains(e.target)) setIsEditing(false);
     };
     document.addEventListener("mousedown", handleOutside);
     return () => document.removeEventListener("mousedown", handleOutside);
@@ -63,21 +56,16 @@ const AccountPanel = ({ color }) => {
     localStorage.setItem("nexus_operator", JSON.stringify(u));
   };
 
-  // --- Vnútri komponentu AccountPanel ---
-
   const handleSocialLogin = async () => {
     try {
-      // 1. Spustenie Google Popup prihlásenia
       const result = await auth.signInWithPopup(googleProvider);
       const user = result.user;
 
-      // 2. Kontrola/Vytvorenie záznamu v tvojej Firestore databáze
       const userRef = db.collection("operators").doc(user.uid);
       const doc = await userRef.get();
 
       let nexusUser;
       if (!doc.exists) {
-        // Ak je to nový operátor (rodina/priatelia), vytvoríme mu profil
         nexusUser = {
           uid: user.uid,
           name: user.displayName.toUpperCase(),
@@ -85,22 +73,18 @@ const AccountPanel = ({ color }) => {
           tier: "FREE",
           accessKey: "NONE",
           avatar: user.photoURL,
-          bio: "Nexus operator initialized via Cloud Link.",
+          bio: "Nexus operátor inicializovaný cez Cloud Link."
         };
         await userRef.set(nexusUser);
       } else {
-        // Ak už existuje, načítame jeho dáta (napr. tvoj ARCHITECT status)
         nexusUser = doc.data();
       }
 
-      // 3. Uloženie do systému
       saveToNexus(nexusUser);
       setIsLogged(true);
       setShowAuth(false);
-      console.log("NEXUS_CORE: Operator authenticated successfully.");
     } catch (error) {
-      console.error("AUTH_CRITICAL_ERROR:", error.message);
-      alert("Prístup zamietnutý. Skontrolujte pripojenie k NEXUS-CORE.");
+      console.error("KRITICKÁ_CHYBA_AUTENTIFIKÁCIE:", error.message);
     }
   };
 
@@ -482,66 +466,73 @@ const App = () => {
       className="min-h-screen flex flex-col bg-[#050505] transition-all duration-700"
       style={{ borderLeft: `6px solid ${current.color}` }}
     >
-      {/* 🟢 HUD HEADER (NEXUS-CORE_2Mb FINAL) */}
-      <div className="fixed top-0 left-0 w-full p-6 flex justify-between items-center z-50 bg-gradient-to-b from-black to-transparent">
-        <div className="flex items-center gap-4">
-          <div className="brand-logo-nexus text-[#39FF14] font-mono font-black text-lg tracking-widest">
-            NEXUS-CORE_2Mb
-          </div>
-          <div className="h-4 w-[1px] bg-white/20"></div>
-          <span className="text-[7px] opacity-40 font-mono uppercase text-white">
-            Node_2Mb // Trnava_Station
-          </span>
-        </div>
+      {/* 🟢 HUD HEADER (NEXUS-CORE_2Mb FINAL - SLOVENSKÁ VERZIA) */}
+<div className="fixed top-0 left-0 w-full p-6 flex justify-between items-center z-50 bg-gradient-to-b from-black to-transparent">
+  <div className="flex items-center gap-4">
+    <div className="brand-logo-nexus text-[#39FF14] font-mono font-black text-lg tracking-widest uppercase">
+      NEXUS-CORE_2Mb
+    </div>
+    <div className="h-4 w-[1px] bg-white/20"></div>
+    <span className="text-[7px] opacity-40 font-mono uppercase text-white">
+      Uzol_2Mb // Trnava_Station
+    </span>
+  </div>
 
-        <div className="flex items-center gap-4">
-          {/* Border-Thin */}
-          <button
-            className="hud-btn border-thin rounded-full"
-            style={{ color: statusColor, borderColor: statusColor }}
-          >
-            STATUS_OK
-          </button>
+  <div className="flex items-center gap-4">
+    {/* Border-Thin: STATUS_OK s pulzujúcou guličkou */}
+    <button
+      className="hud-btn border-thin rounded-full flex items-center gap-2"
+      style={{ color: statusColor, borderColor: statusColor }}
+    >
+      <div 
+        className="w-2 h-2 rounded-full animate-pulse" 
+        style={{ backgroundColor: statusColor, boxShadow: `0 0 8px ${statusColor}` }}
+      ></div>
+      STATUS_OK
+    </button>
 
-          {/* Border-Medium + Click-Away Log */}
-          <div className="relative" ref={logRef}>
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="hud-btn border-medium rounded-full"
-              style={{ color: current.color, borderColor: current.color }}
-            >
-              LAST_UPGRADE: {updates[0]?.date || "SYNC"}
-            </button>
-            {isMenuOpen && (
-              <div className="absolute top-14 right-0 w-80 bg-black/95 border border-white/20 p-5 rounded-xl shadow-2xl backdrop-blur-xl animate-in fade-in zoom-in-95">
-                <h4 className="text-[#39FF14] text-[10px] font-black italic border-b border-white/10 pb-2 mb-4 uppercase tracking-widest">
-                  Update_Log_History
-                </h4>
-                <div className="space-y-4 max-h-80 overflow-y-auto pr-2 custom-scrollbar text-left text-white">
-                  {updates.map((upd) => (
-                    <div key={upd.id} className="border-b border-white/5 pb-3">
-                      <div className="flex justify-between text-[6px] opacity-40 italic mb-1 uppercase">
-                        <span>#NODE_{upd.id}</span>
-                        <span>{upd.date}</span>
-                      </div>
-                      <div className="text-[9px] font-bold text-white uppercase tracking-tight">
-                        {upd.title}
-                      </div>
-                      {upd.desc && (
-                        <div className="mt-1 text-[7px] text-white/50 leading-relaxed font-mono italic">
-                          {upd.desc}
-                        </div>
-                      )}
-                    </div>
-                  ))}
+    {/* Border-Medium: HISTÓRIA UPGRADU s Click-Away logikou */}
+    <div className="relative" ref={logRef}>
+      <button
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+        className="hud-btn border-medium rounded-full"
+        style={{ color: current.color, borderColor: current.color }}
+      >
+        POSLEDNÝ_UPGRADE: {updates[0]?.date || "SYNCHRONIZÁCIA"}
+      </button>
+
+      {isMenuOpen && (
+        <div className="absolute top-14 right-0 w-80 bg-black/95 border border-white/20 p-5 rounded-xl shadow-2xl backdrop-blur-xl animate-in fade-in zoom-in-95 z-[100]">
+          <h4 className="text-[#39FF14] text-[10px] font-black italic border-b border-white/10 pb-2 mb-4 uppercase tracking-widest">
+            História_Upgrade_Logu
+          </h4>
+          <div className="space-y-4 max-h-80 overflow-y-auto pr-2 custom-scrollbar text-left text-white">
+            {updates.map((upd) => (
+              <div key={upd.id} className="border-b border-white/5 pb-3">
+                <div className="flex justify-between text-[6px] opacity-40 italic mb-1 uppercase">
+                  <span>#UZOL_{upd.id}</span>
+                  <span>{upd.date}</span>
                 </div>
+                <div className="text-[9px] font-bold text-white uppercase tracking-tight">
+                  {upd.title}
+                </div>
+                {/* ZOBRAZENIE POPISU (Description) */}
+                {upd.desc && (
+                  <div className="mt-1 text-[7px] text-white/50 leading-relaxed font-mono italic">
+                    {upd.desc}
+                  </div>
+                )}
               </div>
-            )}
+            ))}
           </div>
-
-          <AccountPanel color={current.color} />
         </div>
-      </div>
+      )}
+    </div>
+
+    {/* Border-Thick: ACCOUNT PANEL (Pridelené v AccountPanel komponente) */}
+    <AccountPanel color={current.color} />
+  </div>
+</div>
 
       <main className="container mx-auto px-8 pt-32 pb-32 max-w-6xl flex-grow text-white text-left">
         <header className="mb-16">
