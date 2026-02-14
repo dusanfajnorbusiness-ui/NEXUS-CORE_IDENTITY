@@ -1,3 +1,4 @@
+// js/dimensions/id02.js
 window.id02Data = {
   proContent: `
 <div class="space-y-6 font-mono text-left animate-in fade-in duration-700 text-white/90 px-1">
@@ -37,5 +38,5 @@ window.id02Data = {
       <div class="absolute top-0 right-0 bg-[#FFEB3B] text-black text-[8px] px-4 font-black py-1 uppercase tracking-widest shadow-lg">Architect_Level_Flow</div>
       <h4 class="text-[#FFEB3B] font-black text-[12px] uppercase mb-4 italic tracking-tighter text-center">!! HYPER_AUTOMATION_SYSTEM !!</h4>
     </div>
-  `
+  `,
 };

@@ -6,6 +6,7 @@ window.nexusData = {
     lastSync: "2026-02-12",
   },
 
+  // Certifikáty a zručnosti (v5.3)
   skills: [
     // --- ITNETWORK NODE ---
     {
@@ -145,7 +146,7 @@ window.nexusData = {
     },
   ],
 
-  // js/data.js - Úprava farieb pre logický gradient (v5.4)
+  // Dimenzie a obsah (v5.3)
   dimensions: {
     "01": {
       name: "identity",
@@ -240,17 +241,20 @@ window.nexusData = {
       premiumContent: window.id11Data?.premiumContent || "OFFLINE",
     },
   },
+  // Užívateľské údaje a systémové nastavenia(v5.3)
   currentUser: {
     name: "D. FAJNOR",
     tier: "ARCHITECT",
     subscription: "LIFETIME_ACCESS",
     tier_level: 999,
   },
+  // Užívateľské údaje a systémové nastavenia (v5.3)
   users: [
     { id: "001", name: "D. FAJNOR", tier: "ARCHITECT", status: "ONLINE" },
     { id: "102", name: "SERGEANT_X", tier: "PREMIUM", status: "OFFLINE" },
     { id: "205", name: "GUEST_USER", tier: "FREE", status: "ONLINE" },
   ],
+  // Systémové nastavenia a ciele (v5.3)
   system_config: {
     version: "1.3 (Safety & Performance Protocol)",
     security: {
