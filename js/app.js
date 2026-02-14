@@ -1,5 +1,5 @@
 // ==========================================
-// 0. FIREBASE & INIT (v5.9.8 - Stability Fix)
+// 0. FIREBASE & INIT (v6.0 - Global Sync)
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyAZ63dB9Rc5zX-qabOCC0LSErQnwzr9eaE",
@@ -18,7 +18,7 @@ const googleProvider = new firebase.auth.GoogleAuthProvider();
 const { useState, useEffect, useMemo, useRef } = React;
 
 // ==========================================
-// 1. MODUL: OperatorMonitor (Metrics Console)
+// 1. MODUL: OperatorMonitor (Metrics Hub)
 // ==========================================
 const OperatorMonitor = ({ color }) => {
   const [operators, setOperators] = useState([]);
@@ -26,12 +26,10 @@ const OperatorMonitor = ({ color }) => {
   const monitorRef = useRef(null);
 
   useEffect(() => {
-    // Real-time stream z Cloud Firestore
     const unsubscribe = db.collection("operators").onSnapshot(snapshot => {
       const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setOperators(data);
     });
-    
     const handleOutside = (e) => {
       if (monitorRef.current && !monitorRef.current.contains(e.target)) setIsOpen(false);
     };
@@ -39,11 +37,10 @@ const OperatorMonitor = ({ color }) => {
     return () => { unsubscribe(); document.removeEventListener("mousedown", handleOutside); };
   }, []);
 
-  const getStatusInfo = (lastSeen) => {
+  const getStatus = (lastSeen) => {
     if (!lastSeen) return { label: "OFFLINE", color: "#FF003C" };
-    const now = Date.now();
     const last = lastSeen.toDate ? lastSeen.toDate().getTime() : new Date(lastSeen).getTime();
-    const diff = (now - last) / 1000;
+    const diff = (Date.now() - last) / 1000;
     if (diff < 60) return { label: "ONLINE", color: "#39FF14" };
     if (diff < 300) return { label: "SLEEP", color: "#FFA500" };
     return { label: "OFFLINE", color: "#FF003C" };
@@ -51,36 +48,50 @@ const OperatorMonitor = ({ color }) => {
 
   return (
     <div className="relative font-mono" ref={monitorRef}>
-      <button onClick={() => setIsOpen(!isOpen)} className="hud-btn border-thin rounded-full flex items-center gap-2 px-3 py-1 text-[8px]" style={{ color: color, borderColor: color }}>
+      <button onClick={() => setIsOpen(!isOpen)} 
+              className="hud-btn border-thin rounded-full flex items-center gap-2 px-3 py-1 text-[8px] transition-all" 
+              style={{ color: color, borderColor: color }}>
         <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: color }}></div>
-        OPERATORS_METRICS
+        OPERATORS_METRICS [{operators.length}]
       </button>
 
       {isOpen && (
-        <div className="absolute top-12 right-0 w-[300px] md:w-[450px] bg-black/95 border border-white/20 p-4 rounded-xl z-[200] shadow-2xl backdrop-blur-xl animate-in fade-in zoom-in-95">
+        <div className="absolute top-12 right-0 w-[320px] md:w-[480px] bg-black/95 border border-white/20 p-5 rounded-xl z-[200] shadow-2xl backdrop-blur-xl animate-in fade-in zoom-in-95 origin-top-right">
           <h4 className="text-[#39FF14] text-[10px] font-black mb-4 uppercase italic border-b border-white/10 pb-2 flex justify-between">
-            <span>System_Wide_Metrics</span>
-            <span className="opacity-50">Nodes: {operators.length}</span>
+            <span>Live_Fleet_Telemetria</span>
+            <span className="opacity-50 tracking-tighter">Nexus_Nodes_Active</span>
           </h4>
           
-          <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-            {operators.map(op => {
-              const status = getStatusInfo(op.lastOnline);
-              const regDate = op.registeredAt?.toDate ? op.registeredAt.toDate().toLocaleDateString() : "N/A";
+          <div className="space-y-2 max-h-[450px] overflow-y-auto pr-2 custom-scrollbar">
+            {operators.sort((a,b) => (b.lastOnline?.seconds || 0) - (a.lastOnline?.seconds || 0)).map(op => {
+              const status = getStatus(op.lastOnline);
+              const regDate = op.registeredAt?.toDate ? op.registeredAt.toDate().toLocaleDateString() : "---";
               return (
-                <div key={op.id} className="bg-white/5 border border-white/5 p-3 rounded-lg flex flex-col gap-2 hover:bg-white/10 transition-all">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: status.color }}></div>
-                      <span className="text-[10px] font-bold text-white uppercase">{op.name || "Unknown"}</span>
+                <div key={op.id} className="bg-white/[0.03] border border-white/5 p-3 rounded-lg group hover:bg-white/[0.08] transition-all">
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full border border-white/10 overflow-hidden bg-black">
+                        {op.avatar ? <img src={op.avatar} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-[10px]">{op.name?.substring(0,2)}</div>}
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-white uppercase leading-none mb-1">{op.name || "Unknown_Unit"}</span>
+                        <div className="flex items-center gap-1.5">
+                          <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: status.color }}></div>
+                          <span className="text-[7px]" style={{ color: status.color }}>{status.label}</span>
+                        </div>
+                      </div>
                     </div>
-                    <span className="text-[7px] px-2 py-0.5 rounded border border-white/10" style={{ color: op.tier === 'PRO' ? '#39FF14' : op.tier === 'PREMIUM' ? '#FFD700' : '#fff' }}>
-                      {op.tier || 'FREE'}_ACCESS
-                    </span>
+                    <div className="text-right flex flex-col items-end gap-1">
+                      <div className="text-[7px] font-black px-2 py-0.5 rounded-sm border" 
+                           style={{ color: op.tier === 'PRO' ? '#39FF14' : op.tier === 'PREMIUM' ? '#FFD700' : '#888', 
+                                    borderColor: op.tier === 'PRO' ? '#39FF1444' : op.tier === 'PREMIUM' ? '#FFD70044' : '#8884' }}>
+                        {op.tier || 'FREE'}_ACCESS
+                      </div>
+                    </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-2 text-[6px] opacity-40 uppercase">
+                  <div className="grid grid-cols-2 gap-4 text-[6px] opacity-40 uppercase tracking-widest pt-2 border-t border-white/5 font-mono">
                     <div>Ident_Date: {regDate}</div>
-                    <div className="text-right italic">Last_Ping: {status.label}</div>
+                    <div className="text-right italic">Signal: {status.label === "ONLINE" ? "ACTIVE" : "STANDBY"}</div>
                   </div>
                 </div>
               );
@@ -93,32 +104,28 @@ const OperatorMonitor = ({ color }) => {
 };
 
 // ==========================================
-// 2. MODUL: AccountPanel (Cloud Identity)
+// 2. MODUL: AccountPanel (Identity Engine)
 // ==========================================
 const AccountPanel = ({ color }) => {
   const [isLogged, setIsLogged] = useState(false);
-  const [user, setUser] = useState({ name: "GUEST", tier: "FREE" });
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
       if (firebaseUser) {
         const userRef = db.collection("operators").doc(firebaseUser.uid);
         const doc = await userRef.get();
-        
         const nexusData = {
           uid: firebaseUser.uid,
-          name: firebaseUser.displayName.toUpperCase(),
+          name: firebaseUser.displayName?.toUpperCase() || "UNKNOWN",
           avatar: firebaseUser.photoURL,
           lastOnline: firebase.firestore.FieldValue.serverTimestamp(),
           tier: doc.exists ? doc.data().tier : "FREE",
           registeredAt: doc.exists ? doc.data().registeredAt : firebase.firestore.FieldValue.serverTimestamp()
         };
-
         await userRef.set(nexusData, { merge: true });
         setUser(nexusData);
         setIsLogged(true);
-      } else {
-        setIsLogged(false);
       }
     });
     return () => unsubscribe();
@@ -127,15 +134,17 @@ const AccountPanel = ({ color }) => {
   const handleLogin = () => auth.signInWithPopup(googleProvider);
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center">
       {!isLogged ? (
         <button onClick={handleLogin} className="hud-btn border-thick text-[8px]" style={{ color, borderColor: color }}>INIT_SESSION</button>
       ) : (
-        <div className="flex items-center gap-2 border border-white/10 p-1 pr-3 rounded-full bg-black/40 backdrop-blur-md">
-          <img src={user.avatar} className="w-6 h-6 rounded-full border border-white/20" />
+        <div className="flex items-center gap-3 border border-white/10 p-1 pr-4 rounded-full bg-black/60 backdrop-blur-md">
+          <div className="w-7 h-7 rounded-full border border-white/20 overflow-hidden">
+            <img src={user?.avatar} className="w-full h-full object-cover" />
+          </div>
           <div className="flex flex-col">
-            <span className="text-[8px] font-black text-white leading-none">{user.name}</span>
-            <span className="text-[6px] opacity-50 uppercase tracking-tighter" style={{ color }}>{user.tier}</span>
+            <span className="text-[9px] font-black text-white leading-none mb-1">{user?.name}</span>
+            <span className="text-[6px] opacity-50 uppercase tracking-tighter" style={{ color }}>{user?.tier}_Tier</span>
           </div>
         </div>
       )}
@@ -144,19 +153,17 @@ const AccountPanel = ({ color }) => {
 };
 
 // ==========================================
-// 3. MODUL: DimensionWrapper (Security Guard)
+// 3. MODUL: DimensionWrapper (Tier Guard)
 // ==========================================
 const DimensionWrapper = ({ id, color, children, proContent, premiumContent, isUnlocked, setIsUnlocked }) => {
   const [keyInput, setKeyInput] = useState("");
   const [accessLevel, setAccessLevel] = useState("FREE");
-
   const handleVerify = () => {
     const input = keyInput.trim().toUpperCase();
     if (["NEXUS-OMEGA-OVRD", "NEXUS-999-PREMIUM"].includes(input)) { setAccessLevel("PREMIUM"); setIsUnlocked(true); }
     else if (input === "NEXUS-150-PRO") { setAccessLevel("PRO"); setIsUnlocked(true); }
     else { alert("ACCESS DENIED"); setKeyInput(""); }
   };
-
   return (
     <div className="space-y-6 relative">
       <div className="text-left border-l border-white/5 pl-4">{children}</div>
@@ -166,7 +173,7 @@ const DimensionWrapper = ({ id, color, children, proContent, premiumContent, isU
           <button onClick={handleVerify} className="w-full py-2 text-[9px] font-black uppercase shadow-lg transition-transform active:scale-95" style={{ backgroundColor: color, color: "#000" }}>Unlock Protocol</button>
         </div>
       ) : (
-        <div className="animate-in slide-in-from-top-4 space-y-8 text-left text-white font-mono">
+        <div className="animate-in slide-in-from-top-4 space-y-8 text-left text-white">
            {(accessLevel === "PRO" || accessLevel === "PREMIUM") && <div className="pt-8 border-t border-white/10 pro-content-area" dangerouslySetInnerHTML={{ __html: proContent }} />}
            {accessLevel === "PREMIUM" && <div className="pt-8 border-t-2 border-cyan-500/30 bg-cyan-500/5 p-4 rounded-lg premium-content-area" dangerouslySetInnerHTML={{ __html: premiumContent }} />}
         </div>
@@ -188,66 +195,71 @@ const Footer = () => (
 );
 
 // ==========================================
-// 5. MODUL: App (Core Logic & UI)
+// 5. MODUL: App (Core HUD)
 // ==========================================
 const App = () => {
   const [activeID, setActiveID] = useState("01");
-  const [loadTime] = useState(new Date());
   const [seconds, setSeconds] = useState(0);
-  const [isUnlocked, setIsUnlocked] = useState(false);
   const [updates, setUpdates] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const logRef = useRef(null);
+  const [isUnlocked, setIsUnlocked] = useState(false);
 
   useEffect(() => {
-    // Sťahovanie Update histórie z GitHubu
     fetch("https://api.github.com/repos/dusanfajnorbusiness-ui/NEXUS-CORE_IDENTITY/commits?per_page=100")
       .then(res => res.json()).then(data => {
         if(Array.isArray(data)) {
-          setUpdates(data.map(c => ({ id: c.sha.substring(0,7), date: new Date(c.commit.author.date).toLocaleDateString(), title: c.commit.message.split("\n")[0], desc: c.commit.message.split("\n").slice(1).join(" ").trim() })));
+          setUpdates(data.map(c => {
+            const d = new Date(c.commit.author.date);
+            return { 
+              id: c.sha.substring(0,7), 
+              date: d.toLocaleDateString(),
+              time: `${d.getHours()}h${String(d.getMinutes()).padStart(2,'0')}m${String(d.getSeconds()).padStart(2,'0')}s`,
+              title: c.commit.message.split("\n")[0], 
+              desc: c.commit.message.split("\n").slice(1).join(" ").trim() 
+            };
+          }));
         }
       });
-    const timer = setInterval(() => setSeconds(Math.floor((new Date() - loadTime) / 1000)), 1000);
+    const timer = setInterval(() => setSeconds(s => s + 1), 1000);
     return () => clearInterval(timer);
-  }, [loadTime]);
+  }, []);
 
   useEffect(() => {
     const handleOutside = (e) => { if (logRef.current && !logRef.current.contains(e.target)) setIsMenuOpen(false); };
     document.addEventListener("mousedown", handleOutside);
     return () => document.removeEventListener("mousedown", handleOutside);
-  }, [isMenuOpen]);
+  }, []);
 
   if (!window.nexusData) return <div className="p-20 text-red-500 font-mono text-center uppercase text-white">Critical_Error: Data_Not_Found</div>;
   const current = window.nexusData.dimensions[activeID] || window.nexusData.dimensions["01"];
-  const statusColor = seconds <= 30 ? "#39FF14" : seconds <= 120 ? "#FFD700" : "#FF003C";
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#050505] transition-all duration-700 font-mono" style={{ borderLeft: `6px solid ${current.color}` }}>
+    <div className="min-h-screen flex flex-col bg-[#050505] transition-all duration-700 font-mono text-white" style={{ borderLeft: `6px solid ${current.color}` }}>
       
       {/* HUD HEADER */}
-      <div className="fixed top-0 left-0 w-full p-6 flex justify-between items-center z-50 bg-gradient-to-b from-black to-transparent backdrop-blur-sm border-b border-white/5">
+      <div className="fixed top-0 left-0 w-full p-4 md:p-6 flex justify-between items-center z-50 bg-black/80 backdrop-blur-md border-b border-white/5">
         <div className="flex items-center gap-4">
-          <div className="brand-logo-nexus font-black text-lg tracking-widest uppercase transition-colors duration-500" style={{ color: current.color }}>NEXUS-CORE_2Mb</div>
-          <div className="h-4 w-[1px] bg-white/20"></div>
-          <span className="text-[7px] opacity-40 text-white uppercase tracking-tighter hidden md:block">Uzol_2Mb // Trnava_Station</span>
+          <div className="brand-logo-nexus font-black text-sm md:text-lg tracking-widest uppercase transition-colors duration-500" style={{ color: current.color }}>NEXUS-CORE_2Mb</div>
+          <div className="hidden lg:block h-4 w-[1px] bg-white/20"></div>
+          <span className="hidden lg:block text-[7px] opacity-40 uppercase tracking-tighter">Uzol_2Mb // Trnava_Station</span>
         </div>
 
-        <div className="flex items-center gap-4">
-          {/* BOD: Status & Operator Metrics */}
+        <div className="flex items-center gap-2 md:gap-4">
           <OperatorMonitor color={current.color} />
           
           <div className="relative" ref={logRef}>
-            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="hud-btn border-medium rounded-full uppercase" style={{ color: current.color, borderColor: current.color }}>
+            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="hud-btn border-medium rounded-full uppercase text-[8px] px-3 py-1" style={{ color: current.color, borderColor: current.color }}>
               LOG_{updates[0]?.date || "SYNC"}
             </button>
             {isMenuOpen && (
-              <div className="absolute top-14 right-0 w-80 bg-black/95 border border-white/20 p-5 rounded-xl shadow-2xl backdrop-blur-xl z-[100] animate-in fade-in zoom-in-95">
-                <h4 className="text-[#39FF14] text-[10px] font-black border-b border-white/10 pb-2 mb-4 uppercase tracking-widest italic text-left">Update_History_Log</h4>
+              <div className="absolute top-14 right-0 w-72 md:w-80 bg-black/95 border border-white/20 p-5 rounded-xl shadow-2xl backdrop-blur-xl z-[100] animate-in fade-in zoom-in-95">
+                <h4 className="text-[#39FF14] text-[10px] font-black border-b border-white/10 pb-2 mb-4 uppercase italic text-left">Update_History_Log</h4>
                 <div className="space-y-4 max-h-80 overflow-y-auto pr-2 custom-scrollbar text-left text-white">
                   {updates.map(upd => (
                     <div key={upd.id} className="border-b border-white/5 pb-3">
-                      <div className="flex justify-between text-[6px] opacity-40 italic uppercase"><span>#NODE_{upd.id}</span><span>{upd.date}</span></div>
-                      <div className="text-[9px] font-bold text-white uppercase tracking-tight">{upd.title}</div>
+                      <div className="flex justify-between text-[6px] opacity-40 italic uppercase"><span>#ID_{upd.id}</span><span>{upd.date} // {upd.time}</span></div>
+                      <div className="text-[9px] font-bold uppercase tracking-tight">{upd.title}</div>
                       {upd.desc && <div className="mt-1 text-[7px] text-white/50 leading-relaxed italic">{upd.desc}</div>}
                     </div>
                   ))}
@@ -259,33 +271,33 @@ const App = () => {
         </div>
       </div>
 
-      <main className="container mx-auto px-8 pt-32 pb-32 max-w-6xl flex-grow text-white text-left">
-        <header className="mb-16">
-          <div className="text-[10px] font-mono tracking-[0.4em] mb-4 opacity-40 uppercase font-black">Protocol_{activeID} // NEXUS_FLOW</div>
-          <h1 className="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-none" style={{ color: current.color }}>{current.name}</h1>
-          <p className="mt-8 text-xl italic opacity-50 max-w-2xl leading-relaxed">"{current.quote}"</p>
+      <main className="container mx-auto px-4 md:px-8 pt-24 md:pt-32 pb-32 max-w-6xl flex-grow text-left">
+        <header className="mb-12 md:mb-16">
+          <div className="text-[10px] tracking-[0.4em] mb-4 opacity-40 uppercase font-black">Protocol_{activeID} // NEXUS_FLOW</div>
+          <h1 className="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-tight" style={{ color: current.color }}>{current.name}</h1>
+          <p className="mt-6 md:mt-8 text-lg md:text-xl italic opacity-50 max-w-2xl leading-relaxed">"{current.quote}"</p>
         </header>
 
-        <nav className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-11 gap-2 mb-20">
+        <nav className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-11 gap-2 mb-16 md:mb-20">
           {Object.keys(window.nexusData.dimensions).sort((a,b)=>a-b).map((id) => (
-            <button key={id} onClick={() => { setActiveID(id); setIsUnlocked(false); }} className={`p-3 font-mono text-[9px] border transition-all ${activeID === id ? "scale-105 shadow-[0_0_15px_rgba(0,0,0,0.5)]" : "opacity-40 hover:opacity-100"}`} style={{ borderColor: window.nexusData.dimensions[id].color, color: activeID === id ? "#000" : window.nexusData.dimensions[id].color, backgroundColor: activeID === id ? window.nexusData.dimensions[id].color : "transparent" }}>ID_{id}</button>
+            <button key={id} onClick={() => { setActiveID(id); setIsUnlocked(false); }} className={`p-3 text-[9px] border transition-all ${activeID === id ? "scale-105" : "opacity-40 hover:opacity-100"}`} style={{ borderColor: window.nexusData.dimensions[id].color, color: activeID === id ? "#000" : window.nexusData.dimensions[id].color, backgroundColor: activeID === id ? window.nexusData.dimensions[id].color : "transparent" }}>ID_{id}</button>
           ))}
         </nav>
 
-        <div className="relative p-10 bg-white/[0.03] border border-white/10 backdrop-blur-md rounded-xl max-w-4xl shadow-2xl overflow-hidden">
+        <div className="relative p-6 md:p-10 bg-white/[0.03] border border-white/10 backdrop-blur-md rounded-xl max-w-4xl shadow-2xl overflow-hidden">
           <div className="absolute top-0 left-0 w-1.5 h-full" style={{ backgroundColor: current.color }} />
           <DimensionWrapper id={activeID} color={current.color} proContent={current.proContent} premiumContent={current.premiumContent} isUnlocked={isUnlocked} setIsUnlocked={setIsUnlocked}>
             {activeID === "07" ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[450px] overflow-y-auto pr-4 custom-scrollbar">
                 {(window.nexusData.skills || []).map((cert) => (
                   <div key={cert.id} className="p-4 border border-white/5 bg-white/[0.02] rounded-lg group hover:border-[#39FF14]/30 transition-all">
-                    <div className="text-[8px] opacity-30 font-mono uppercase mb-2">{cert.issuer} // {cert.category}</div>
+                    <div className="text-[8px] opacity-30 uppercase mb-2">{cert.issuer} // {cert.category}</div>
                     <div className="text-xs font-bold uppercase">{cert.name}</div>
-                    <a href={cert.path} target="_blank" className="mt-3 block text-[9px] text-cyan-500/60 hover:text-cyan-400 font-mono underline uppercase">Open_Document →</a>
+                    <a href={cert.path} target="_blank" className="mt-3 block text-[9px] text-cyan-500/60 hover:text-cyan-400 underline uppercase">Open_Document →</a>
                   </div>
                 ))}
               </div>
-            ) : <p className="text-2xl md:text-3xl font-light text-white/90 uppercase leading-snug italic font-serif">{current.content}</p>}
+            ) : <p className="text-xl md:text-3xl font-light text-white/90 uppercase leading-snug italic font-serif">{current.content}</p>}
           </DimensionWrapper>
         </div>
       </main>
