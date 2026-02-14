@@ -1,3 +1,20 @@
+// 🔥 FIREBASE INITIALIZATION: NEXUS-CORE_2Mb
+const firebaseConfig = {
+  apiKey: "SEM_VLOŽ_SVOJ_API_KEY",
+  authDomain: "nexus-core-2mb.firebaseapp.com",
+  projectId: "nexus-core-2mb",
+  storageBucket: "nexus-core-2mb.appspot.com",
+  messagingSenderId: "TVOJE_ID",
+  appId: "TVOJE_APP_ID",
+};
+
+// Inicializácia služieb (CDN Compat verzia)
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+const auth = firebase.auth();
+const db = firebase.firestore();
+const googleProvider = new firebase.auth.GoogleAuthProvider();
 const { useState, useEffect, useMemo, useRef } = React;
 
 // ==========================================
@@ -46,21 +63,45 @@ const AccountPanel = ({ color }) => {
     localStorage.setItem("nexus_operator", JSON.stringify(u));
   };
 
-  const handleAuth = (tier) => {
-    const keys = {
-      FREE: "NONE",
-      PRO: "NEXUS-150-PRO",
-      PREMIUM: "NEXUS-999-PREMIUM",
-    };
-    const newUser = {
-      ...user,
-      tier,
-      subscription: "ACTIVE",
-      accessKey: keys[tier],
-    };
-    saveToNexus(newUser);
-    setIsLogged(true);
-    setShowAuth(false);
+  // --- Vnútri komponentu AccountPanel ---
+
+  const handleSocialLogin = async () => {
+    try {
+      // 1. Spustenie Google Popup prihlásenia
+      const result = await auth.signInWithPopup(googleProvider);
+      const user = result.user;
+
+      // 2. Kontrola/Vytvorenie záznamu v tvojej Firestore databáze
+      const userRef = db.collection("operators").doc(user.uid);
+      const doc = await userRef.get();
+
+      let nexusUser;
+      if (!doc.exists) {
+        // Ak je to nový operátor (rodina/priatelia), vytvoríme mu profil
+        nexusUser = {
+          uid: user.uid,
+          name: user.displayName.toUpperCase(),
+          email: user.email,
+          tier: "FREE",
+          accessKey: "NONE",
+          avatar: user.photoURL,
+          bio: "Nexus operator initialized via Cloud Link.",
+        };
+        await userRef.set(nexusUser);
+      } else {
+        // Ak už existuje, načítame jeho dáta (napr. tvoj ARCHITECT status)
+        nexusUser = doc.data();
+      }
+
+      // 3. Uloženie do systému
+      saveToNexus(nexusUser);
+      setIsLogged(true);
+      setShowAuth(false);
+      console.log("NEXUS_CORE: Operator authenticated successfully.");
+    } catch (error) {
+      console.error("AUTH_CRITICAL_ERROR:", error.message);
+      alert("Prístup zamietnutý. Skontrolujte pripojenie k NEXUS-CORE.");
+    }
   };
 
   return (
@@ -372,29 +413,39 @@ const App = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const logRef = useRef(null);
 
-  const sonarPing = useMemo(() => new Audio("./assets/sounds/sonar-ping.mp3"), []);
+  const sonarPing = useMemo(
+    () => new Audio("./assets/sounds/sonar-ping.mp3"),
+    [],
+  );
 
   useEffect(() => {
     // Načítanie 100 správ z GitHubu
-    fetch("https://api.github.com/repos/dusanfajnorbusiness-ui/NEXUS-CORE_IDENTITY/commits?per_page=100")
-      .then(res => res.json())
-      .then(data => {
+    fetch(
+      "https://api.github.com/repos/dusanfajnorbusiness-ui/NEXUS-CORE_IDENTITY/commits?per_page=100",
+    )
+      .then((res) => res.json())
+      .then((data) => {
         if (Array.isArray(data)) {
-          setUpdates(data.slice(0, 100).map(c => ({ 
-            id: c.sha.substring(0,7), 
-            date: new Date(c.commit.author.date).toLocaleDateString(), 
-            title: c.commit.message.split("\n")[0],
-            desc: c.commit.message.split("\n").slice(1).join(" ").trim()
-          })));
+          setUpdates(
+            data.slice(0, 100).map((c) => ({
+              id: c.sha.substring(0, 7),
+              date: new Date(c.commit.author.date).toLocaleDateString(),
+              title: c.commit.message.split("\n")[0],
+              desc: c.commit.message.split("\n").slice(1).join(" ").trim(),
+            })),
+          );
         }
-      }).catch(err => console.error(err));
+      })
+      .catch((err) => console.error(err));
 
     const timer = setInterval(() => {
       const diff = Math.floor((new Date() - loadTime) / 1000);
       setSeconds(diff);
       if (!isUnlocked && diff % 10 === 0 && diff > 0) {
-        sonarPing.volume = 0.15; sonarPing.play().catch(() => {});
-        setShowRadar(true); setTimeout(() => setShowRadar(false), 4000);
+        sonarPing.volume = 0.15;
+        sonarPing.play().catch(() => {});
+        setShowRadar(true);
+        setTimeout(() => setShowRadar(false), 4000);
       }
     }, 1000);
     return () => clearInterval(timer);
@@ -413,41 +464,74 @@ const App = () => {
     return () => document.removeEventListener("mousedown", handleOutside);
   }, [isMenuOpen]);
 
-  const getStatusColor = () => seconds <= 30 ? "#39FF14" : seconds <= 120 ? "#FFD700" : "#FF003C";
-  if (!window.nexusData) return <div className="p-20 text-red-500 font-mono text-center uppercase">Critical_Error: Data_Not_Found</div>;
+  const getStatusColor = () =>
+    seconds <= 30 ? "#39FF14" : seconds <= 120 ? "#FFD700" : "#FF003C";
+  if (!window.nexusData)
+    return (
+      <div className="p-20 text-red-500 font-mono text-center uppercase">
+        Critical_Error: Data_Not_Found
+      </div>
+    );
 
-  const current = window.nexusData.dimensions[activeID] || window.nexusData.dimensions["01"];
+  const current =
+    window.nexusData.dimensions[activeID] || window.nexusData.dimensions["01"];
   const statusColor = getStatusColor();
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#050505] transition-all duration-700" style={{ borderLeft: `6px solid ${current.color}` }}>
-      
+    <div
+      className="min-h-screen flex flex-col bg-[#050505] transition-all duration-700"
+      style={{ borderLeft: `6px solid ${current.color}` }}
+    >
       {/* 🟢 HUD HEADER (NEXUS-CORE_2Mb FINAL) */}
       <div className="fixed top-0 left-0 w-full p-6 flex justify-between items-center z-50 bg-gradient-to-b from-black to-transparent">
         <div className="flex items-center gap-4">
-          <div className="brand-logo-nexus text-[#39FF14] font-mono font-black text-lg tracking-widest">NEXUS-CORE_2Mb</div>
+          <div className="brand-logo-nexus text-[#39FF14] font-mono font-black text-lg tracking-widest">
+            NEXUS-CORE_2Mb
+          </div>
           <div className="h-4 w-[1px] bg-white/20"></div>
-          <span className="text-[7px] opacity-40 font-mono uppercase text-white">Node_2Mb // Trnava_Station</span>
+          <span className="text-[7px] opacity-40 font-mono uppercase text-white">
+            Node_2Mb // Trnava_Station
+          </span>
         </div>
 
         <div className="flex items-center gap-4">
           {/* Border-Thin */}
-          <button className="hud-btn border-thin rounded-full" style={{ color: statusColor, borderColor: statusColor }}>STATUS_OK</button>
-          
+          <button
+            className="hud-btn border-thin rounded-full"
+            style={{ color: statusColor, borderColor: statusColor }}
+          >
+            STATUS_OK
+          </button>
+
           {/* Border-Medium + Click-Away Log */}
           <div className="relative" ref={logRef}>
-            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="hud-btn border-medium rounded-full" style={{ color: current.color, borderColor: current.color }}>
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="hud-btn border-medium rounded-full"
+              style={{ color: current.color, borderColor: current.color }}
+            >
               LAST_UPGRADE: {updates[0]?.date || "SYNC"}
             </button>
             {isMenuOpen && (
               <div className="absolute top-14 right-0 w-80 bg-black/95 border border-white/20 p-5 rounded-xl shadow-2xl backdrop-blur-xl animate-in fade-in zoom-in-95">
-                <h4 className="text-[#39FF14] text-[10px] font-black italic border-b border-white/10 pb-2 mb-4 uppercase tracking-widest">Update_Log_History</h4>
+                <h4 className="text-[#39FF14] text-[10px] font-black italic border-b border-white/10 pb-2 mb-4 uppercase tracking-widest">
+                  Update_Log_History
+                </h4>
                 <div className="space-y-4 max-h-80 overflow-y-auto pr-2 custom-scrollbar text-left text-white">
-                  {updates.map(upd => (
+                  {updates.map((upd) => (
                     <div key={upd.id} className="border-b border-white/5 pb-3">
-                      <div className="flex justify-between text-[6px] opacity-40 italic mb-1 uppercase"><span>#NODE_{upd.id}</span><span>{upd.date}</span></div>
-                      <div className="text-[9px] font-bold text-white uppercase tracking-tight">{upd.title}</div>
-                      {upd.desc && <div className="mt-1 text-[7px] text-white/50 leading-relaxed font-mono italic">{upd.desc}</div>}
+                      <div className="flex justify-between text-[6px] opacity-40 italic mb-1 uppercase">
+                        <span>#NODE_{upd.id}</span>
+                        <span>{upd.date}</span>
+                      </div>
+                      <div className="text-[9px] font-bold text-white uppercase tracking-tight">
+                        {upd.title}
+                      </div>
+                      {upd.desc && (
+                        <div className="mt-1 text-[7px] text-white/50 leading-relaxed font-mono italic">
+                          {upd.desc}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -461,32 +545,97 @@ const App = () => {
 
       <main className="container mx-auto px-8 pt-32 pb-32 max-w-6xl flex-grow text-white text-left">
         <header className="mb-16">
-          <div className="text-[10px] font-mono tracking-[0.4em] mb-4 opacity-40 uppercase">Protocol_{activeID} // NEXUS_FLOW</div>
-          <h1 className="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-none" style={{ color: current.color }}>{current.name}</h1>
-          <p className="mt-8 text-xl italic opacity-50 max-w-2xl leading-relaxed">"{current.quote}"</p>
+          <div className="text-[10px] font-mono tracking-[0.4em] mb-4 opacity-40 uppercase">
+            Protocol_{activeID} // NEXUS_FLOW
+          </div>
+          <h1
+            className="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-none"
+            style={{ color: current.color }}
+          >
+            {current.name}
+          </h1>
+          <p className="mt-8 text-xl italic opacity-50 max-w-2xl leading-relaxed">
+            "{current.quote}"
+          </p>
         </header>
 
         <nav className="flex flex-wrap gap-2 mb-20">
-          {Object.keys(window.nexusData.dimensions).sort((a,b)=>a-b).map((id) => (
-            <button key={id} onClick={() => { setActiveID(id); setIsUnlocked(false); }} className={`px-5 py-3 font-mono text-xs border transition-all ${activeID === id ? "scale-105" : "opacity-40 hover:opacity-100"}`} style={{ borderColor: window.nexusData.dimensions[id].color, color: activeID === id ? "#000" : window.nexusData.dimensions[id].color, backgroundColor: activeID === id ? window.nexusData.dimensions[id].color : "transparent" }}>ID_{id}</button>
-          ))}
+          {Object.keys(window.nexusData.dimensions)
+            .sort((a, b) => a - b)
+            .map((id) => (
+              <button
+                key={id}
+                onClick={() => {
+                  setActiveID(id);
+                  setIsUnlocked(false);
+                }}
+                className={`px-5 py-3 font-mono text-xs border transition-all ${activeID === id ? "scale-105" : "opacity-40 hover:opacity-100"}`}
+                style={{
+                  borderColor: window.nexusData.dimensions[id].color,
+                  color:
+                    activeID === id
+                      ? "#000"
+                      : window.nexusData.dimensions[id].color,
+                  backgroundColor:
+                    activeID === id
+                      ? window.nexusData.dimensions[id].color
+                      : "transparent",
+                }}
+              >
+                ID_{id}
+              </button>
+            ))}
         </nav>
 
         <div className="relative p-10 bg-white/[0.03] border border-white/10 backdrop-blur-md rounded-r-xl max-w-4xl shadow-2xl overflow-hidden">
-          {!isUnlocked && showRadar && <div className="absolute inset-0 pointer-events-none"><div className="radar-circle" style={{ color: current.color }}></div></div>}
-          <div className="absolute top-0 left-0 w-1.5 h-full" style={{ backgroundColor: current.color }} />
-          <DimensionWrapper id={activeID} color={current.color} proContent={current.proContent} premiumContent={current.premiumContent} isUnlocked={isUnlocked} setIsUnlocked={setIsUnlocked}>
+          {!isUnlocked && showRadar && (
+            <div className="absolute inset-0 pointer-events-none">
+              <div
+                className="radar-circle"
+                style={{ color: current.color }}
+              ></div>
+            </div>
+          )}
+          <div
+            className="absolute top-0 left-0 w-1.5 h-full"
+            style={{ backgroundColor: current.color }}
+          />
+          <DimensionWrapper
+            id={activeID}
+            color={current.color}
+            proContent={current.proContent}
+            premiumContent={current.premiumContent}
+            isUnlocked={isUnlocked}
+            setIsUnlocked={setIsUnlocked}
+          >
             {activeID === "07" ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[450px] overflow-y-auto pr-4 custom-scrollbar">
                 {(window.nexusData.skills || []).map((cert) => (
-                  <div key={cert.id} className="p-4 border border-white/5 bg-white/[0.02] rounded-lg group hover:border-[#39FF14]/30 transition-colors">
-                    <div className="text-[8px] opacity-30 font-mono uppercase mb-2">{cert.issuer} // {cert.category}</div>
-                    <div className="text-xs font-bold uppercase">{cert.name}</div>
-                    <a href={cert.path} target="_blank" className="mt-3 block text-[9px] text-cyan-500/60 hover:text-cyan-400 font-mono underline uppercase">Open_Document →</a>
+                  <div
+                    key={cert.id}
+                    className="p-4 border border-white/5 bg-white/[0.02] rounded-lg group hover:border-[#39FF14]/30 transition-colors"
+                  >
+                    <div className="text-[8px] opacity-30 font-mono uppercase mb-2">
+                      {cert.issuer} // {cert.category}
+                    </div>
+                    <div className="text-xs font-bold uppercase">
+                      {cert.name}
+                    </div>
+                    <a
+                      href={cert.path}
+                      target="_blank"
+                      className="mt-3 block text-[9px] text-cyan-500/60 hover:text-cyan-400 font-mono underline uppercase"
+                    >
+                      Open_Document →
+                    </a>
                   </div>
                 ))}
               </div>
-            ) : <p className="text-2xl md:text-4xl font-light text-white/90 uppercase leading-snug italic font-serif">{current.content}</p>}
+            ) : (
+              <p className="text-2xl md:text-4xl font-light text-white/90 uppercase leading-snug italic font-serif">
+                {current.content}
+              </p>
+            )}
           </DimensionWrapper>
         </div>
       </main>
