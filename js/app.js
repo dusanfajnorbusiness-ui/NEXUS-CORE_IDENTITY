@@ -27,7 +27,7 @@ const AccountPanel = ({ color }) => {
     if (user.subscription !== "NONE") setIsLogged(true);
   }, []);
 
-  // PROTOKOL: Zatvorenie kliknutím mimo okna
+  // PROTOKOL: Zatvorenie kliknutím mimo okna (Click-Away)
   useEffect(() => {
     const handleOutsideClick = (e) => {
       if (authRef.current && !authRef.current.contains(e.target)) setShowAuth(false);
@@ -86,11 +86,11 @@ const AccountPanel = ({ color }) => {
                  <button onClick={() => { localStorage.removeItem("nexus_operator"); window.location.reload(); }} className="text-red-500 text-[7px] underline">Logout</button>
                </div>
                <div className="space-y-4">
-                  <div className="flex flex-col gap-1 text-left">
+                  <div className="flex flex-col gap-1 text-left text-white">
                     <label className="text-[6px] opacity-40 uppercase">Identity_Mark</label>
                     <input className="bg-white/10 p-1 text-[10px] text-white focus:outline-none" value={user.name} onChange={(e) => saveToNexus({ ...user, name: e.target.value.toUpperCase() })} />
                   </div>
-                  <div className="flex flex-col gap-1 text-left">
+                  <div className="flex flex-col gap-1 text-left text-white">
                     <label className="text-[6px] opacity-40 uppercase">Tactical_Bio</label>
                     <textarea className="bg-white/5 border border-white/10 p-1 text-[8px] text-white h-12 focus:outline-none" value={user.bio} onChange={(e) => saveToNexus({ ...user, bio: e.target.value })} />
                   </div>
@@ -107,8 +107,8 @@ const AccountPanel = ({ color }) => {
 // 2. MODUL: UserAdminList
 // ==========================================
 const UserAdminList = ({ users }) => (
-  <div className="mt-10 bg-black/40 border border-white/5 p-6 rounded-lg animate-in fade-in">
-    <h3 className="text-[#39FF14] font-mono text-[10px] mb-6 tracking-[0.5em] font-black italic text-left uppercase">Registered_Operators_Database</h3>
+  <div className="mt-10 bg-black/40 border border-white/5 p-6 rounded-lg">
+    <h3 className="text-[#39FF14] font-mono text-[10px] mb-6 tracking-[0.5em] font-black italic text-left uppercase">Operator_Database</h3>
     <div className="overflow-x-auto text-left">
       <table className="w-full font-mono">
         <thead>
@@ -119,7 +119,7 @@ const UserAdminList = ({ users }) => (
             <tr key={u.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
               <td className="py-3 text-white/40 italic">#NEX_{u.id}</td><td className="py-3 font-bold">{u.name}</td>
               <td className="py-3"><span className={`px-2 py-0.5 rounded text-[8px] font-black ${u.tier === "ARCHITECT" ? "bg-purple-500/20 text-purple-400 border border-purple-500/50" : u.tier === "PREMIUM" ? "bg-[#39FF14]/20 text-[#39FF14] border border-[#39FF14]/50" : "bg-white/10 text-white/50 border border-white/10"}`}>{u.tier}</span></td>
-              <td className="py-3 text-[#39FF14] animate-pulse uppercase italic">In_Field</td>
+              <td className="py-3 text-[#39FF14] animate-pulse uppercase italic text-[8px]">In_Field</td>
             </tr>
           ))}
         </tbody>
@@ -145,17 +145,17 @@ const DimensionWrapper = ({ id, color, children, proContent, premiumContent, isU
   return (
     <div className="space-y-6 relative">
       <div className="absolute -inset-2 opacity-10 pointer-events-none blur-xl transition-all" style={{ backgroundColor: color }}></div>
-      <div className="text-left animate-in fade-in duration-700 relative z-10">
+      <div className="text-left relative z-10">
         <div className="text-[7px] opacity-30 font-mono mb-2 tracking-widest uppercase flex items-center gap-2"><span className="w-1 h-1 rounded-full bg-[#39FF14] animate-pulse"></span> [ Free_Node_Active ]</div>
         <div className="relative z-10 border-l border-white/5 pl-4">{children}</div>
       </div>
       {!isUnlocked ? (
-        <div className="mt-10 p-6 border border-white/5 bg-black/60 rounded-xl space-y-4 shadow-2xl relative overflow-hidden group">
+        <div className="mt-10 p-6 border border-white/5 bg-black/60 rounded-xl space-y-4 shadow-2xl relative overflow-hidden">
           <input type="password" placeholder="ENTER ACCESS_KEY..." value={keyInput} onChange={(e) => setKeyInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleVerify()} className="bg-transparent border-b border-white/10 text-center text-[10px] w-full focus:outline-none focus:border-white/40 transition-all font-mono tracking-[0.2em] text-white py-2 relative z-10" />
           <button onClick={handleVerify} className="w-full py-2 text-[9px] font-black uppercase shadow-lg transition-transform active:scale-95" style={{ backgroundColor: color, color: "#000" }}>Unlock Protocol</button>
         </div>
       ) : (
-        <div className="space-y-6 animate-in slide-in-from-top-4 duration-700 relative z-10 text-left">
+        <div className="space-y-6 relative z-10 text-left">
           {(accessLevel === "PRO" || accessLevel === "PREMIUM") && <div className="pt-8 border-t border-white/10"><div className="text-[7px] text-[#FFD700] mb-4 font-mono tracking-widest uppercase">[ Pro_Unlocked ]</div><div className="pro-content-area text-white/80" dangerouslySetInnerHTML={{ __html: proContent }} /></div>}
           {accessLevel === "PREMIUM" && <div className="pt-8 border-t-2 border-cyan-500/30 bg-cyan-500/5 p-4 rounded-lg"><div className="text-[7px] text-cyan-400 mb-4 font-mono tracking-widest uppercase">[ Premium_Unlocked ]</div><div className="premium-content-area mb-8 text-white/90" dangerouslySetInnerHTML={{ __html: premiumContent || "VAULT_READY..." }} />{window.nexusData.users && <UserAdminList users={window.nexusData.users} />}</div>}
         </div>
@@ -197,7 +197,7 @@ const App = () => {
       .then(res => res.json())
       .then(data => {
         setUpdates(data.slice(0, 10).map(c => ({ id: c.sha.substring(0,7), date: new Date(c.commit.author.date).toLocaleDateString(), title: c.commit.message.split("\n")[0] })));
-      });
+      }).catch(err => console.error(err));
 
     const timer = setInterval(() => {
       const diff = Math.floor((new Date() - loadTime) / 1000);
@@ -210,15 +210,17 @@ const App = () => {
     return () => clearInterval(timer);
   }, [loadTime, isUnlocked, sonarPing]);
 
-  // Click-Away pre Update Log
+  // Click-Away pre Log Menu
   useEffect(() => {
     const handleOutside = (e) => { if (logRef.current && !logRef.current.contains(e.target)) setIsMenuOpen(false); };
     document.addEventListener("mousedown", handleOutside);
     return () => document.removeEventListener("mousedown", handleOutside);
   }, []);
 
+  if (!window.nexusData) return <div className="p-20 text-red-500 font-mono text-center uppercase">Critical_Error: Data_Not_Found</div>;
+
   const current = window.nexusData.dimensions[activeID] || window.nexusData.dimensions["01"];
-  const statusColor = seconds <= 30 ? "#39FF14" : seconds <= 120 ? "#8B4513" : "#FF003C";
+  const statusColor = seconds <= 30 ? "#39FF14" : seconds <= 120 ? "#FFD700" : "#FF003C";
 
   return (
     <div className="min-h-screen flex flex-col bg-[#050505] transition-all" style={{ borderLeft: `6px solid ${current.color}` }}>
@@ -232,10 +234,8 @@ const App = () => {
         </div>
 
         <div className="flex items-center gap-4">
-          {/* Border-Thin */}
           <button className="hud-btn border-thin rounded-full" style={{ color: statusColor }}>STATUS_OK</button>
           
-          {/* Border-Medium + Click-Away Log */}
           <div className="relative" ref={logRef}>
             <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="hud-btn border-medium rounded-full" style={{ color: current.color }}>
               LAST_UPGRADE: {updates[0]?.date || "SYNC"}
@@ -255,18 +255,46 @@ const App = () => {
             )}
           </div>
 
-          {/* Border-Thick (AccountPanel) */}
           <AccountPanel color={current.color} />
         </div>
       </div>
 
-      <main className="container mx-auto px-8 pt-32 max-w-6xl flex-grow text-left">
-          {/* ... (Ponechaj zvyšok Main sekcie tak ako bol) ... */}
+      <main className="container mx-auto px-8 pt-32 pb-32 max-w-6xl flex-grow text-white text-left">
+        <header className="mb-16">
+          <div className="text-[10px] font-mono tracking-[0.4em] mb-4 opacity-40 uppercase">Protocol_{activeID} // NEXUS_FLOW</div>
+          <h1 className="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-none" style={{ color: current.color }}>{current.name}</h1>
+          <p className="mt-8 text-xl italic opacity-50 max-w-2xl leading-relaxed">"{current.quote}"</p>
+        </header>
+
+        <nav className="flex flex-wrap gap-2 mb-20">
+          {Object.keys(window.nexusData.dimensions).sort((a,b)=>a-b).map((id) => (
+            <button key={id} onClick={() => { setActiveID(id); setIsUnlocked(false); }} className={`px-5 py-3 font-mono text-xs border transition-all ${activeID === id ? "scale-105" : "opacity-40 hover:opacity-100"}`} style={{ borderColor: window.nexusData.dimensions[id].color, color: activeID === id ? "#000" : window.nexusData.dimensions[id].color, backgroundColor: activeID === id ? window.nexusData.dimensions[id].color : "transparent" }}>ID_{id}</button>
+          ))}
+        </nav>
+
+        <div className="relative p-10 bg-white/[0.03] border border-white/10 backdrop-blur-md rounded-r-xl max-w-4xl shadow-2xl overflow-hidden">
+          {!isUnlocked && showRadar && <div className="absolute inset-0 pointer-events-none"><div className="radar-circle" style={{ color: current.color }}></div></div>}
+          <div className="absolute top-0 left-0 w-1.5 h-full" style={{ backgroundColor: current.color }} />
+          <DimensionWrapper id={activeID} color={current.color} proContent={current.proContent} premiumContent={current.premiumContent} isUnlocked={isUnlocked} setIsUnlocked={setIsUnlocked}>
+            {activeID === "07" ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[450px] overflow-y-auto pr-4 custom-scrollbar">
+                {(window.nexusData.skills || []).map((cert) => (
+                  <div key={cert.id} className="p-4 border border-white/5 bg-white/[0.02] rounded-lg group hover:border-[#39FF14]/30 transition-colors">
+                    <div className="text-[8px] opacity-30 font-mono uppercase mb-2">{cert.issuer} // {cert.category}</div>
+                    <div className="text-xs font-bold uppercase">{cert.name}</div>
+                    <a href={cert.path} target="_blank" className="mt-3 block text-[9px] text-cyan-500/60 hover:text-cyan-400 font-mono underline uppercase">Open_Document →</a>
+                  </div>
+                ))}
+              </div>
+            ) : <p className="text-2xl md:text-4xl font-light text-white/90 uppercase leading-snug italic font-serif">{current.content}</p>}
+          </DimensionWrapper>
+        </div>
       </main>
 
       <Footer />
     </div>
   );
 };
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<App />);
