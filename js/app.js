@@ -1,5 +1,5 @@
 // ==========================================
-// 0. FIREBASE & INIT (Základové dosky)
+// 0. FIREBASE & INIT (v5.8-Full Recovery)
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyAZ63dB9Rc5zX-qabOCC0LSErQnwzr9eaE",
@@ -65,7 +65,7 @@ const AccountPanel = ({ color }) => {
           <button onClick={() => setShowAuth(!showAuth)} className="hud-btn border-thick" style={{ borderColor: color, color: color }}>INITIATE_SESSION</button>
           {showAuth && (
             <div className="absolute top-14 right-0 w-80 bg-black/95 border border-white/20 p-6 z-[100] rounded-xl backdrop-blur-xl shadow-2xl">
-              <h4 className="text-[#39FF14] text-[10px] mb-4 font-black border-b border-white/10 pb-2">New_Operator_Auth</h4>
+              <h4 className="text-[#39FF14] text-[10px] mb-4 font-black border-b border-white/10 pb-2">Auth_Protokol</h4>
               <div className="space-y-3">
                 <button onClick={() => handleAuth("FREE")} className="w-full p-2 bg-white/5 border border-white/10 text-[8px] flex justify-between uppercase hover:bg-white/10"><span>FREE_TIER</span><span>0€</span></button>
                 <button onClick={() => handleAuth("PRO")} className="w-full p-2 bg-blue-500/10 border border-blue-500/30 text-[8px] text-blue-400 flex justify-between uppercase hover:bg-blue-500/20"><span>PRO_TIER</span><span>🔑 KEY</span></button>
@@ -81,8 +81,8 @@ const AccountPanel = ({ color }) => {
             <div className="w-8 h-8 rounded-full border-2 overflow-hidden bg-white/5" style={{ borderColor: color }}>
               {user.avatar ? <img src={user.avatar} className="w-full h-full object-cover" /> : <span className="text-[10px] flex items-center justify-center h-full">{user.name.substring(0, 2)}</span>}
             </div>
-            <div className="flex flex-col items-start leading-none text-left">
-              <span className="text-[9px] font-black text-white">{user.name}</span>
+            <div className="flex flex-col items-start leading-none text-left text-white">
+              <span className="text-[9px] font-black">{user.name}</span>
               <span className="text-[6px]" style={{ color }}>{user.tier} ACCESS</span>
             </div>
           </button>
@@ -93,8 +93,8 @@ const AccountPanel = ({ color }) => {
                    <button onClick={() => { localStorage.removeItem("nexus_operator"); window.location.reload(); }} className="text-red-500 text-[7px] underline">Logout</button>
                 </div>
                 <div className="space-y-4">
-                   <div className="flex flex-col text-left"><label className="text-[6px] opacity-40 uppercase">Identity_Mark</label><input className="bg-white/10 p-2 text-[10px] text-white focus:outline-none" value={user.name} onChange={(e) => saveToNexus({ ...user, name: e.target.value.toUpperCase() })} /></div>
-                   <div className="flex flex-col text-left"><label className="text-[6px] opacity-40 uppercase">Tactical_Bio</label><textarea className="bg-white/5 border border-white/10 p-2 text-[8px] text-white h-12 focus:outline-none" value={user.bio} onChange={(e) => saveToNexus({ ...user, bio: e.target.value })} /></div>
+                   <div className="flex flex-col text-left"><label className="text-[6px] opacity-40 uppercase text-white">Identity_Mark</label><input className="bg-white/10 p-2 text-[10px] text-white focus:outline-none" value={user.name} onChange={(e) => saveToNexus({ ...user, name: e.target.value.toUpperCase() })} /></div>
+                   <div className="flex flex-col text-left"><label className="text-[6px] opacity-40 uppercase text-white">Tactical_Bio</label><textarea className="bg-white/5 border border-white/10 p-2 text-[8px] text-white h-12 focus:outline-none" value={user.bio} onChange={(e) => saveToNexus({ ...user, bio: e.target.value })} /></div>
                 </div>
                 <button onClick={() => setIsEditing(false)} className="w-full mt-4 p-2 bg-[#39FF14]/20 border border-[#39FF14]/50 text-[#39FF14] text-[8px] font-black uppercase">Sync_to_Core</button>
              </div>
@@ -136,12 +136,12 @@ const DimensionWrapper = ({ id, color, children, proContent, premiumContent, isU
       {!isUnlocked ? (
         <div className="mt-10 p-6 border border-white/5 bg-black/60 rounded-xl space-y-4 shadow-2xl">
           <input type="password" placeholder="ENTER ACCESS_KEY..." value={keyInput} onChange={(e) => setKeyInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleVerify()} className="bg-transparent border-b border-white/10 text-center text-[10px] w-full text-white py-2 focus:outline-none" />
-          <button onClick={handleVerify} className="w-full py-2 text-[9px] font-black uppercase" style={{ backgroundColor: color, color: "#000" }}>Unlock Protocol</button>
+          <button onClick={handleVerify} className="w-full py-2 text-[9px] font-black uppercase shadow-lg transition-transform active:scale-95" style={{ backgroundColor: color, color: "#000" }}>Unlock Protocol</button>
         </div>
       ) : (
         <div className="animate-in slide-in-from-top-4 space-y-8 text-left text-white">
-           {(accessLevel === "PRO" || accessLevel === "PREMIUM") && <div className="pt-8 border-t border-white/10" dangerouslySetInnerHTML={{ __html: proContent }} />}
-           {accessLevel === "PREMIUM" && <div className="pt-8 border-t-2 border-cyan-500/30 bg-cyan-500/5 p-4 rounded-lg" dangerouslySetInnerHTML={{ __html: premiumContent }} />}
+           {(accessLevel === "PRO" || accessLevel === "PREMIUM") && <div className="pt-8 border-t border-white/10 pro-content-area" dangerouslySetInnerHTML={{ __html: proContent }} />}
+           {accessLevel === "PREMIUM" && <div className="pt-8 border-t-2 border-cyan-500/30 bg-cyan-500/5 p-4 rounded-lg premium-content-area" dangerouslySetInnerHTML={{ __html: premiumContent }} />}
            {accessLevel === "PREMIUM" && window.nexusData.users && <UserAdminList users={window.nexusData.users} />}
         </div>
       )}
@@ -190,7 +190,7 @@ const App = () => {
     return () => document.removeEventListener("mousedown", handleOutside);
   }, [isMenuOpen]);
 
-  if (!window.nexusData) return <div className="p-20 text-red-500 font-mono text-center uppercase">Critical_Error: Data_Not_Found</div>;
+  if (!window.nexusData) return <div className="p-20 text-red-500 font-mono text-center uppercase text-white">Critical_Error: Data_Not_Found</div>;
   const current = window.nexusData.dimensions[activeID] || window.nexusData.dimensions["01"];
   const statusColor = seconds <= 30 ? "#39FF14" : seconds <= 120 ? "#FFD700" : "#FF003C";
 
@@ -221,7 +221,7 @@ const App = () => {
                 <div className="space-y-4 max-h-80 overflow-y-auto pr-2 custom-scrollbar text-left text-white font-mono">
                   {updates.map(upd => (
                     <div key={upd.id} className="border-b border-white/5 pb-3">
-                      <div className="flex justify-between text-[6px] opacity-40 italic uppercase"><span>#UZOL_{upd.id}</span><span>{upd.date}</span></div>
+                      <div className="flex justify-between text-[6px] opacity-40 italic uppercase text-white"><span>#NODE_{upd.id}</span><span>{upd.date}</span></div>
                       <div className="text-[9px] font-bold text-white uppercase tracking-tight">{upd.title}</div>
                       {upd.desc && <div className="mt-1 text-[7px] text-white/50 leading-relaxed italic">{upd.desc}</div>}
                     </div>
@@ -238,24 +238,25 @@ const App = () => {
         <header className="mb-16">
           <div className="text-[10px] font-mono tracking-[0.4em] mb-4 opacity-40 uppercase font-black">Protocol_{activeID} // NEXUS_FLOW</div>
           <h1 className="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-none" style={{ color: current.color }}>{current.name}</h1>
-          <p className="mt-8 text-xl italic opacity-50 max-w-2xl leading-relaxed">"{current.quote}"</p>
+          <p className="mt-8 text-xl italic opacity-50 max-w-2xl leading-relaxed text-white">"{current.quote}"</p>
         </header>
 
-        <nav className="grid grid-cols-6 md:grid-cols-11 gap-2 mb-20">
+        {/* 🚀 OPRAVENÁ NAVIGÁCIA (GRID) */}
+        <nav className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-11 gap-2 mb-20">
           {Object.keys(window.nexusData.dimensions).sort((a,b)=>a-b).map((id) => (
             <button key={id} onClick={() => { setActiveID(id); setIsUnlocked(false); }} className={`p-3 font-mono text-[9px] border transition-all ${activeID === id ? "scale-105" : "opacity-40 hover:opacity-100"}`} style={{ borderColor: window.nexusData.dimensions[id].color, color: activeID === id ? "#000" : window.nexusData.dimensions[id].color, backgroundColor: activeID === id ? window.nexusData.dimensions[id].color : "transparent" }}>ID_{id}</button>
           ))}
         </nav>
 
-        <div className="relative p-10 bg-white/[0.03] border border-white/10 backdrop-blur-md rounded-xl max-w-4xl shadow-2xl overflow-hidden">
+        <div className="relative p-10 bg-white/[0.03] border border-white/10 backdrop-blur-md rounded-xl max-w-4xl shadow-2xl overflow-hidden text-white">
           <div className="absolute top-0 left-0 w-1.5 h-full" style={{ backgroundColor: current.color }} />
           <DimensionWrapper id={activeID} color={current.color} proContent={current.proContent} premiumContent={current.premiumContent} isUnlocked={isUnlocked} setIsUnlocked={setIsUnlocked}>
             {activeID === "07" ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[450px] overflow-y-auto pr-4 custom-scrollbar">
                 {(window.nexusData.skills || []).map((cert) => (
                   <div key={cert.id} className="p-4 border border-white/5 bg-white/[0.02] rounded-lg group hover:border-[#39FF14]/30 transition-colors">
-                    <div className="text-[8px] opacity-30 font-mono uppercase mb-2">{cert.issuer}</div>
-                    <div className="text-xs font-bold uppercase">{cert.name}</div>
+                    <div className="text-[8px] opacity-30 font-mono uppercase mb-2 text-white">{cert.issuer} // {cert.category}</div>
+                    <div className="text-xs font-bold uppercase text-white">{cert.name}</div>
                     <a href={cert.path} target="_blank" className="mt-3 block text-[9px] text-cyan-500/60 hover:text-cyan-400 font-mono underline uppercase">Open_Document →</a>
                   </div>
                 ))}
