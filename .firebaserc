@@ -1,5 +1,21 @@
 {
   "projects": {
     "default": "nexus-core-2mb"
-  }
+  },
+  "targets": {
+    "nexus-core-2mb": {
+      "hosting": {
+        "home-site": [
+          "nexus-core-2mb"
+        ],
+        "identity-site": [
+          "nexus-core-identity"
+        ],
+        "genesis-site": [
+          "nexus-os-genesis-edition"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

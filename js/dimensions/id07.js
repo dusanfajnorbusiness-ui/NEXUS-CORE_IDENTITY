@@ -2,12 +2,11 @@
 window.id07Data = {
   proContent: `
     <div class="space-y-6 font-mono text-left animate-in fade-in duration-700 text-white/90 px-1">
-      
       <div class="p-4 border-l-2 border-[#8A2BE2] bg-[#8A2BE2]/5 rounded-r">
         <h3 class="text-[#8A2BE2] font-black uppercase tracking-wider text-xs">[ SKILL_TREE_v5.1 // ARCHITECT_STATUS ]</h3>
-        <p class="text-[8px] opacity-60 mt-1 uppercase italic underline decoration-[#8A2BE2]/30 italic">Expertízna matica: IT, Design, Management & Development</p>
+        <p class="text-[8px] opacity-60 mt-1 uppercase italic underline decoration-[#8A2BE2]/30">Expertízna matica: IT, Design, Management & Development</p>
       </div>
-
+      
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="p-4 border border-white/10 bg-black/40 rounded-lg group hover:border-[#8A2BE2]/50 transition-colors">
           <div class="flex justify-between items-center mb-3">
@@ -33,21 +32,32 @@ window.id07Data = {
           </div>
         </div>
       </div>
-
-      <div class="p-3 border border-white/5 rounded text-center opacity-30 italic">
-        <p class="text-[8px] uppercase tracking-[0.3em]">Skill is a weapon. Expertise is the ammo.</p>
-      </div>
-
     </div>
   `,
-  premiumContent: `
-    <div class="p-6 bg-[#8A2BE2]/10 border-2 border-[#8A2BE2] rounded-xl shadow-[0_0_25px_rgba(138,43,226,0.2)] relative overflow-hidden animate-in zoom-in-95 duration-700 text-center">
-      <div class="absolute top-0 right-0 bg-[#8A2BE2] text-black text-[8px] px-4 font-black py-1 uppercase tracking-widest">Mastery_Vault</div>
-      <h4 class="text-[#8A2BE2] font-black text-[12px] uppercase mb-3 italic tracking-tighter">!! ARCHITECT_PORTFOLIO_DUMP !!</h4>
-      <p class="text-[9px] font-mono leading-relaxed text-white/90 italic mb-4">
-        Priamy prístup k digitálnemu archívu certifikátov a zdrojových kódov kľúčových projektov.
-      </p>
-      <div class="px-6 py-1.5 bg-[#8A2BE2] text-black text-[9px] uppercase font-black inline-block cursor-pointer hover:scale-105 transition-transform">Verify_Access_Key</div>
-    </div>
-  `
+
+  // Funkcia, ktorá dynamicky vráti Premium Content aj s PDF linkami
+  getPremiumContent: function() {
+    const skills = window.nexusData.skills;
+    const certList = skills.map(skill => `
+      <a href="${skill.path}" target="_blank" class="flex justify-between items-center p-2 border-b border-white/5 hover:bg-[#8A2BE2]/20 transition-all group">
+        <span class="text-[8px] uppercase tracking-tighter text-white/70">${skill.name}</span>
+        <span class="text-[7px] text-[#8A2BE2] font-black opacity-0 group-hover:opacity-100">OPEN_PDF_</span>
+      </a>
+    `).join('');
+
+    return `
+      <div class="p-6 bg-[#8A2BE2]/10 border-2 border-[#8A2BE2] rounded-xl shadow-[0_0_25px_rgba(138,43,226,0.2)] relative overflow-hidden animate-in zoom-in-95 duration-700">
+        <div class="absolute top-0 right-0 bg-[#8A2BE2] text-black text-[8px] px-4 font-black py-1 uppercase tracking-widest">Mastery_Vault</div>
+        <h4 class="text-[#8A2BE2] font-black text-[12px] uppercase mb-3 italic text-center tracking-tighter">!! ARCHITECT_PORTFOLIO_DUMP !!</h4>
+        
+        <div class="max-h-60 overflow-y-auto custom-scrollbar mb-4">
+          ${certList}
+        </div>
+
+        <div class="text-center">
+          <div class="px-6 py-1.5 bg-[#8A2BE2] text-black text-[9px] uppercase font-black inline-block cursor-pointer hover:scale-105 transition-transform">Verify_Access_Key</div>
+        </div>
+      </div>
+    `;
+  }
 };
