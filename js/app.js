@@ -336,20 +336,26 @@ const App = () => {
       className="min-h-screen flex flex-col bg-[#050505] font-mono text-white transition-all duration-700"
       style={{ borderLeft: `6px solid ${current.color}` }}
     >
-      {/* HEADER HUD - FIXED ALIGNMENT */}
-      <div className="fixed top-0 left-0 w-full p-4 md:p-6 flex justify-between items-center z-50 bg-black/80 backdrop-blur-md border-b border-white/5">
-        <div
-          className="text-lg md:text-2xl font-black tracking-widest uppercase italic"
-          style={{ color: current.color }}
-        >
-          NEXUS CORE <span className="text-white">IDENTITY </span>
-          <span className="text-[10px] opacity-50">
-            Jadro Identity v Nexuse
+      {/* HEADER HUD - FIXED & RESPONSIVE */}
+      <div className="fixed top-0 left-0 w-full p-4 md:p-6 flex flex-wrap justify-between items-center z-50 bg-black/80 backdrop-blur-md border-b border-white/5 min-h-[80px]">
+        <div className="flex flex-col md:flex-row md:items-baseline gap-1 md:gap-3">
+          <div
+            className="text-lg md:text-2xl font-black tracking-widest uppercase italic whitespace-nowrap"
+            style={{ color: current.color }}
+          >
+            NEXUS CORE <span className="text-white">IDENTITY</span>
+          </div>
+
+          {/* TVOJ TAG - Teraz sa zalomí pod názov na mobile, aby nezmizol */}
+          <span
+            className="text-[10px] opacity-50 font-mono lowercase tracking-tighter truncate max-w-[200px] md:max-w-none"
+            style={{ color: current.color }}
+          >
+            {current.tag}
           </span>
         </div>
 
-        {/* ZAROVNANÁ PRAVÁ STRANA HEADERU */}
-        <div className="flex items-center gap-3 md:gap-6">
+        <div className="flex items-center gap-2 md:gap-4 mt-2 md:mt-0">
           <OperatorMonitor color={current.color} />
 
           <div className="relative h-[32px]" ref={logRef}>
