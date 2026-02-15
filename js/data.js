@@ -149,8 +149,8 @@ window.nexusData = {
   // Dimenzie a obsah (v5.3)
   dimensions: {
     "01": {
-      name: "| identity",
-      tag: "| ID [eGo - superEgo] / Personal [UI SPACE]",
+      name: "|identity",
+      tag: "|ID [eGo - superEgo] / Personal [UI SPACE]",
       color: "#39FF14",
       quote: "Keď som, tak som, viem, že som.",
       content: "Jadro, autenticita, 'Keď som, tak som.'",
@@ -161,7 +161,7 @@ window.nexusData = {
     // --- START GRADIENT BLOCK ---
     "02": {
       name: "|workFlow-leader",
-      tag: "| Líder [Pracovného Toku] / Work [UI SPACE]",
+      tag: "|Líder [Pracovného Toku] / Work [UI SPACE]",
       color: "#FFEB3B",
       quote: "Efektivita v prítomnosti.",
       content: "Operatíva, výkon, denné úlohy.",
@@ -169,8 +169,8 @@ window.nexusData = {
       premiumContent: window.id02Data?.premiumContent || "OFFLINE",
     },
     "03": {
-      name: "| cash-engine",
-      tag: "| Motor [Peňažného Toku] / Finance [UI SPACE]",
+      name: "|cash-engine",
+      tag: "|Motor [Peňažného Toku] / Finance [UI SPACE]",
       color: "#FFD700",
       quote: "Peniaze sú palivo slobody.",
       content: "Správa toku peňazí a dlhov.",
@@ -178,18 +178,18 @@ window.nexusData = {
       premiumContent: window.id03Data?.premiumContent || "OFFLINE",
     },
     "04": {
-      name: "| revenue-architect",
+      name: "|revenue-architect",
       color: "#FFAA00",
-      tag: "| Architekt [Zisku] / Business [UI SPACE]",
+      tag: "|Architekt [Zisku] / Business [UI SPACE]",
       quote: "Projektovanie zisku.",
       content: "Budovanie systémov a predaj Access Key.",
       proContent: window.id04Data?.proContent || "OFFLINE",
       premiumContent: window.id04Data?.premiumContent || "OFFLINE",
     },
     "05": {
-      name: "| asset-matrix",
+      name: "|asset-matrix",
       color: "#FF8C00",
-      tag: "| Matica [Aktív] / Investment [UI SPACE]",
+      tag: "|Matica [Aktív] / Investment [UI SPACE]",
       quote: "Tichý rast hodnôt.",
       content: "Dlhodobá stratégia a 'Kiyosaki mindset'.",
       proContent: window.id05Data?.proContent || "OFFLINE",
@@ -198,8 +198,8 @@ window.nexusData = {
     // --- END GRADIENT BLOCK ---
 
     "06": {
-      name: "| data-absorber",
-      tag: "| Absorbér [Vedomostí] / Study [UI SPACE]",
+      name: "|data-absorber",
+      tag: "|Absorbér [Vedomostí] / Study [UI SPACE]",
       color: "#BF00FF",
       quote: "Nasávanie vedomostí ako procesor.",
       content: "Spracovanie 38 certifikátov a vedomostí.",
@@ -208,7 +208,7 @@ window.nexusData = {
     },
     "07": {
       name: "|skill-tree",
-      tag: "| Strom [Schopností] / Professional [UI SPACE]",
+      tag: "|Strom [Schopností] / Professional [UI SPACE]",
       color: "#8A2BE2",
       quote: "Vetvenie schopností.",
       content: "Kariérny status a Skill Tree (HTML/CSS).",
@@ -216,8 +216,8 @@ window.nexusData = {
       premiumContent: window.id07Data?.premiumContent || "OFFLINE",
     },
     "08": {
-      name: "| empty-book",
-      tag: "| Prázdná kniha [Neznáma] / Reader [UI SPACE]",
+      name: "|empty-book",
+      tag: "|Prázdná kniha [Neznáma] / Reader [UI SPACE]",
       color: "#00FFFF",
       quote: "Čistá strana pre tvorbu.",
       content: "Absorpcia informácií, 'Prijímací režim'.",
@@ -226,7 +226,7 @@ window.nexusData = {
     },
     "09": {
       name: "|sergeant-core",
-      tag: "| Jadro [Seržanta] / Player [UI SPACE]",
+      tag: "|Jadro [Seržanta] / Player [UI SPACE]",
       color: "#FF003C",
       quote: "Disciplína v akcii.",
       content: "CoD Zombies, YouTube, Akcia.",
@@ -234,8 +234,8 @@ window.nexusData = {
       premiumContent: window.id09Data?.premiumContent || "OFFLINE",
     },
     10: {
-      name: "| non-identity",
-      tag: "| Nikto a Nič [alterEgo - Bytie - neBytie] / Home [UI SPACE]",
+      name: "|non-identity",
+      tag: "|Nikto a Nič [alterEgo - Bytie - neBytie] / Home [UI SPACE]",
       color: "#0044FF",
       quote: "Boh je Ticho.",
       content: "Ticho, Boh, Reset, Rodina, Základňa.",
@@ -243,8 +243,8 @@ window.nexusData = {
       premiumContent: window.id10Data?.premiumContent || "OFFLINE",
     },
     11: {
-      name: "| the-recovery",
-      tag: "| Obnova [Záchrana] / Recovery [UI SPACE]",
+      name: "|the-recovery",
+      tag: "|Obnova [Záchrana] / Recovery [UI SPACE]",
       color: "#FFBF00",
       quote: "Cesta von z Matrixu.",
       content: "Manifest Architekta. Ako von zo schizofrénie a insomnie.",
