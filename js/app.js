@@ -343,7 +343,9 @@ const App = () => {
           style={{ color: current.color }}
         >
           NEXUS CORE <span className="text-white">IDENTITY </span>
-          <span className="text-[10px] opacity-50">Jadro Identity Nexusu</span>
+          <span className="text-[10px] opacity-50">
+            Jadro Identity v Nexuse
+          </span>
         </div>
 
         {/* ZAROVNANÁ PRAVÁ STRANA HEADERU */}
@@ -399,6 +401,10 @@ const App = () => {
             style={{ color: current.color }}
           >
             {current.name}
+            {/* Pridaný tag: 10px, 50% opacity, lowercase */}
+            <span className="text-[10px] opacity-50 lowercase font-mono ml-2 tracking-normal">
+              {current.tag}
+            </span>
           </h1>
           <p className="mt-8 text-2xl md:text-4xl italic opacity-60 leading-relaxed font-serif">
             "{current.quote}"

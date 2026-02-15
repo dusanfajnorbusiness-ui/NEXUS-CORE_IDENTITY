@@ -150,7 +150,7 @@ window.nexusData = {
   dimensions: {
     "01": {
       name: "identity",
-      tag: "| ID [eGo - superEgo]",
+      tag: "| ID [eGo - superEgo] / Personal [UI SPACE]",
       color: "#39FF14",
       quote: "Keď som, tak som, viem, že som.",
       content: "Jadro, autenticita, 'Keď som, tak som.'",
@@ -161,6 +161,7 @@ window.nexusData = {
     // --- START GRADIENT BLOCK ---
     "02": {
       name: "workFlow-leader",
+      tag: "| Líder [Pracovného Toku] / Work [UI SPACE]",
       color: "#FFEB3B",
       quote: "Efektivita v prítomnosti.",
       content: "Operatíva, výkon, denné úlohy.",
@@ -169,6 +170,7 @@ window.nexusData = {
     },
     "03": {
       name: "cash-engine",
+      tag: "| Motor [Peňažného Toku] / Finance [UI SPACE]",
       color: "#FFD700",
       quote: "Peniaze sú palivo slobody.",
       content: "Správa toku peňazí a dlhov.",
@@ -178,6 +180,7 @@ window.nexusData = {
     "04": {
       name: "revenue-architect",
       color: "#FFAA00",
+      tag: "| Architekt [Zisku] / Business [UI SPACE]",
       quote: "Projektovanie zisku.",
       content: "Budovanie systémov a predaj Access Key.",
       proContent: window.id04Data?.proContent || "OFFLINE",
@@ -186,6 +189,7 @@ window.nexusData = {
     "05": {
       name: "asset-matrix",
       color: "#FF8C00",
+      tag: "| Matica [Aktív] / Investment [UI SPACE]",
       quote: "Tichý rast hodnôt.",
       content: "Dlhodobá stratégia a 'Kiyosaki mindset'.",
       proContent: window.id05Data?.proContent || "OFFLINE",
@@ -195,6 +199,7 @@ window.nexusData = {
 
     "06": {
       name: "data-absorber",
+      tag: "| Absorbér [Vedomostí] / Study [UI SPACE]",
       color: "#BF00FF",
       quote: "Nasávanie vedomostí ako procesor.",
       content: "Spracovanie 38 certifikátov a vedomostí.",
@@ -203,6 +208,7 @@ window.nexusData = {
     },
     "07": {
       name: "skill-tree",
+      tag: "| Strom [Schopností] / Professional [UI SPACE]",
       color: "#8A2BE2",
       quote: "Vetvenie schopností.",
       content: "Kariérny status a Skill Tree (HTML/CSS).",
@@ -211,6 +217,7 @@ window.nexusData = {
     },
     "08": {
       name: "empty-book",
+      tag: "| Prázdná kniha [Neznáma] / Reader [UI SPACE]",
       color: "#00FFFF",
       quote: "Čistá strana pre tvorbu.",
       content: "Absorpcia informácií, 'Prijímací režim'.",
@@ -219,6 +226,7 @@ window.nexusData = {
     },
     "09": {
       name: "sergeant-core",
+      tag: "| Jadro [Seržanta] / Player [UI SPACE]",
       color: "#FF003C",
       quote: "Disciplína v akcii.",
       content: "CoD Zombies, YouTube, Akcia.",
@@ -227,6 +235,7 @@ window.nexusData = {
     },
     10: {
       name: "non-identity",
+      tag: "| Nikto a Nič [alterEgo - Bytie - neBytie] / Home [UI SPACE]",
       color: "#0044FF",
       quote: "Boh je Ticho.",
       content: "Ticho, Boh, Reset, Rodina, Základňa.",
@@ -235,6 +244,7 @@ window.nexusData = {
     },
     11: {
       name: "the-recovery",
+      tag: "| Obnova [Záchrana] / Recovery [UI SPACE]",
       color: "#FFBF00",
       quote: "Cesta von z Matrixu.",
       content: "Manifest Architekta. Ako von zo schizofrénie a insomnie.",
@@ -251,9 +261,10 @@ window.nexusData = {
   },
   // Užívateľské údaje a systémové nastavenia (v5.3)
   users: [
-    { id: "001", name: "D. FAJNOR", tier: "ARCHITECT", status: "ONLINE" },
-    { id: "102", name: "SERGEANT_X", tier: "PREMIUM", status: "OFFLINE" },
-    { id: "205", name: "GUEST_USER", tier: "FREE", status: "ONLINE" },
+    { id: "001", name: "NEXUS-CORE_2Mb", tier: "ARCHITECT", status: "ONLINE" },
+    { id: "102", name: "PREMIUM USER", tier: "PREMIUM", status: "OFFLINE" },
+    { id: "205", name: "PRO USER", tier: "PRO", status: "ONLINE" },
+    { id: "305", name: "GUEST_USER", tier: "FREE", status: "ONLINE" },
   ],
   // Systémové nastavenia a ciele (v5.3)
   system_config: {
