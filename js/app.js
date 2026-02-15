@@ -338,16 +338,17 @@ const App = () => {
     >
       {/* HEADER HUD - FIXED & RESPONSIVE */}
       <div className="fixed top-0 left-0 w-full p-4 md:p-6 flex flex-wrap justify-between items-center z-50 bg-black/80 backdrop-blur-md border-b border-white/5 min-h-[80px]">
-        <div className="flex flex-col md:flex-row md:items-baseline gap-1 md:gap-3 max-w-[60%]">
+        {/* Vymeň začiatok Headera za toto */}
+        <div className="flex flex-col md:flex-row md:items-baseline gap-1 md:gap-3 max-w-[70%]">
           <div
             className="text-lg md:text-2xl font-black tracking-widest uppercase italic whitespace-nowrap"
             style={{ color: current.color }}
           >
             NEXUS CORE <span className="text-white">IDENTITY</span>
           </div>
-          {/* Tag: 10px, 50% opacity - teraz odolný voči rozbitiu layoutu */}
+
           <span
-            className="text-[10px] opacity-50 font-mono lowercase tracking-tighter truncate"
+            className="text-[10px] opacity-40 font-mono lowercase truncate"
             style={{ color: current.color }}
           >
             {current.tag}
@@ -399,13 +400,24 @@ const App = () => {
       </div>
 
       <main className="container mx-auto px-6 pt-32 pb-32 max-w-6xl flex-grow">
-        <header className="mb-16">
-          <h1
-            className="text-6xl md:text-9xl font-black uppercase tracking-tighter leading-tight"
-            style={{ color: current.color }}
-          >
-            {current.name}
-          </h1>
+        <header className="mb-16 min-h-[160px] md:min-h-[240px]">
+          <div className="flex flex-col gap-2">
+            <h1
+              className="text-6xl md:text-9xl font-black uppercase tracking-tighter leading-tight"
+              style={{ color: current.color }}
+            >
+              {current.name}
+            </h1>
+
+            {/* TVOJ TAG - 10px, 50% opacity, monospace */}
+            <div
+              className="text-[10px] md:text-[12px] font-mono opacity-50 lowercase tracking-widest pl-2"
+              style={{ color: current.color }}
+            >
+              {current.tag}
+            </div>
+          </div>
+
           <p className="mt-8 text-2xl md:text-4xl italic opacity-60 leading-relaxed font-serif">
             "{current.quote}"
           </p>
