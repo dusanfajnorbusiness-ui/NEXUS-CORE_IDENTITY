@@ -66,4 +66,13 @@ node_modules/
 .env
 
 # dataconnect generated files
+
 .dataconnect
+# NEXUS-CORE SPECIFIC
+# Ignoruj surový zdroj dát (3GB), pushujeme len JSON fragmenty
+ID08. Reader_UI_Space.md
+
+# Ignoruj lokálne skripty, ktoré nie sú súčasťou produkčného webu
+ingest.ps1
+ingest_v2.ps1
+*Temporary*

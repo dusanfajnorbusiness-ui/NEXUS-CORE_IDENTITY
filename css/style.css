@@ -120,4 +120,59 @@
     opacity: 0;
     border-width: 1px;
   }
+}
+/* Branding */
+.brand-logo-nexus {
+  font-family: "Courier New", monospace;
+  color: #39FF14;
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* HUD Button Symmetry & Hierarchy */
+.hud-btn {
+  background: rgba(0, 0, 0, 0.8);
+  height: 42px; /* Fixná výška */
+  min-width: 160px; /* Fixná šírka pre symetriu */
+  font-family: "Courier New", monospace;
+  font-size: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-sizing: border-box; /* Dôležité: border nezmení veľkosť */
+  border-radius: 9999px; /* Full rounded */
+}
+
+/* Tri úrovne borderov */
+.border-thin {
+  border: 1px solid currentColor;
+}
+
+.border-medium {
+  border: 2px solid currentColor;
+}
+
+.border-thick {
+  border: 3px solid currentColor;
+  font-weight: 900;
+}
+
+/* Do tvojho style.css */
+.cube-drop {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: currentColor; /* Berie farbu dimenzie */
+  box-shadow: 0 0 10px currentColor;
+  animation: fall linear forwards;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
 }/*# sourceMappingURL=style.css.map */

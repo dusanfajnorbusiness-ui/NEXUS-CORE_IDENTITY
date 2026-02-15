@@ -261,6 +261,7 @@ const App = () => {
   const logRef = useRef(null);
 
   useEffect(() => {
+    // 1. GITHUB COMMITS FETCH (Tvoj pôvodný kód)
     fetch(
       "https://api.github.com/repos/dusanfajnorbusiness-ui/NEXUS-CORE_IDENTITY/commits?per_page=100",
     )
@@ -281,7 +282,31 @@ const App = () => {
           );
         }
       });
-  }, []);
+
+    // 2. CODEX LIVE STREAM (Pre ID08 - tých tvojich 50 riadkov)
+    if (activeDimension === "id08") {
+      const streamContainer = document.getElementById("codex-terminal");
+      if (streamContainer) {
+        fetch("./js/data/codex/fragment_1.json")
+          .then((res) => res.json())
+          .then((fragment) => {
+            // Vykreslíme tvojich 50 riadkov ako riadky v termináli
+            streamContainer.innerHTML = fragment.data
+              .map(
+                (line) =>
+                  `<div class="flex gap-2 py-0.5 border-b border-[#F0F8FF]/5">
+              <span class="text-[#F0F8FF] opacity-30 text-[7px] min-w-[50px]">[SCAN_v1]</span>
+              <span class="text-[9px]">${line}</span>
+            </div>`,
+              )
+              .join("");
+          })
+          .catch(() => {
+            streamContainer.innerHTML = `<div class="text-[8px] opacity-40">WAITING FOR SYNC...</div>`;
+          });
+      }
+    }
+  }, [activeDimension]); // Spustí sa pri načítaní a pri každej zmene dimenzie
 
   if (!window.nexusData)
     return (
