@@ -342,8 +342,9 @@ const App = () => {
           className="text-lg md:text-2xl font-black tracking-widest uppercase italic"
           style={{ color: current.color }}
         >
-          PROJEKT <span className="text-white">NEXUS</span>
+          NEXUS CORE <span className="text-white">IDENTITY</span>
         </div>
+        <p>Jadro Identity Nexusu</p>
 
         {/* ZAROVNANÁ PRAVÁ STRANA HEADERU */}
         <div className="flex items-center gap-3 md:gap-6">
@@ -412,6 +413,7 @@ const App = () => {
                 key={id}
                 onClick={() => {
                   setActiveID(id);
+                  setIsMenuOpen(false); // PRIDANÉ: Zatvorí log pri prepnutí dimenzie
                 }}
                 className={`p-4 text-[12px] font-black border transition-all ${activeID === id ? "" : "opacity-40 hover:opacity-100"}`}
                 style={{
