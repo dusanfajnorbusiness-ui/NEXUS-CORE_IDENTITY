@@ -150,7 +150,7 @@ window.nexusData = {
   dimensions: {
     "01": {
       name: "identity",
-      name: "ID/eGo/superEgo",
+      name2: "| ID [eGo superEgo]",
       color: "#39FF14",
       quote: "Keď som, tak som, viem, že som.",
       content: "Jadro, autenticita, 'Keď som, tak som.'",
