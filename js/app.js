@@ -260,10 +260,20 @@ const App = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const logRef = useRef(null);
 
-  // Hľadaj v app.js tento blok a oprav ho:
-  // Hľadaj v app.js tento blok a vymeň ho:
+  // 1. EFEKT: Zatváranie menu kliknutím mimo (UX Fix)
   useEffect(() => {
-    // 1. GITHUB FETCH - Sync tvojich commitov do UPDATE_LOG
+    const handleClickOutside = (event) => {
+      if (logRef.current && !logRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // 2. EFEKT: Dáta (GitHub + Codex ID_08)
+  useEffect(() => {
+    // A. GitHub API Sync
     fetch(
       "https://api.github.com/repos/dusanfajnorbusiness-ui/NEXUS-CORE_IDENTITY/commits?per_page=100",
     )
@@ -286,9 +296,8 @@ const App = () => {
       })
       .catch((err) => console.error("GitHub_API_Error:", err));
 
-    // 2. CODEX SYNC - Načítanie syrečka pre ID_08
+    // B. ID_08 LIVE STREAM (Syreček Loader)
     if (activeID === "08") {
-      // Musíme počkať milisekundu, kým sa DOM vykreslí
       setTimeout(() => {
         const streamContainer = document.getElementById("codex-terminal");
         if (streamContainer) {
@@ -298,20 +307,20 @@ const App = () => {
               streamContainer.innerHTML = fragment.data
                 .map(
                   (line) =>
-                    `<div class="flex gap-2 py-0.5 border-b border-white/5">
-                <span class="text-[#00FFFF] opacity-30 text-[7px] min-w-[50px]">[SCAN]</span>
-                <span class="text-[9px] text-white/80">${line}</span>
-              </div>`,
+                    `<div class="flex gap-2 py-1 border-b border-white/5 animate-in slide-in-from-left duration-300">
+                  <span class="text-[#00FFFF] opacity-30 text-[7px] font-bold min-w-[60px]">[DECODED]</span>
+                  <span class="text-[10px] text-white/80 leading-tight">${line}</span>
+                </div>`,
                 )
                 .join("");
             })
             .catch(() => {
-              streamContainer.innerHTML = `<div class="text-[8px] opacity-40 italic p-4 text-center">SYREČEK_OFFLINE: Čakám na fragmenty...</div>`;
+              streamContainer.innerHTML = `<div class="p-10 text-center opacity-30 text-[10px] uppercase italic">>> Waiting for Codex Synchronization...</div>`;
             });
         }
-      }, 100);
+      }, 200);
     }
-  }, [activeID]); // Tu je opravená závislosť na tvojom state[typeof activeDimension !== 'undefined' ? activeDimension : activeTab]);
+  }, [activeID]); // Sleduje zmenu dimenzie [activeID]); // Tu je opravená závislosť na tvojom state[typeof activeDimension !== 'undefined' ? activeDimension : activeTab]);
 
   if (!window.nexusData)
     return (
