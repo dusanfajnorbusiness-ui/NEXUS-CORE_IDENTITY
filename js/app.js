@@ -468,25 +468,26 @@ const App = () => {
 
       {/* MAIN CONTENT */}
       <main className="container mx-auto px-6 pt-32 pb-32 max-w-6xl flex-grow text-left">
-        <header className="mb-16 min-h-[160px] md:min-h-[240px] flex flex-col justify-end">
-          <div className="flex flex-col gap-2">
+        <header className="mb-16">
+          {/* Tento DIV je kotva - zabezpečí, že výška bude vždy rovnaká */}
+          <div className="min-h-[160px] md:min-h-[280px] flex items-end pb-4">
             <h1
-              className="text-6xl md:text-9xl font-black uppercase tracking-tighter leading-none"
+              className="text-6xl md:text-9xl font-black uppercase tracking-tighter leading-[0.8]"
               style={{ color: current.color }}
             >
               {current.name}
             </h1>
-
-            {/* Tvoj Tag: Stabilných 10px, 50% opacity */}
-            <div
-              className="text-[10px] md:text-[12px] font-mono opacity-50 lowercase tracking-widest pl-2 h-4"
-              style={{ color: current.color }}
-            >
-              {current.tag}
-            </div>
           </div>
 
-          <p className="mt-8 text-2xl md:text-4xl italic opacity-60 leading-relaxed font-serif min-h-[3em]">
+          {/* Tag a Quote nasledujú pod ním, už sa nebudú hýbať */}
+          <div
+            className="text-[10px] md:text-[12px] font-mono opacity-50 lowercase tracking-widest pl-2 mb-8"
+            style={{ color: current.color }}
+          >
+            {current.tag}
+          </div>
+
+          <p className="text-2xl md:text-4xl italic opacity-60 leading-relaxed font-serif max-w-4xl">
             "{current.quote}"
           </p>
         </header>
