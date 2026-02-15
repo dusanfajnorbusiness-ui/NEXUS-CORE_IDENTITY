@@ -150,6 +150,7 @@ window.nexusData = {
   dimensions: {
     "01": {
       name: "identity",
+      name: "ID/eGo/superEgo",
       color: "#39FF14",
       quote: "Keď som, tak som, viem, že som.",
       content: "Jadro, autenticita, 'Keď som, tak som.'",
@@ -224,7 +225,7 @@ window.nexusData = {
       proContent: window.id09Data?.proContent || "OFFLINE",
       premiumContent: window.id09Data?.premiumContent || "OFFLINE",
     },
-    10: {
+    "10": {
       name: "non-identity",
       color: "#0044FF",
       quote: "Boh je Ticho.",
@@ -232,7 +233,7 @@ window.nexusData = {
       proContent: window.id10Data?.proContent || "OFFLINE",
       premiumContent: window.id10Data?.premiumContent || "OFFLINE",
     },
-    11: {
+    "11": {
       name: "the-recovery",
       color: "#FFBF00",
       quote: "Cesta von z Matrixu.",
