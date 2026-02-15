@@ -338,25 +338,23 @@ const App = () => {
     >
       {/* HEADER HUD - FIXED & RESPONSIVE */}
       <div className="fixed top-0 left-0 w-full p-4 md:p-6 flex flex-wrap justify-between items-center z-50 bg-black/80 backdrop-blur-md border-b border-white/5 min-h-[80px]">
-        
-        <div className="flex flex-col md:flex-row md:items-baseline gap-1 md:gap-3">
+        <div className="flex flex-col md:flex-row md:items-baseline gap-1 md:gap-3 max-w-[60%]">
           <div
             className="text-lg md:text-2xl font-black tracking-widest uppercase italic whitespace-nowrap"
             style={{ color: current.color }}
           >
             NEXUS CORE <span className="text-white">IDENTITY</span>
           </div>
-
-          {/* TVOJ TAG - 10px, 50% opacity */}
+          {/* Tag: 10px, 50% opacity - teraz odolný voči rozbitiu layoutu */}
           <span
-            className="text-[10px] opacity-50 font-mono lowercase tracking-tighter truncate max-w-[200px] md:max-w-none"
+            className="text-[10px] opacity-50 font-mono lowercase tracking-tighter truncate"
             style={{ color: current.color }}
           >
             {current.tag}
           </span>
         </div>
-
-        <div className="flex items-center gap-2 md:gap-4 mt-2 md:mt-0">
+        {/* Pravá strana HUD ostáva stabilná */}
+        <div className="flex items-center gap-2">
           <OperatorMonitor color={current.color} />
 
           <div className="relative h-[32px]" ref={logRef}>
@@ -378,11 +376,17 @@ const App = () => {
                     <div key={upd.id} className="border-b border-white/5 pb-3">
                       <div className="flex justify-between text-[9px] opacity-40 mb-1">
                         <span>#ID_{upd.id}</span>
-                        <span>{upd.date} | {upd.time}</span>
+                        <span>
+                          {upd.date} | {upd.time}
+                        </span>
                       </div>
-                      <div className="text-[12px] font-bold uppercase mb-1">{upd.title}</div>
+                      <div className="text-[12px] font-bold uppercase mb-1">
+                        {upd.title}
+                      </div>
                       {upd.desc && (
-                        <div className="text-[10px] text-white/50 italic leading-relaxed">{upd.desc}</div>
+                        <div className="text-[10px] text-white/50 italic leading-relaxed">
+                          {upd.desc}
+                        </div>
                       )}
                     </div>
                   ))}
@@ -420,8 +424,14 @@ const App = () => {
                 className={`p-4 text-[12px] font-black border transition-all ${activeID === id ? "" : "opacity-40 hover:opacity-100"}`}
                 style={{
                   borderColor: window.nexusData.dimensions[id].color,
-                  color: activeID === id ? "#000" : window.nexusData.dimensions[id].color,
-                  backgroundColor: activeID === id ? window.nexusData.dimensions[id].color : "transparent",
+                  color:
+                    activeID === id
+                      ? "#000"
+                      : window.nexusData.dimensions[id].color,
+                  backgroundColor:
+                    activeID === id
+                      ? window.nexusData.dimensions[id].color
+                      : "transparent",
                 }}
               >
                 ID_{id}
@@ -435,16 +445,16 @@ const App = () => {
             style={{ backgroundColor: current.color }}
           />
           <div className="text-2xl md:text-5xl font-light uppercase leading-snug italic font-serif opacity-90">
-             <DimensionWrapper 
-                id={activeID} 
-                color={current.color}
-                proContent={current.proContent}
-                premiumContent={current.premiumContent}
-                isUnlocked={false} // Sem môžeš neskôr napojiť stav odomknutia
-                setIsUnlocked={() => {}} 
-             >
-                {current.content}
-             </DimensionWrapper>
+            <DimensionWrapper
+              id={activeID}
+              color={current.color}
+              proContent={current.proContent}
+              premiumContent={current.premiumContent}
+              isUnlocked={false} // Sem môžeš neskôr napojiť stav odomknutia
+              setIsUnlocked={() => {}}
+            >
+              {current.content}
+            </DimensionWrapper>
           </div>
         </div>
       </main>
