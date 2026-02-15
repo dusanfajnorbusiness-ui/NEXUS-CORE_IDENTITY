@@ -338,24 +338,29 @@ const App = () => {
     >
       {/* HEADER HUD - FIXED & RESPONSIVE */}
       <div className="fixed top-0 left-0 w-full p-4 md:p-6 flex flex-wrap justify-between items-center z-50 bg-black/80 backdrop-blur-md border-b border-white/5 min-h-[80px]">
-        {/* Vymeň začiatok Headera za toto */}
-        <div className="flex flex-col md:flex-row md:items-baseline gap-1 md:gap-3 max-w-[70%]">
+        
+        {/* LEFT SIDE: Title + Tag */}
+        <div className="flex flex-col md:flex-row md:items-baseline gap-1 md:gap-3 max-w-[65%]">
           <div
             className="text-lg md:text-2xl font-black tracking-widest uppercase italic whitespace-nowrap"
             style={{ color: current.color }}
           >
             NEXUS CORE <span className="text-white">IDENTITY</span>
           </div>
-
-          <span
-            className="text-[10px] opacity-40 font-mono lowercase truncate"
-            style={{ color: current.color }}
-          >
-            {current.tag}
-          </span>
+          
+          {/* POISTKA NA TAG: Ak current.tag neexistuje, nič sa nevyrenderuje */}
+          {current.tag && (
+            <span
+              className="text-[10px] opacity-50 font-mono lowercase tracking-tighter truncate max-w-[150px] md:max-w-none"
+              style={{ color: current.color }}
+            >
+              {current.tag}
+            </span>
+          )}
         </div>
-        {/* Pravá strana HUD ostáva stabilná */}
-        <div className="flex items-center gap-2">
+
+        {/* RIGHT SIDE: Operators + Log + Account */}
+        <div className="flex items-center gap-2 md:gap-4 mt-2 md:mt-0">
           <OperatorMonitor color={current.color} />
 
           <div className="relative h-[32px]" ref={logRef}>
@@ -366,29 +371,18 @@ const App = () => {
             >
               LOG_{updates[0]?.date || "SYNC"}
             </button>
-
             {isMenuOpen && (
               <div className="absolute top-14 right-0 w-80 bg-black/95 border border-white/20 p-5 rounded-xl z-[100] shadow-2xl backdrop-blur-xl">
-                <h4 className="text-[#39FF14] text-[12px] font-black border-b border-white/10 pb-2 mb-4 uppercase">
-                  Update_Log
-                </h4>
-                <div className="space-y-4 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
+                <h4 className="text-[#39FF14] text-[12px] font-black border-b border-white/10 pb-2 mb-4 uppercase text-center">Update_Log</h4>
+                <div className="space-y-4 max-h-80 overflow-y-auto pr-2 custom-scrollbar text-left">
                   {updates.map((upd) => (
                     <div key={upd.id} className="border-b border-white/5 pb-3">
-                      <div className="flex justify-between text-[9px] opacity-40 mb-1">
+                      <div className="flex justify-between text-[9px] opacity-40 mb-1 font-mono">
                         <span>#ID_{upd.id}</span>
-                        <span>
-                          {upd.date} | {upd.time}
-                        </span>
+                        <span>{upd.date} | {upd.time}</span>
                       </div>
-                      <div className="text-[12px] font-bold uppercase mb-1">
-                        {upd.title}
-                      </div>
-                      {upd.desc && (
-                        <div className="text-[10px] text-white/50 italic leading-relaxed">
-                          {upd.desc}
-                        </div>
-                      )}
+                      <div className="text-[12px] font-bold uppercase mb-1">{upd.title}</div>
+                      {upd.desc && <div className="text-[10px] text-white/50 italic leading-relaxed">{upd.desc}</div>}
                     </div>
                   ))}
                 </div>
@@ -399,51 +393,36 @@ const App = () => {
         </div>
       </div>
 
+      {/* MAIN CONTENT SPACE */}
       <main className="container mx-auto px-6 pt-32 pb-32 max-w-6xl flex-grow">
-        <header className="mb-16 min-h-[160px] md:min-h-[240px]">
-          <div className="flex flex-col gap-2">
-            <h1
-              className="text-6xl md:text-9xl font-black uppercase tracking-tighter leading-tight"
-              style={{ color: current.color }}
-            >
-              {current.name}
-            </h1>
-
-            {/* TVOJ TAG - 10px, 50% opacity, monospace */}
-            <div
-              className="text-[10px] md:text-[12px] font-mono opacity-50 lowercase tracking-widest pl-2"
-              style={{ color: current.color }}
-            >
-              {current.tag}
-            </div>
-          </div>
-
+        <header className="mb-16">
+          <h1
+            className="text-6xl md:text-9xl font-black uppercase tracking-tighter leading-tight"
+            style={{ color: current.color }}
+          >
+            {current.name}
+          </h1>
           <p className="mt-8 text-2xl md:text-4xl italic opacity-60 leading-relaxed font-serif">
             "{current.quote}"
           </p>
         </header>
 
+        {/* DIMENSION NAVIGATION */}
         <nav className="grid grid-cols-4 md:grid-cols-11 gap-3 mb-20">
           {Object.keys(window.nexusData.dimensions)
-            .sort((a, b) => a - b)
+            .sort((a, b) => (Number(a) - Number(b)))
             .map((id) => (
               <button
                 key={id}
                 onClick={() => {
                   setActiveID(id);
-                  setIsMenuOpen(false); // Zatvorí menu pri prepnutí
+                  setIsMenuOpen(false);
                 }}
-                className={`p-4 text-[12px] font-black border transition-all ${activeID === id ? "" : "opacity-40 hover:opacity-100"}`}
+                className={`p-4 text-[12px] font-black border transition-all duration-300 ${activeID === id ? "" : "opacity-40 hover:opacity-100"}`}
                 style={{
                   borderColor: window.nexusData.dimensions[id].color,
-                  color:
-                    activeID === id
-                      ? "#000"
-                      : window.nexusData.dimensions[id].color,
-                  backgroundColor:
-                    activeID === id
-                      ? window.nexusData.dimensions[id].color
-                      : "transparent",
+                  color: activeID === id ? "#000" : window.nexusData.dimensions[id].color,
+                  backgroundColor: activeID === id ? window.nexusData.dimensions[id].color : "transparent",
                 }}
               >
                 ID_{id}
@@ -451,27 +430,22 @@ const App = () => {
             ))}
         </nav>
 
-        <div className="relative p-10 bg-white/[0.03] border border-white/10 backdrop-blur-md rounded-xl shadow-2xl">
-          <div
-            className="absolute top-0 left-0 w-2 h-full"
-            style={{ backgroundColor: current.color }}
-          />
-          <div className="text-2xl md:text-5xl font-light uppercase leading-snug italic font-serif opacity-90">
-            <DimensionWrapper
-              id={activeID}
-              color={current.color}
-              proContent={current.proContent}
-              premiumContent={current.premiumContent}
-              isUnlocked={false} // Sem môžeš neskôr napojiť stav odomknutia
-              setIsUnlocked={() => {}}
-            >
-              {current.content}
-            </DimensionWrapper>
+        {/* CONTENT DISPLAY */}
+        <div className="relative p-10 bg-white/[0.03] border border-white/10 backdrop-blur-md rounded-xl shadow-2xl min-h-[300px]">
+          <div className="absolute top-0 left-0 w-2 h-full" style={{ backgroundColor: current.color }} />
+          <div className="text-xl md:text-4xl font-light uppercase leading-snug italic opacity-90 text-left">
+            {current.content}
           </div>
         </div>
       </main>
 
-      <Footer />
+      {/* FOOTER */}
+      <footer className="w-full py-6 border-t border-white/5 bg-black/60 px-6 font-mono text-[10px] md:text-[14px] uppercase tracking-widest">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-[#39FF14]">
+          <div>HW: Uzol_2Mb // Trnava_Station // AI: Gemini_Link</div>
+          <div className="font-black">D. FAJNOR // ARCHITECT © 2026</div>
+        </div>
+      </footer>
     </div>
   );
 };
