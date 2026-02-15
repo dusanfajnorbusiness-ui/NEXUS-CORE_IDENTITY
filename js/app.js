@@ -344,8 +344,7 @@ const App = () => {
         >
           NEXUS CORE <span className="text-white">IDENTITY</span>
         </div>
-        <p>Jadro Identity Nexusu</p>
-
+        Jadro Identity Nexusu
         {/* ZAROVNANÁ PRAVÁ STRANA HEADERU */}
         <div className="flex items-center gap-3 md:gap-6">
           <OperatorMonitor color={current.color} />
