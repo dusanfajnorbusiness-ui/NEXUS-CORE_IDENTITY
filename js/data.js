@@ -149,7 +149,8 @@ window.nexusData = {
   // Dimenzie a obsah (v5.3)
   dimensions: {
     "01": {
-      name: "identity<span class='text-[10px] opacity-50'>| ID [eGo superEgo]</span>",
+      name: "identity",
+      tag: "| ID [eGo - superEgo]",
       color: "#39FF14",
       quote: "Keď som, tak som, viem, že som.",
       content: "Jadro, autenticita, 'Keď som, tak som.'",
