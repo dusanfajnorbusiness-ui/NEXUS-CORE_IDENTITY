@@ -1,38 +1,35 @@
-// js/dimensions/id08.js (v1.1 - Ingested Edition)
+// js/dimensions/id08.js (v1.2 - Heavy Stream Edition)
 window.id08Data = {
-  proContent: `... tvoj kód zhora ...`, // Ponechaj proContent ako statické info
-
-  // Funkcia na dynamické načítanie fragmentov
-  getLiveCodex: async function() {
-    try {
-      const response = await fetch('./js/data/codex/fragment_1.json');
-      const fragment = await response.json();
-      
-      // Zoberieme prvých 20 riadkov z fragmentu ako ukážku
-      const lines = fragment.data.slice(0, 20).map(line => 
-        `<div class="flex gap-2 text-[8px] border-b border-[#F0F8FF]/5 py-0.5">
-           <span class="opacity-30">SCAN_01 ></span> 
-           <span class="truncate">${line}</span>
-         </div>`
-      ).join('');
-
-      return lines;
-    } catch (e) {
-      return `<div class="text-[8px] opacity-40 italic uppercase text-center">[ DATA_STREAM_OFFLINE // WAITING_FOR_SYNC ]</div>`;
-    }
-  },
+  proContent: `
+    <div class="p-4 border-l-2 border-[#00FFFF]/30 bg-[#00FFFF]/5 mb-6">
+      <h3 class="text-[#00FFFF] font-bold uppercase text-xs mb-2 tracking-widest">Codex_Protocol_Active</h3>
+      <p class="text-[10px] opacity-70 leading-relaxed">
+        Systém úspešne identifikoval 17,102 riadkov surových dát. 
+        Prebieha dešifrovanie OneNote štruktúry a mapovanie časových osí.
+      </p>
+    </div>
+  `,
 
   premiumContent: `
-    <div class="p-5 bg-black/80 border-2 border-[#F0F8FF] rounded-xl shadow-[0_0_25px_rgba(240,248,255,0.2)] relative overflow-hidden animate-in zoom-in-95 duration-700 min-h-[300px]">
-      <div class="absolute top-0 right-0 bg-[#F0F8FF] text-black text-[7px] px-3 font-black py-0.5 uppercase tracking-tighter shadow-lg">Architect_Draft_Space</div>
-      <h4 class="text-[#F0F8FF] font-black text-[11px] uppercase mb-3 italic tracking-tighter text-center">!! RAW_IDEA_STREAM !!</h4>
+    <div class="p-5 bg-black/90 border-2 border-[#00FFFF] rounded-xl shadow-[0_0_40px_rgba(0,255,255,0.15)] relative overflow-hidden animate-in zoom-in-95 duration-700 min-h-[600px] flex flex-col">
+      <div class="absolute top-0 right-0 bg-[#00FFFF] text-black text-[7px] px-3 font-black py-0.5 uppercase tracking-tighter">Architect_Deep_Scan_v2</div>
       
-      <div id="codex-terminal" class="space-y-1 font-mono text-[#F0F8FF] h-48 overflow-y-auto custom-scrollbar">
-         [ INITIALIZING_KNOWLEDGE_DUMP_SCAN... ]
+      <div class="flex justify-between items-center mb-4 border-b border-[#00FFFF]/20 pb-2">
+        <h4 class="text-[#00FFFF] font-black text-[11px] uppercase italic tracking-tighter animate-pulse">
+          !! RAW_DATA_DECRYPTOR [CONNECTED] !!
+        </h4>
+        <div class="text-[8px] font-mono text-[#00FFFF]/50">LINES: 17102 // SYNC_STATUS: OK</div>
+      </div>
+      
+      {/* TERMINÁL S AUTO-SCROLLOM A PEVNOU VÝŠKOU */}
+      <div id="codex-terminal" class="flex-grow space-y-1 font-mono text-[#00FFFF] h-[450px] overflow-y-auto custom-scrollbar p-3 bg-black/60 rounded border border-white/5 text-left">
+          [ WAITING_FOR_DECRYPTION_KEY... ]
       </div>
 
-      <div class="mt-4 p-2 bg-[#F0F8FF]/5 border border-[#F0F8FF]/20 rounded text-center">
-        <div class="text-[7px] text-[#F0F8FF] uppercase font-bold tracking-widest animate-pulse">Scanning_3.05GB_Codex</div>
+      <div class="mt-4 grid grid-cols-3 gap-2 opacity-40">
+        <div class="text-[7px] uppercase font-bold border-r border-white/10">Buffer: 972KB</div>
+        <div class="text-[7px] uppercase font-bold border-r border-white/10 text-center">Process: Idle</div>
+        <div class="text-[7px] uppercase font-bold text-right">Node: Trnava_Station</div>
       </div>
     </div>
   `
