@@ -342,11 +342,10 @@ const App = () => {
           className="text-lg md:text-2xl font-black tracking-widest uppercase italic"
           style={{ color: current.color }}
         >
-          NEXUS CORE <span className="text-white">IDENTITY</span>
+          NEXUS CORE <span className="text-white">IDENTITY </span>
+          <span className="text-[10px] opacity-50">Jadro Identity Nexusu</span>
         </div>
-        <div className="text-[10px] opacity-40">
-          className=Jadro Identity Nexusu
-        </div>
+
         {/* ZAROVNANÁ PRAVÁ STRANA HEADERU */}
         <div className="flex items-center gap-3 md:gap-6">
           <OperatorMonitor color={current.color} />
