@@ -85,3 +85,16 @@ $colors: (
 .border-thin { border: 1px solid currentColor; }
 .border-medium { border: 2px solid currentColor; }
 .border-thick { border: 3px solid currentColor; font-weight: 900; }
+/* Do tvojho style.css */
+.cube-drop {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: currentColor; /* Berie farbu dimenzie */
+  box-shadow: 0 0 10px currentColor;
+  animation: fall linear forwards;
+}
+
+@keyframes fall {
+  to { transform: translateY(100vh); opacity: 0; }
+}
