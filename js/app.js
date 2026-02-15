@@ -260,8 +260,10 @@ const App = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const logRef = useRef(null);
 
+  // Hľadaj v app.js tento blok a oprav ho:
+  // Hľadaj v app.js tento blok a vymeň ho:
   useEffect(() => {
-    // 1. GITHUB COMMITS FETCH (Tvoj pôvodný kód)
+    // 1. GITHUB FETCH - Sync tvojich commitov do UPDATE_LOG
     fetch(
       "https://api.github.com/repos/dusanfajnorbusiness-ui/NEXUS-CORE_IDENTITY/commits?per_page=100",
     )
@@ -281,32 +283,35 @@ const App = () => {
             }),
           );
         }
-      });
+      })
+      .catch((err) => console.error("GitHub_API_Error:", err));
 
-    // 2. CODEX LIVE STREAM (Pre ID08 - tých tvojich 50 riadkov)
-    if (activeDimension === "id08") {
-      const streamContainer = document.getElementById("codex-terminal");
-      if (streamContainer) {
-        fetch("./js/data/codex/fragment_1.json")
-          .then((res) => res.json())
-          .then((fragment) => {
-            // Vykreslíme tvojich 50 riadkov ako riadky v termináli
-            streamContainer.innerHTML = fragment.data
-              .map(
-                (line) =>
-                  `<div class="flex gap-2 py-0.5 border-b border-[#F0F8FF]/5">
-              <span class="text-[#F0F8FF] opacity-30 text-[7px] min-w-[50px]">[SCAN_v1]</span>
-              <span class="text-[9px]">${line}</span>
-            </div>`,
-              )
-              .join("");
-          })
-          .catch(() => {
-            streamContainer.innerHTML = `<div class="text-[8px] opacity-40">WAITING FOR SYNC...</div>`;
-          });
-      }
+    // 2. CODEX SYNC - Načítanie syrečka pre ID_08
+    if (activeID === "08") {
+      // Musíme počkať milisekundu, kým sa DOM vykreslí
+      setTimeout(() => {
+        const streamContainer = document.getElementById("codex-terminal");
+        if (streamContainer) {
+          fetch("./js/data/codex/fragment_1.json")
+            .then((res) => res.json())
+            .then((fragment) => {
+              streamContainer.innerHTML = fragment.data
+                .map(
+                  (line) =>
+                    `<div class="flex gap-2 py-0.5 border-b border-white/5">
+                <span class="text-[#00FFFF] opacity-30 text-[7px] min-w-[50px]">[SCAN]</span>
+                <span class="text-[9px] text-white/80">${line}</span>
+              </div>`,
+                )
+                .join("");
+            })
+            .catch(() => {
+              streamContainer.innerHTML = `<div class="text-[8px] opacity-40 italic p-4 text-center">SYREČEK_OFFLINE: Čakám na fragmenty...</div>`;
+            });
+        }
+      }, 100);
     }
-  }, [activeDimension]); // Spustí sa pri načítaní a pri každej zmene dimenzie
+  }, [activeID]); // Tu je opravená závislosť na tvojom state[typeof activeDimension !== 'undefined' ? activeDimension : activeTab]);
 
   if (!window.nexusData)
     return (
