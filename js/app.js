@@ -338,6 +338,7 @@ const App = () => {
     >
       {/* HEADER HUD - FIXED & RESPONSIVE */}
       <div className="fixed top-0 left-0 w-full p-4 md:p-6 flex flex-wrap justify-between items-center z-50 bg-black/80 backdrop-blur-md border-b border-white/5 min-h-[80px]">
+        
         <div className="flex flex-col md:flex-row md:items-baseline gap-1 md:gap-3">
           <div
             className="text-lg md:text-2xl font-black tracking-widest uppercase italic whitespace-nowrap"
@@ -346,7 +347,7 @@ const App = () => {
             NEXUS CORE <span className="text-white">IDENTITY</span>
           </div>
 
-          {/* TVOJ TAG - Teraz sa zalomí pod názov na mobile, aby nezmizol */}
+          {/* TVOJ TAG - 10px, 50% opacity */}
           <span
             className="text-[10px] opacity-50 font-mono lowercase tracking-tighter truncate max-w-[200px] md:max-w-none"
             style={{ color: current.color }}
@@ -366,6 +367,7 @@ const App = () => {
             >
               LOG_{updates[0]?.date || "SYNC"}
             </button>
+
             {isMenuOpen && (
               <div className="absolute top-14 right-0 w-80 bg-black/95 border border-white/20 p-5 rounded-xl z-[100] shadow-2xl backdrop-blur-xl">
                 <h4 className="text-[#39FF14] text-[12px] font-black border-b border-white/10 pb-2 mb-4 uppercase">
@@ -376,18 +378,11 @@ const App = () => {
                     <div key={upd.id} className="border-b border-white/5 pb-3">
                       <div className="flex justify-between text-[9px] opacity-40 mb-1">
                         <span>#ID_{upd.id}</span>
-                        <span>
-                          {upd.date} | {upd.time}
-                        </span>
+                        <span>{upd.date} | {upd.time}</span>
                       </div>
-                      <div className="text-[12px] font-bold uppercase mb-1">
-                        {upd.title}
-                      </div>
-                      {/* VRÁTENÝ DESCRIPTION */}
+                      <div className="text-[12px] font-bold uppercase mb-1">{upd.title}</div>
                       {upd.desc && (
-                        <div className="text-[10px] text-white/50 italic leading-relaxed">
-                          {upd.desc}
-                        </div>
+                        <div className="text-[10px] text-white/50 italic leading-relaxed">{upd.desc}</div>
                       )}
                     </div>
                   ))}
@@ -395,7 +390,6 @@ const App = () => {
               </div>
             )}
           </div>
-
           <AccountPanel color={current.color} />
         </div>
       </div>
@@ -407,10 +401,6 @@ const App = () => {
             style={{ color: current.color }}
           >
             {current.name}
-            {/* Pridaný tag: 10px, 50% opacity, lowercase */}
-            <span className="text-[10px] opacity-50 lowercase font-mono ml-2 tracking-normal">
-              {current.tag}
-            </span>
           </h1>
           <p className="mt-8 text-2xl md:text-4xl italic opacity-60 leading-relaxed font-serif">
             "{current.quote}"
@@ -425,19 +415,13 @@ const App = () => {
                 key={id}
                 onClick={() => {
                   setActiveID(id);
-                  setIsMenuOpen(false); // PRIDANÉ: Zatvorí log pri prepnutí dimenzie
+                  setIsMenuOpen(false); // Zatvorí menu pri prepnutí
                 }}
                 className={`p-4 text-[12px] font-black border transition-all ${activeID === id ? "" : "opacity-40 hover:opacity-100"}`}
                 style={{
                   borderColor: window.nexusData.dimensions[id].color,
-                  color:
-                    activeID === id
-                      ? "#000"
-                      : window.nexusData.dimensions[id].color,
-                  backgroundColor:
-                    activeID === id
-                      ? window.nexusData.dimensions[id].color
-                      : "transparent",
+                  color: activeID === id ? "#000" : window.nexusData.dimensions[id].color,
+                  backgroundColor: activeID === id ? window.nexusData.dimensions[id].color : "transparent",
                 }}
               >
                 ID_{id}
@@ -451,21 +435,21 @@ const App = () => {
             style={{ backgroundColor: current.color }}
           />
           <div className="text-2xl md:text-5xl font-light uppercase leading-snug italic font-serif opacity-90">
-            {current.content}
+             <DimensionWrapper 
+                id={activeID} 
+                color={current.color}
+                proContent={current.proContent}
+                premiumContent={current.premiumContent}
+                isUnlocked={false} // Sem môžeš neskôr napojiť stav odomknutia
+                setIsUnlocked={() => {}} 
+             >
+                {current.content}
+             </DimensionWrapper>
           </div>
         </div>
       </main>
 
-      <footer className="w-full py-6 border-t border-white/5 bg-black/60 px-6 font-mono text-[10px] md:text-[14px] uppercase tracking-widest">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-[#39FF14]">
-          <div className="text-center md:text-left">
-            HW: Uzol_2Mb // Trnava_Station // AI: Gemini_Link
-          </div>
-          <div className="text-center md:text-right font-black">
-            D. FAJNOR // ARCHITECT © 2026
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
