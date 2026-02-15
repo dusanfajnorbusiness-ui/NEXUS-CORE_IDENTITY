@@ -468,24 +468,27 @@ const App = () => {
 
       {/* MAIN CONTENT */}
       <main className="container mx-auto px-6 pt-32 pb-32 max-w-6xl flex-grow text-left">
-        <header className="mb-8 min-h-[140px] md:min-h-[260px] flex flex-col justify-end px-4">
-          <div className="flex flex-col gap-1">
+        <header className="mb-8 md:mb-16">
+          {/* FIX: Pevná výška kontajnera zabráni skákaniu celého webu */}
+          <div className="min-h-[140px] md:min-h-[280px] flex items-end pb-4 overflow-hidden">
             <h1
-              className="text-4xl md:text-9xl font-black uppercase tracking-tighter leading-[0.85] min-h-[2em] flex items-end"
+              className="text-4xl md:text-9xl font-black uppercase tracking-tighter leading-[0.85]"
               style={{ color: current.color }}
             >
               {current.name}
             </h1>
-
-            <div
-              className="text-[9px] md:text-[12px] font-mono opacity-50 lowercase tracking-widest pl-1 h-4"
-              style={{ color: current.color }}
-            >
-              {current.tag}
-            </div>
           </div>
 
-          <p className="mt-4 text-lg md:text-4xl italic opacity-60 leading-tight font-serif min-h-[2.5em]">
+          {/* Tu je tvoj znak |, ale mimo h1, aby nerobil bordel v responze */}
+          <div
+            className="flex items-center gap-2 text-[10px] md:text-[12px] font-mono opacity-50 lowercase tracking-widest pl-1"
+            style={{ color: current.color }}
+          >
+            <span className="font-bold">|</span>
+            <span>{current.tag}</span>
+          </div>
+
+          <p className="mt-6 text-lg md:text-4xl italic opacity-60 leading-tight font-serif max-w-4xl min-h-[3em]">
             "{current.quote}"
           </p>
         </header>
