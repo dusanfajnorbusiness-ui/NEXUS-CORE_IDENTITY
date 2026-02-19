@@ -1,4 +1,143 @@
 @charset "UTF-8";
+/* --- DIMENSION 08: READER UI SPACE --- */
+/* Color Identity: #00FFFF (Cyan) */
+#dimension-08 {
+  position: relative;
+  width: 100%;
+  border-top: 1px solid rgba(0, 255, 255, 0.3);
+  /* Header Section */
+}
+#dimension-08 .reader-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  position: relative;
+}
+#dimension-08 .reader-header h2 {
+  font-family: "Courier New", monospace;
+  color: #00FFFF;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  font-size: 1.8rem;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  margin-bottom: 0.5rem;
+}
+#dimension-08 .reader-header .status-line {
+  font-size: 0.7rem;
+  color: rgba(0, 255, 255, 0.6);
+  font-family: monospace;
+}
+#dimension-08 {
+  /* Access Panel (Input Area) */
+}
+#dimension-08 .access-panel {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 255, 255, 0.05) 100%);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  padding: 1.5rem;
+  margin: 0 auto 3rem auto;
+  max-width: 500px;
+  text-align: center;
+  clip-path: polygon(10% 0, 100% 0, 100% 90%, 90% 100%, 0 100%, 0 10%);
+}
+#dimension-08 .access-panel .tier-indicator {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 0.6rem;
+  border: 1px solid currentColor;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+#dimension-08 .access-panel .input-group {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+#dimension-08 .access-panel input {
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid #00FFFF;
+  color: #00FFFF;
+  padding: 0.5rem;
+  font-family: "Courier New", monospace;
+  width: 60%;
+  outline: none;
+}
+#dimension-08 .access-panel input:focus {
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+}
+#dimension-08 .access-panel button {
+  background: rgba(0, 255, 255, 0.1);
+  border: 1px solid #00FFFF;
+  color: #00FFFF;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+#dimension-08 .access-panel button:hover {
+  background: #00FFFF;
+  color: #000;
+  box-shadow: 0 0 20px #00FFFF;
+}
+#dimension-08 {
+  /* FREE VIEW (Locked Content) */
+}
+#dimension-08 .locked-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  opacity: 0.7;
+}
+#dimension-08 .locked-grid .locked-card {
+  border: 1px solid rgba(255, 0, 60, 0.3); /* Red border for locked */
+  background: rgba(20, 0, 0, 0.4);
+  padding: 1.5rem;
+  position: relative;
+  transition: transform 0.3s;
+}
+#dimension-08 .locked-grid .locked-card:hover {
+  border-color: rgba(255, 0, 60, 0.8);
+}
+#dimension-08 .locked-grid .locked-card h3 {
+  color: #ff003c;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+#dimension-08 .locked-grid .locked-card p {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+#dimension-08 .locked-grid .locked-card .lock-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.2rem;
+}
+#dimension-08 {
+  /* PRO/PREMIUM VIEW (Unlocked Library) */
+}
+#dimension-08 .library-container {
+  animation: fadeIn 1s ease-in-out;
+  border-left: 2px solid #00FFFF;
+  padding-left: 2rem;
+}
+#dimension-08 .library-container .sys-msg {
+  color: #00FFFF;
+  font-size: 0.8rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px dashed rgba(0, 255, 255, 0.3);
+  padding-bottom: 1rem;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 .neon-text.identity {
   color: #39FF14;
   filter: drop-shadow(0 0 8px rgba(57, 255, 20, 0.6));
@@ -191,4 +330,29 @@ main {
 /* Fix pre plynulé zmeny farieb */
 * {
   transition: border-color 0.5s ease, color 0.5s ease, background-color 0.5s ease;
+}
+
+.fx-burst-core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: #39FF14;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: burst-anim 0.8s ease-out forwards;
+}
+
+@keyframes burst-anim {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+    box-shadow: 0 0 0px #39FF14;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(50);
+    opacity: 0;
+    box-shadow: 0 0 100px #39FF14;
+  }
 }/*# sourceMappingURL=style.css.map */

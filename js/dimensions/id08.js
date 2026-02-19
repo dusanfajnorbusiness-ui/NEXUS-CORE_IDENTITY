@@ -1,36 +1,74 @@
-// js/dimensions/id08.js (v1.2 - Heavy Stream Edition)
-window.id08Data = {
-  proContent: `
-    <div class="p-4 border-l-2 border-[#00FFFF]/30 bg-[#00FFFF]/5 mb-6">
-      <h3 class="text-[#00FFFF] font-bold uppercase text-xs mb-2 tracking-widest">Codex_Protocol_Active</h3>
-      <p class="text-[10px] opacity-70 leading-relaxed">
-        Systém úspešne identifikoval 17,102 riadkov surových dát. 
-        Prebieha dešifrovanie OneNote štruktúry a mapovanie časových osí.
-      </p>
-    </div>
-  `,
+/* --- DIMENSION 08: AUTH-TERMINAL (FIXED) --- */
+const ID08 = {
+    id: "08",
+    name: "DECRYPTOR",
+    color: "#00FFFF",
 
-  premiumContent: `
-    <div class="p-5 bg-black/90 border-2 border-[#00FFFF] rounded-xl shadow-[0_0_40px_rgba(0,255,255,0.15)] relative overflow-hidden animate-in zoom-in-95 duration-700 min-h-[600px] flex flex-col">
-      <div class="absolute top-0 right-0 bg-[#00FFFF] text-black text-[7px] px-3 font-black py-0.5 uppercase tracking-tighter">Architect_Deep_Scan_v2</div>
-      
-      <div class="flex justify-between items-center mb-4 border-b border-[#00FFFF]/20 pb-2">
-        <h4 class="text-[#00FFFF] font-black text-[11px] uppercase italic tracking-tighter animate-pulse">
-          !! RAW_DATA_DECRYPTOR [CONNECTED] !!
-        </h4>
-        <div class="text-[8px] font-mono text-[#00FFFF]/50">LINES: 17102 // SYNC_STATUS: OK</div>
-      </div>
-      
-      {/* TERMINÁL S AUTO-SCROLLOM A PEVNOU VÝŠKOU */}
-      <div id="codex-terminal" class="flex-grow space-y-1 font-mono text-[#00FFFF] h-[450px] overflow-y-auto custom-scrollbar p-3 bg-black/60 rounded border border-white/5 text-left">
-          [ WAITING_FOR_DECRYPTION_KEY... ]
-      </div>
+    render: function(container, tier = "FREE") {
+        console.log("📟 Terminal ID08: Rendering started...");
+        
+        container.innerHTML = `
+            <div class="flex flex-col items-center justify-center p-4 md:p-10 animate-in zoom-in duration-500 max-w-xl mx-auto">
+                <div class="w-full bg-black/40 border border-[#00FFFF]/30 p-8 rounded-2xl shadow-[0_0_50px_rgba(0,255,255,0.1)] backdrop-blur-xl">
+                    <h2 class="text-[#00FFFF] font-black text-2xl mb-2 uppercase tracking-tighter italic text-center">Security_Terminal</h2>
+                    <p class="text-[#00FFFF]/50 text-[10px] font-mono mb-8 uppercase tracking-widest text-center">Tier_Status: ${tier}</p>
+                    
+                    <div class="relative mb-8 group">
+                        <input type="password" id="id08-code" placeholder="ENTER CODE" 
+                            class="w-full bg-[#050505] border-b-2 border-[#00FFFF] text-[#00FFFF] px-4 py-4 text-center text-xl font-bold tracking-[0.4em] outline-none transition-all focus:border-white">
+                        
+                        <button id="id08-eye" class="absolute right-2 top-1/2 -translate-y-1/2 text-[#00FFFF] opacity-50 hover:opacity-100 p-2 transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </button>
+                    </div>
 
-      <div class="mt-4 grid grid-cols-3 gap-2 opacity-40">
-        <div class="text-[7px] uppercase font-bold border-r border-white/10">Buffer: 972KB</div>
-        <div class="text-[7px] uppercase font-bold border-r border-white/10 text-center">Process: Idle</div>
-        <div class="text-[7px] uppercase font-bold text-right">Node: Trnava_Station</div>
-      </div>
-    </div>
-  `
+                    <button id="id08-submit" 
+                        class="w-full bg-[#00FFFF]/10 border border-[#00FFFF] text-[#00FFFF] py-4 font-black uppercase tracking-[0.3em] hover:bg-[#00FFFF] hover:text-black transition-all duration-300 shadow-[0_0_20px_rgba(0,255,255,0.2)]">
+                        Verify_Identity
+                    </button>
+
+                    <div id="id08-msg" class="mt-6 text-center font-mono text-[10px] uppercase min-h-[15px]"></div>
+                </div>
+            </div>
+        `;
+
+        // --- INTERNÁ LOGIKA ---
+        const input = container.querySelector("#id08-code");
+        const btn = container.querySelector("#id08-submit");
+        const eye = container.querySelector("#id08-eye");
+        const msg = container.querySelector("#id08-msg");
+
+        const handleVerify = () => {
+            const val = input.value.trim();
+            console.log("📟 Processing code...");
+
+            if (val === "111") {
+                if (window.upgradeUserTier) window.upgradeUserTier("PRO");
+            } else if (val === "999") {
+                if (window.upgradeUserTier) window.upgradeUserTier("PREMIUM");
+            } else {
+                msg.innerText = "❌ ACCESS_DENIED: Invalid_Key";
+                msg.className = "mt-6 text-center font-mono text-[10px] uppercase text-red-500 animate-shake";
+                input.value = "";
+                setTimeout(() => { msg.innerText = ""; }, 3000);
+            }
+        };
+
+        // EVENT: Kliknutie na tlačidlo
+        btn.addEventListener("click", handleVerify);
+
+        // EVENT: Stlačenie ENTER v inpute
+        input.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") handleVerify();
+        });
+
+        // EVENT: Očko (Toggle Visibility)
+        eye.addEventListener("click", () => {
+            const isPass = input.type === "password";
+            input.type = isPass ? "text" : "password";
+            eye.style.opacity = isPass ? "1" : "0.5";
+        });
+    }
 };
+
+window.ID08 = ID08;

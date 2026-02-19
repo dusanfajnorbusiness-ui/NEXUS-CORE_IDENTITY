@@ -1,5 +1,5 @@
 // ==========================================
-// 0. FIREBASE & INIT (v6.2 - Identity Restored)
+// 0.1 FIREBASE & INIT (v6.2 - Identity Restored)
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyAZ63dB9Rc5zX-qabOCC0LSErQnwzr9eaE",
@@ -11,16 +11,21 @@ const firebaseConfig = {
   measurementId: "G-QE4GE8TZN9",
 };
 
+// --- KĽÚČOVÁ ZMENA: NAJPRV REACT FUNKCIE ---
+const { useState, useEffect, useMemo, useRef } = React;
+
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 const auth = firebase.auth();
 const db = firebase.firestore();
 const googleProvider = new firebase.auth.GoogleAuthProvider();
-const { useState, useEffect, useMemo, useRef } = React;
+
+// Odstránil som samostatnú definíciu userTier odtiaľto,
+// pretože musí byť VNÚTRI komponentu App, aby fungovala.
 
 // ==========================================
-// 1. MODUL: OperatorMonitor (PRIORITY_1: USERS)
+// 1. MODUL: OperatorMonitor
 // ==========================================
 const OperatorMonitor = ({ color }) => {
   const [operators, setOperators] = useState([]);
@@ -118,51 +123,132 @@ const OperatorMonitor = ({ color }) => {
 };
 
 // ==========================================
-// 2. MODUL: AccountPanel (Session + Key Init)
+// 2. MODUL: AccountPanel (UI First Protocol)
 // ==========================================
 const AccountPanel = ({ color }) => {
   const [isLogged, setIsLogged] = useState(false);
   const [user, setUser] = useState(null);
-  const [inputKey, setInputKey] = useState(""); // Pre zadanie kódu
+  const [inputKey, setInputKey] = useState("");
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (firebaseUser) => {
       if (firebaseUser) {
-        const userRef = db.collection("operators").doc(firebaseUser.uid);
-        const doc = await userRef.get();
+        console.log("✅ GOOGLE AUTH SUCCESS:", firebaseUser.displayName);
 
-        const nexusData = {
+        // 1. OKAMŽITÉ ZOBRAZENIE AVATARA (Nečakáme na databázu!)
+        let initialTier = (
+          localStorage.getItem("nexus_tier") || "FREE"
+        ).toUpperCase();
+
+        setUser({
           uid: firebaseUser.uid,
           name: firebaseUser.displayName?.toUpperCase() || "OPERATOR",
           avatar: firebaseUser.photoURL,
-          lastOnline: firebase.firestore.FieldValue.serverTimestamp(),
-          tier: doc.exists ? doc.data().tier : "FREE",
-        };
-
-        await userRef.set(nexusData, { merge: true });
-        setUser(nexusData);
+          tier: initialTier,
+        });
         setIsLogged(true);
+
+        // 2. TICHÁ SYNCHRONIZÁCIA S DATABÁZOU NA POZADÍ
+        try {
+          const userRef = db.collection("operators").doc(firebaseUser.uid);
+          const doc = await userRef.get();
+
+          let dbTier = doc.exists
+            ? (doc.data().tier || "FREE").toUpperCase()
+            : "FREE";
+          const weights = { FREE: 0, PRO: 1, PREMIUM: 2, ARCHITECT: 3 };
+          let finalTier = dbTier;
+
+          if (weights[initialTier] > weights[dbTier]) {
+            finalTier = initialTier;
+          } else if (weights[dbTier] > weights[initialTier]) {
+            finalTier = dbTier;
+          }
+
+          const nexusData = {
+            uid: firebaseUser.uid,
+            name: firebaseUser.displayName?.toUpperCase() || "OPERATOR",
+            avatar: firebaseUser.photoURL,
+            lastOnline: firebase.firestore.FieldValue.serverTimestamp(),
+            tier: finalTier,
+          };
+
+          await userRef.set(nexusData, { merge: true });
+
+          // 3. Aktualizácia stavu po pripojení k DB
+          setUser(nexusData);
+          localStorage.setItem("nexus_tier", finalTier.toLowerCase());
+          console.log("✅ SYNC SUCCESS: Data uložené do DB.");
+        } catch (error) {
+          console.warn(
+            "⚠️ FIRESTORE PENDING/ERROR. Bežíme v offline režime.",
+            error,
+          );
+        }
       } else {
         setIsLogged(false);
         setUser(null);
+        localStorage.setItem("nexus_tier", "free");
       }
     });
     return () => unsubscribe();
   }, []);
 
-  const handleLogin = () => auth.signInWithPopup(googleProvider);
+  // Prihlásenie cez POPUP (Oveľa spoľahlivejšie pre lokálny vývoj)
+  const handleLogin = () => {
+    auth.signInWithPopup(googleProvider).catch((error) => {
+      console.error("❌ CHYBA PRIHLÁSENIA:", error);
+      alert("Prihlásenie zrušené alebo zlyhalo.");
+    });
+  };
 
-  // LOGIKA OVERENIA KĽÚČA
-  const upgradeTier = async () => {
-    if (inputKey === "NEXUS-150-PRO" || inputKey === "NEXUS-999-PREMIUM") {
-      const newTier = inputKey.includes("150") ? "PRO" : "PREMIUM";
-      await db.collection("operators").doc(user.uid).update({
-        tier: newTier,
+  const handleLogout = () => {
+    if (window.confirm("Odhlásiť sa a resetovať na FREE?")) {
+      auth.signOut().then(() => {
+        localStorage.setItem("nexus_tier", "free");
+        window.location.reload();
       });
-      alert(`SYSTEM_UPDATE: Prístup ${newTier} aktivovaný!`);
-      window.location.reload(); // Refresh pre načítanie nových práv
-    } else {
-      alert("ACCESS_DENIED: Neplatný kód.");
+    }
+  };
+
+  // --- GLOBÁLNE PREPOJENIE PRE ID08 ---
+  useEffect(() => {
+    window.isUserLoggedIn = isLogged;
+    window.triggerLogin = handleLogin;
+
+    // Vo vnútri AccountPanel useEffect:
+    window.upgradeUserTier = async (newTier) => {
+      if (user && user.uid) {
+        const tierUpper = newTier.toUpperCase();
+        try {
+          await db
+            .collection("operators")
+            .doc(user.uid)
+            .update({ tier: tierUpper });
+        } catch (e) {
+          console.warn("DB mešká...");
+        }
+
+        // NAJPRV SYNC
+        if (typeof window.syncTierWithUI === "function") {
+          window.syncTierWithUI(tierUpper);
+        }
+
+        // POTOM ALERT
+        alert(`✅ SYSTEM_SYNC: Protokol ${tierUpper} aktivovaný!`);
+      }
+    };
+  }, [isLogged, user]);
+
+  const handleHeaderKeySubmit = () => {
+    if (window.verifyAccessCode) {
+      const result = window.verifyAccessCode(inputKey);
+      if (result) {
+        window.upgradeUserTier(result);
+      } else {
+        alert("⛔ ACCESS DENIED: Neplatný kód.");
+        setInputKey("");
+      }
     }
   };
 
@@ -171,25 +257,25 @@ const AccountPanel = ({ color }) => {
       {!isLogged ? (
         <button
           onClick={handleLogin}
-          className="hud-btn border-thick text-[10px] md:text-[12px] px-4 h-full animate-pulse"
+          className="hud-btn border-thick text-[10px] md:text-[12px] px-4 h-full animate-pulse hover:bg-white hover:text-black transition-all"
           style={{ color, borderColor: color }}
         >
           INIT_SESSION
         </button>
       ) : (
         <div className="flex items-center gap-3">
-          {/* POLE PRE KĽÚČ (Zobrazí sa len ak je užívateľ FREE) */}
           {user?.tier === "FREE" && (
             <div className="flex h-full border border-white/20 rounded-full overflow-hidden bg-black/60">
               <input
                 type="text"
-                placeholder="ENTER_KEY"
-                className="bg-transparent text-[8px] px-2 w-20 outline-none text-white font-mono"
+                placeholder="KEY"
+                className="bg-transparent text-[8px] px-2 w-16 outline-none text-white font-mono uppercase"
                 value={inputKey}
                 onChange={(e) => setInputKey(e.target.value.toUpperCase())}
+                onKeyDown={(e) => e.key === "Enter" && handleHeaderKeySubmit()}
               />
               <button
-                onClick={upgradeTier}
+                onClick={handleHeaderKeySubmit}
                 className="bg-white/10 px-2 text-[8px] hover:bg-white/20 transition-all border-l border-white/20"
                 style={{ color }}
               >
@@ -198,14 +284,13 @@ const AccountPanel = ({ color }) => {
             </div>
           )}
 
-          {/* PROFILOVÝ CHIP */}
-          <div className="flex items-center gap-2 border border-white/10 p-1 pr-3 rounded-full bg-black/40 h-[32px]">
+          <div className="flex items-center gap-2 border border-white/10 p-1 pr-1 rounded-full bg-black/40 h-[32px]">
             <img
-              src={user?.avatar}
+              src={user?.avatar || "https://via.placeholder.com/150"}
               className="w-6 h-6 rounded-full border border-white/20"
               alt="avatar"
             />
-            <div className="flex flex-col leading-none text-left">
+            <div className="flex flex-col leading-none text-left mr-2">
               <span className="text-[9px] font-black text-white truncate max-w-[60px]">
                 {user?.name}
               </span>
@@ -216,6 +301,14 @@ const AccountPanel = ({ color }) => {
                 {user?.tier}
               </span>
             </div>
+
+            <button
+              onClick={handleLogout}
+              className="w-6 h-6 flex items-center justify-center rounded-full bg-red-500/20 hover:bg-red-500 text-red-500 hover:text-white transition-all text-[10px] border border-red-500/30"
+              title="LOGOUT"
+            >
+              ✕
+            </button>
           </div>
         </div>
       )}
@@ -226,64 +319,118 @@ const AccountPanel = ({ color }) => {
 // ==========================================
 // 3. MODUL: DimensionWrapper (Tier Guard)
 // ==========================================
-const DimensionWrapper = ({
-  id,
-  color,
-  children,
-  proContent,
-  premiumContent,
-  isUnlocked,
-  setIsUnlocked,
-}) => {
-  const [keyInput, setKeyInput] = useState("");
-  const [accessLevel, setAccessLevel] = useState("FREE");
-  const handleVerify = () => {
-    const input = keyInput.trim().toUpperCase();
-    if (["NEXUS-OMEGA-OVRD", "NEXUS-999-PREMIUM"].includes(input)) {
-      setAccessLevel("PREMIUM");
-      setIsUnlocked(true);
-    } else if (input === "NEXUS-150-PRO") {
-      setAccessLevel("PRO");
-      setIsUnlocked(true);
-    } else {
-      alert("ACCESS DENIED");
-      setKeyInput("");
+const DimensionWrapper = ({ activeDimension, userTier, color }) => {
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    // POISTKA: Ak activeDimension nie je definovaná, alebo kontajner neexistuje, preruš operáciu
+    if (
+      activeDimension === undefined ||
+      activeDimension === null ||
+      !containerRef.current
+    )
+      return;
+
+    try {
+      // Vyčistíme kontajner pre Vanilla JS moduly
+      containerRef.current.innerHTML = "";
+
+      // Bezpečný prevod na ID (napr. 8 -> "08")
+      const dimId = String(activeDimension).padStart(2, "0");
+      const moduleName = `ID${dimId}`;
+
+      // Kontrola, či je modul načítaný v okne (window.ID08 atď.)
+      if (
+        window[moduleName] &&
+        typeof window[moduleName].render === "function"
+      ) {
+        // KĽÚČOVÁ ZMENA: Posielame userTier do modulu!
+        window[moduleName].render(containerRef.current, userTier);
+        console.log(
+          `📡 Neural Link: ${moduleName} rendered with Tier: ${userTier}`,
+        );
+      } else {
+        console.warn(`⚠️ Module ${moduleName} not ready.`);
+        containerRef.current.innerHTML = `
+          <div class="flex items-center justify-center h-64 text-white/20 uppercase italic tracking-[0.3em] animate-pulse text-xs">
+            Establishing Neural Link to ${moduleName}...
+          </div>`;
+      }
+    } catch (err) {
+      console.error("❌ Critical Render Error:", err);
     }
-  };
+  }, [activeDimension, userTier]);
+
+  // Pomocná konštanta, aby sme vedeli, či sme v dešifrovacom centre
+  const isAuthCenter =
+    String(activeDimension) === "8" || String(activeDimension) === "08";
+
   return (
-    <div className="space-y-6 relative">
-      <div className="text-left border-l border-white/5 pl-4">{children}</div>
-      {!isUnlocked ? (
-        <div className="mt-10 p-6 border border-white/5 bg-black/60 rounded-xl space-y-4 shadow-2xl">
-          <input
-            type="password"
-            placeholder="ENTER ACCESS_KEY..."
-            value={keyInput}
-            onChange={(e) => setKeyInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleVerify()}
-            className="bg-transparent border-b border-white/10 text-center text-[10px] w-full text-white py-2 focus:outline-none"
-          />
-          <button
-            onClick={handleVerify}
-            className="w-full py-2 text-[9px] font-black uppercase shadow-lg transition-transform active:scale-95"
-            style={{ backgroundColor: color, color: "#000" }}
-          >
-            Unlock Protocol
-          </button>
-        </div>
-      ) : (
-        <div className="animate-in slide-in-from-top-4 space-y-8 text-left text-white">
-          {(accessLevel === "PRO" || accessLevel === "PREMIUM") && (
-            <div
-              className="pt-8 border-t border-white/10 pro-content-area"
-              dangerouslySetInnerHTML={{ __html: proContent }}
-            />
+    <div className="relative w-full h-full overflow-y-auto custom-scrollbar flex flex-col">
+      {/* Vanilla JS Content Area */}
+      <div ref={containerRef} className="flex-grow"></div>
+
+      {/* 🛡️ GLOBÁLNY UPGRADE SYSTÉM - Skryje sa v ID08, aby nezavadzal terminálu */}
+      {!isAuthCenter && (
+        <div className="max-w-4xl mx-auto w-full p-10 space-y-6 pb-20">
+          {/* PRO CARD */}
+          {userTier === "FREE" && (
+            <div className="group relative border border-green-500/30 bg-black/80 p-1 transition-all hover:border-green-500">
+              <div className="absolute inset-0 bg-green-500/5 group-hover:bg-green-500/10 transition-colors"></div>
+              <div className="relative border border-green-500/20 p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="text-center md:text-left">
+                  <div className="flex items-center gap-2 mb-1 justify-center md:justify-start">
+                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    <h4 className="text-green-500 font-black text-sm uppercase tracking-[0.2em]">
+                      Level PRO Restricted
+                    </h4>
+                  </div>
+                  <p className="text-white/60 text-[10px] font-mono lowercase">
+                    Odomkni pokročilé taktické dáta a bio-metriky.
+                  </p>
+                </div>
+                <button
+                  onClick={() =>
+                    window.dispatchEvent(
+                      new CustomEvent("changeDimension", { detail: "08" }),
+                    )
+                  }
+                  className="bg-green-500/10 border border-green-500 text-green-500 px-6 py-2 text-[10px] font-black uppercase hover:bg-green-500 hover:text-black transition-all duration-300"
+                >
+                  Authorize [111]
+                </button>
+              </div>
+            </div>
           )}
-          {accessLevel === "PREMIUM" && (
-            <div
-              className="pt-8 border-t-2 border-cyan-500/30 bg-cyan-500/5 p-4 rounded-lg premium-content-area"
-              dangerouslySetInnerHTML={{ __html: premiumContent }}
-            />
+
+          {/* PREMIUM CARD */}
+          {userTier !== "PREMIUM" && (
+            <div className="group relative border border-yellow-500/30 bg-black/80 p-1 transition-all hover:border-yellow-500 shadow-[0_0_30px_rgba(234,179,8,0.05)]">
+              <div className="absolute inset-0 bg-yellow-500/5 group-hover:bg-yellow-500/10 transition-colors"></div>
+              <div className="relative border border-yellow-500/20 p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="text-center md:text-left">
+                  <div className="flex items-center gap-2 mb-1 justify-center md:justify-start">
+                    <span className="w-2 h-2 bg-yellow-500 rounded-full shadow-[0_0_10px_#EAB308]"></span>
+                    <h4 className="text-yellow-500 font-black text-sm uppercase tracking-[0.2em]">
+                      Level PREMIUM (Omega)
+                    </h4>
+                  </div>
+                  <p className="text-white/60 text-[10px] font-mono lowercase">
+                    Úplná systémová previerka a prístup k riadiacim protokolom.
+                  </p>
+                </div>
+                <button
+                  onClick={() =>
+                    window.dispatchEvent(
+                      new CustomEvent("changeDimension", { detail: "08" }),
+                    )
+                  }
+                  className="bg-yellow-500/10 border border-yellow-500 text-yellow-500 px-6 py-2 text-[10px] font-black uppercase hover:bg-yellow-500 hover:text-black transition-all duration-300"
+                >
+                  Authorize [999]
+                </button>
+              </div>
+            </div>
           )}
         </div>
       )}
@@ -292,40 +439,54 @@ const DimensionWrapper = ({
 };
 
 // ==========================================
-// 4. MODUL: Footer (System Info)
-// ==========================================
-const Footer = () => (
-  <footer className="mt-auto py-4 border-t border-white/5 bg-black/40 backdrop-blur-md px-6 font-mono text-[8px] uppercase tracking-widest opacity-40">
-    <div className="max-w-7xl mx-auto flex justify-between text-[#39FF14]">
-      <div>HW: Uzol_2Mb // Trnava_Station // AI: Gemini_Link</div>
-      <div>D. FAJNOR // ARCHITECT © 2026</div>
-    </div>
-  </footer>
-);
-
-// ==========================================
-// 5. MODUL: App (HUD & Core UI - v7.2)
+// 4. MAIN APP ENGINE (FIXED HOOK ORDER)
 // ==========================================
 const App = () => {
-  const [activeID, setActiveID] = useState("01");
+  // SEM VLOŽÍME USER TIER
+  const [userTier, setUserTier] = useState(
+    localStorage.getItem("nexus_tier") || "FREE",
+  );
+
+  // Vnútri App komponentu v useEffect:
+  useEffect(() => {
+    window.syncTierWithUI = (newTier) => {
+      const tierUpper = newTier.toUpperCase();
+      console.log(`📡 BROADCAST: Syncing UI to Tier ${tierUpper}`);
+
+      // 1. Update React stavu (schová karty)
+      setUserTier(tierUpper);
+
+      // 2. Update fyzickej pamäte (pre window.getCurrentTier)
+      localStorage.setItem("nexus_tier", tierUpper.toLowerCase());
+
+      // 3. Vynútený re-render aktuálnej dimenzie
+      const dimId = String(activeID).padStart(2, "0");
+      const moduleName = `ID${dimId}`;
+      const mountPoint =
+        document.getElementById("id08-mount-point") || containerRef.current;
+
+      if (
+        window[moduleName] &&
+        typeof window[moduleName].render === "function"
+      ) {
+        window[moduleName].render(mountPoint, tierUpper);
+      }
+    };
+  }, [activeID]); // Pridaj activeID do závislostí
+
+  // --- 1. DEFINÍCIE HOOKOV ---
+  const [activeID, setActiveID] = useState(
+    localStorage.getItem("nexus_last_id") || "01",
+  );
+
   const [updates, setUpdates] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const logRef = useRef(null);
 
-  // 1. EFEKT: UX Fix - Zatváranie menu
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (logRef.current && !logRef.current.contains(event.target)) {
-        setIsMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  // --- 2. EFEKTY ---
 
-  // 2. EFEKT: Data Engine (GitHub + 17k Codex Loader)
+  // Efekt: GitHub Sync
   useEffect(() => {
-    // A. GitHub Sync
     fetch(
       "https://api.github.com/repos/dusanfajnorbusiness-ui/NEXUS-CORE_IDENTITY/commits?per_page=100",
     )
@@ -346,60 +507,65 @@ const App = () => {
           );
         }
       })
-      .catch((err) => console.error("Sync_Error", err));
+      .catch((err) => console.warn("GitHub Sync: Offline"));
+  }, []);
 
-    // B. Codex Loader (ID_08) - Optimized for 17,102 lines
+  // EFEKT: Ukladanie pozície (Keď prepneš ID, uloží sa)
+  useEffect(() => {
+    localStorage.setItem("nexus_last_id", activeID);
+  }, [activeID]);
+
+  // Efekt: Redirect Login Check
+  useEffect(() => {
+    auth.getRedirectResult().catch((e) => console.error(e));
+  }, []);
+
+  // Efekt: ID08 BRIDGE (Spustenie externého modulu)
+  useEffect(() => {
     if (activeID === "08") {
+      console.log("🚀 Switching to ID08...");
       setTimeout(() => {
-        const terminal = document.getElementById("codex-terminal");
-        if (terminal) {
-          terminal.innerHTML = `<div class="animate-pulse opacity-50 text-[10px] p-4 text-center tracking-[0.2em]">ACCESSING_ONE_NOTE_DUMP_STREAM...</div>`;
-
-          fetch("./js/data/codex/fragment_1.json")
-            .then((res) => res.json())
-            .then((fragment) => {
-              const now = new Date();
-              terminal.innerHTML = fragment.data
-                .map((line, idx) => {
-                  const ts = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}.${idx % 999}`;
-                  const isHeading = line.trim().startsWith("#");
-
-                  if (isHeading) {
-                    return `
-                    <div class="mt-6 mb-2 border-b border-[#00FFFF]/20 pb-1">
-                      <div class="text-[6px] opacity-30 font-mono italic">Entry_Point // LINE_${idx + 1}</div>
-                      <div class="text-xs font-black text-[#00FFFF] uppercase">${line.replace(/#/g, "")}</div>
-                    </div>`;
-                  }
-
-                  return `
-                  <div class="py-1 border-b border-white/5 hover:bg-white/5 group transition-colors">
-                    <div class="flex justify-between items-end opacity-20 group-hover:opacity-100 transition-opacity">
-                      <span class="text-[6px] font-mono">LINE_${idx + 1}</span>
-                      <span class="text-[6px] font-mono">TIMESTAMP: ${ts}</span>
-                    </div>
-                    <div class="text-[10px] text-white/90 leading-tight tracking-tighter">${line}</div>
-                  </div>`;
-                })
-                .join("");
-            })
-            .catch(() => {
-              terminal.innerHTML = `<div class="p-10 text-center text-red-500 text-[10px]">[ ERROR: DATA_STREAM_INTERRUPTED ]</div>`;
-            });
+        const mountPoint = document.getElementById("id08-mount-point");
+        if (
+          mountPoint &&
+          window.ID08 &&
+          typeof window.ID08.render === "function"
+        ) {
+          console.log("✅ Mounting ID08 Module");
+          window.ID08.render(mountPoint);
+        } else {
+          console.warn("⚠️ Waiting for ID08 module...");
         }
-      }, 300);
+      }, 100);
     }
   }, [activeID]);
 
-  if (!window.nexusData)
+  useEffect(() => {
+    const checkTier = () => {
+      const currentTier = localStorage.getItem("nexus_tier") || "FREE";
+      setUserTier(currentTier.toUpperCase());
+    };
+    window.addEventListener("storage", checkTier); // Sleduje zmeny z iných tabov
+    const interval = setInterval(checkTier, 1000); // Poistka pre lokálne zmeny
+    return () => {
+      window.removeEventListener("storage", checkTier);
+      clearInterval(interval);
+    };
+  }, []);
+
+  // --- 3. PODMIENKY RENDERU (AŽ TERAZ!) ---
+  if (!window.nexusData) {
     return (
       <div className="p-20 text-center text-white">
         Critical_Error: Data_Not_Found
       </div>
     );
+  }
+
   const current =
     window.nexusData.dimensions[activeID] || window.nexusData.dimensions["01"];
 
+  // --- 4. RENDER UI ---
   return (
     <div
       className="min-h-screen flex flex-col bg-[#050505] font-mono text-white transition-all duration-700"
@@ -468,29 +634,21 @@ const App = () => {
 
       {/* MAIN CONTENT */}
       <main className="container mx-auto px-6 pt-32 pb-32 max-w-6xl flex-grow text-left">
-        <header className="mb-8 md:mb-16">
-          {/* FIX: Pevná výška kontajnera zabráni skákaniu celého webu */}
-          <div className="min-h-[140px] md:min-h-[280px] flex items-end pb-4 overflow-hidden">
+        <header className="mb-16">
+          <div className="min-h-[180px] md:min-h-[320px] flex items-end pb-4 overflow-hidden border-b border-white/5">
             <h1
-              className="text-4xl md:text-9xl font-black uppercase tracking-tighter leading-[0.85]"
+              className="text-6xl md:text-9xl font-black uppercase tracking-tighter leading-[0.8]"
               style={{ color: current.color }}
             >
               {current.name}
             </h1>
           </div>
-
-          {/* Tu je tvoj znak |, ale mimo h1, aby nerobil bordel v responze */}
           <div
-            className="flex items-center gap-2 text-[10px] md:text-[12px] font-mono opacity-50 lowercase tracking-widest pl-1"
+            className="text-[10px] md:text-[12px] font-mono opacity-50 lowercase tracking-widest pl-2 mt-4"
             style={{ color: current.color }}
           >
-            <span className="font-bold">|</span>
-            <span>{current.tag}</span>
+            | {current.tag}
           </div>
-
-          <p className="mt-6 text-lg md:text-4xl italic opacity-60 leading-tight font-serif max-w-4xl min-h-[3em]">
-            "{current.quote}"
-          </p>
         </header>
 
         <nav className="grid grid-cols-4 md:grid-cols-11 gap-3 mb-20">
@@ -527,19 +685,11 @@ const App = () => {
             style={{ backgroundColor: current.color }}
           />
 
-          {/* TIER GUARD INTEGRATION */}
           <DimensionWrapper
-            id={activeID}
+            activeDimension={activeID}
+            userTier={userTier}
             color={current.color}
-            proContent={current.proContent}
-            premiumContent={current.premiumContent}
-            isUnlocked={activeID === "08" ? true : false} // Automatické odomknutie pre test
-            setIsUnlocked={() => {}}
-          >
-            <div className="text-xl md:text-4xl font-light uppercase leading-snug italic opacity-90">
-              {current.content}
-            </div>
-          </DimensionWrapper>
+          />
         </div>
       </main>
 

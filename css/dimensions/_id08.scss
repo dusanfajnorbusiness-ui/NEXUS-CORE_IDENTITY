@@ -1,0 +1,149 @@
+/* --- DIMENSION 08: READER UI SPACE --- */
+/* Color Identity: #00FFFF (Cyan) */
+
+$id08-color: #00FFFF;
+$id08-bg: rgba(0, 20, 20, 0.9);
+
+#dimension-08 {
+  position: relative;
+  width: 100%;
+  border-top: 1px solid rgba($id08-color, 0.3);
+  
+  /* Header Section */
+  .reader-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+    
+    h2 {
+      font-family: 'Courier New', monospace;
+      color: $id08-color;
+      text-shadow: 0 0 10px rgba($id08-color, 0.5);
+      font-size: 1.8rem;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      margin-bottom: 0.5rem;
+    }
+
+    .status-line {
+      font-size: 0.7rem;
+      color: rgba($id08-color, 0.6);
+      font-family: monospace;
+    }
+  }
+
+  /* Access Panel (Input Area) */
+  .access-panel {
+    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba($id08-color, 0.05) 100%);
+    border: 1px solid rgba($id08-color, 0.2);
+    padding: 1.5rem;
+    margin: 0 auto 3rem auto;
+    max-width: 500px;
+    text-align: center;
+    clip-path: polygon(10% 0, 100% 0, 100% 90%, 90% 100%, 0 100%, 0 10%);
+
+    .tier-indicator {
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 0.6rem;
+      border: 1px solid currentColor;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    input {
+      background: rgba(0,0,0,0.8);
+      border: 1px solid $id08-color;
+      color: $id08-color;
+      padding: 0.5rem;
+      font-family: 'Courier New', monospace;
+      width: 60%;
+      outline: none;
+      
+      &:focus {
+        box-shadow: 0 0 15px rgba($id08-color, 0.3);
+      }
+    }
+
+    button {
+      background: rgba($id08-color, 0.1);
+      border: 1px solid $id08-color;
+      color: $id08-color;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: $id08-color;
+        color: #000;
+        box-shadow: 0 0 20px $id08-color;
+      }
+    }
+  }
+
+  /* FREE VIEW (Locked Content) */
+  .locked-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    opacity: 0.7;
+
+    .locked-card {
+      border: 1px solid rgba(255, 0, 60, 0.3); /* Red border for locked */
+      background: rgba(20, 0, 0, 0.4);
+      padding: 1.5rem;
+      position: relative;
+      transition: transform 0.3s;
+
+      &:hover {
+        border-color: rgba(255, 0, 60, 0.8);
+      }
+
+      h3 {
+        color: #ff003c;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+      }
+
+      p {
+        font-size: 0.7rem;
+        color: rgba(255, 255, 255, 0.4);
+      }
+
+      .lock-icon {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 1.2rem;
+      }
+    }
+  }
+
+  /* PRO/PREMIUM VIEW (Unlocked Library) */
+  .library-container {
+    animation: fadeIn 1s ease-in-out;
+    border-left: 2px solid $id08-color;
+    padding-left: 2rem;
+    
+    .sys-msg {
+      color: $id08-color;
+      font-size: 0.8rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px dashed rgba($id08-color, 0.3);
+      padding-bottom: 1rem;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
